@@ -1,0 +1,14 @@
+[tasks.default]
+alias = "bundle"
+
+[tasks.wasm]
+description = "Build the wasm code"
+command = "wasm-pack"
+args = ["build", "--target", "web"]
+dependencies = [ "format" ]
+
+[tasks.bundle]
+description = "Bundle the wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./main.js", "--format", "iife", "--file", "./pkg/bundle.js" ]

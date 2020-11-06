@@ -6,7 +6,7 @@ pub struct App {
     back: Grid,
 
     value: Option<bool>,
-    hover: Option<(GridId, u16, u16)>
+    hover: Option<(GridId, u16, u16)>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -16,7 +16,7 @@ pub enum GridId {
 }
 
 pub enum Msg {
-    Down(GridId, u16, u16),  // (id, row, col)
+    Down(GridId, u16, u16), // (id, row, col)
     Up,
     Enter(GridId, u16, u16), // (id, row, col)
     Exit,
@@ -46,7 +46,7 @@ pub struct Grid {
 impl Grid {
     pub fn new(id: GridId, height: u16, width: u16) -> Grid {
         Grid {
-	    id, 
+            id,
             cells: vec![false; (height * width) as usize],
             height,
             width,
@@ -90,12 +90,12 @@ impl Grid {
 
 impl App {
     pub fn grid_by_id_mut(&mut self, id: GridId) -> &mut Grid {
-	match id {
-	    GridId::Front => &mut self.front,
-	    GridId::Back => &mut self.back,
-	}
+        match id {
+            GridId::Front => &mut self.front,
+            GridId::Back => &mut self.back,
+        }
     }
-    
+
     pub fn view_row(&self, grid: &Grid, row: u16) -> Html {
         html! {
             <tr>
@@ -107,68 +107,74 @@ impl App {
     pub fn view_cell(&self, grid: &Grid, row: u16, col: u16) -> Html {
         let value = grid.cell(row, col);
         let cls = if value { "on" } else { "off" };
-	let mut classes = vec![cls];
-	let grid_id = grid.id;
+        let mut classes = vec![cls];
+        let grid_id = grid.id;
 
-	let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col));
-	let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col));
-	let exit_callback = self.link.callback(|_| Msg::Exit);
-	let up_callback = self.link.callback(|_| Msg::Up);
+        let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col));
+        let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col));
+        let exit_callback = self.link.callback(|_| Msg::Exit);
+        let up_callback = self.link.callback(|_| Msg::Up);
 
-	if Some((grid_id, row, col) ) == self.hover {
-	    classes.push("hover");
-	}
+        if Some((grid_id, row, col)) == self.hover {
+            classes.push("hover");
+        }
 
         html! {
             <td class=classes
-	     onmousedown=down_callback
-	     onmouseenter=enter_callback
-	     onmouseleave=exit_callback
-	     onmouseup=up_callback
-	     > </td>
+         onmousedown=down_callback
+         onmouseenter=enter_callback
+         onmouseleave=exit_callback
+         onmouseup=up_callback
+         > </td>
         }
     }
 
     pub fn combined_view_row(&self, row: u16) -> Html {
-	html! {
-	    <tr>
-	    { for (0..(self.front.num_cols() * 2)).map(|cn| self.combined_view_cell(row, cn)) }
-		</tr>
-	}
+        html! {
+            <tr>
+            { for (0..(self.front.num_cols() * 2)).map(|cn| self.combined_view_cell(row, cn)) }
+            </tr>
+        }
     }
 
-    pub fn combined_view_cell(&self, row:u16, col:u16) -> Html {
-	let grid = if col % 2 == 1 { &self.front } else { &self.back };
-	let value = grid.cell(row, col / 2);
-	let mut classes = vec![];
-	let cls = if value { "on"} else { "off"};
-	classes.push(cls);
+    pub fn combined_view_cell(&self, row: u16, col: u16) -> Html {
+        let grid = if col % 2 == 1 {
+            &self.front
+        } else {
+            &self.back
+        };
+        let value = grid.cell(row, col / 2);
+        let mut classes = vec![];
+        let cls = if value { "on" } else { "off" };
+        classes.push(cls);
 
-	if col % 2 == 0 {
-	    classes.push("purl");
-	}
-	let content = if col % 2 == 0 {
-	    "•"
-	} else { ""};
+        if col % 2 == 0 {
+            classes.push("purl");
+        }
+        let content = if col % 2 == 0 { "•" } else { "" };
 
-	let grid_id = grid.id;
-	let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col / 2));
-	let up_callback = self.link.callback(move |_| Msg::Up);
-	let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col / 2));
-	let exit_callback = self.link.callback(|_| Msg::Exit);
+        let grid_id = grid.id;
+        let down_callback = self
+            .link
+            .callback(move |_| Msg::Down(grid_id, row, col / 2));
+        let up_callback = self.link.callback(move |_| Msg::Up);
+        let enter_callback = self
+            .link
+            .callback(move |_| Msg::Enter(grid_id, row, col / 2));
+        let exit_callback = self.link.callback(|_| Msg::Exit);
 
-	if Some((grid_id, row, col / 2) ) == self.hover {
-	    classes.push("hover");
-	}
+        if Some((grid_id, row, col / 2)) == self.hover {
+            classes.push("hover");
+        }
 
-	html! {
-	    <td class=classes
-	     onmousedown=down_callback
-	     onmouseenter=enter_callback
-	     onmouseup=up_callback
-	     onmouseleave=exit_callback
-	     >{content}</td>
-	}
+        html! {
+            <td class=classes
+             onmousedown=down_callback
+             onmouseenter=enter_callback
+             onmouseup=up_callback
+             onmouseleave=exit_callback
+             >{content}</td>
+        }
     }
 }
 
@@ -178,81 +184,80 @@ impl Component for App {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
-	    link,
+            link,
             front: Grid::new(GridId::Front, 10, 10),
             back: Grid::new(GridId::Back, 10, 10),
-	    value: None,
-	    hover: None,
+            value: None,
+            hover: None,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-	match msg {
-	    Msg::Down(id, row, col) => {
-		let grid = self.grid_by_id_mut(id);
-		let value = Some(!grid.cell(row, col));
-		grid.toggle_cell(row, col);
+        match msg {
+            Msg::Down(id, row, col) => {
+                let grid = self.grid_by_id_mut(id);
+                let value = Some(!grid.cell(row, col));
+                grid.toggle_cell(row, col);
 
-		self.value = value;
-		true
-	    }
-	    Msg::Enter(id, row, col) => {
-		if let Some(value) = self.value {
-		    let grid = self.grid_by_id_mut(id);
-		    grid.set_cell(row, col, value);
-		}
+                self.value = value;
+                true
+            }
+            Msg::Enter(id, row, col) => {
+                if let Some(value) = self.value {
+                    let grid = self.grid_by_id_mut(id);
+                    grid.set_cell(row, col, value);
+                }
 
-		self.hover = Some((id, row, col));
+                self.hover = Some((id, row, col));
 
-		true
-	    }
-	    Msg::Exit => {
-		if self.hover.is_some() {
-		    self.hover = None;
-		    true
-		} else {
-		    false
-		}
-	    }
-	    Msg::Up => {
-		self.value = None;
-		false
-	    }
-	}
+                true
+            }
+            Msg::Exit => {
+                if self.hover.is_some() {
+                    self.hover = None;
+                    true
+                } else {
+                    false
+                }
+            }
+            Msg::Up => {
+                self.value = None;
+                false
+            }
+        }
     }
 
     fn change(&mut self, _: <Self as yew::Component>::Properties) -> bool {
-	false
+        false
     }
-    
 
     fn view(&self) -> Html {
         html! {
-	    <div class={"container"}>
-		<div class={"row"}>
-		<div class={"col align-self-center"}>
+            <div class={"container"}>
+            <div class={"row"}>
+            <div class={"col align-self-center"}>
+            <table>
+            { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
+                </table>
+            </div>
+
+            <div class={"col align-self-center"}>
         <table>
-        { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
+            { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
+                </table>
+            </div>
+            </div>
+
+            <div class={"row"}>
+            <div class={"col align-self-center"}>
+            <table>
+            { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
             </table>
-		</div>
+            </div>
+            </div>
 
-		<div class={"col align-self-center"}>
-	<table>
-        { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
-            </table>
-		</div>
-		</div>
+            </div>
 
-		<div class={"row"}>
-		<div class={"col align-self-center"}>
-		<table>
-	    { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-	    </table>
-		</div>
-		</div>
-
-		</div>
-
-        }
+            }
     }
 }
