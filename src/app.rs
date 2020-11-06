@@ -186,6 +186,14 @@ impl App {
              >{content}</td>
         }
     }
+
+    fn grid_table(&self, title: &str, grid: &Grid) -> Html {
+        html! {
+          <table class={"user-select-none"}>
+            { for grid.rows().map(|rn| self.view_row(grid, rn)) }
+          </table>
+        }
+    }
 }
 
 impl Component for App {
@@ -251,38 +259,88 @@ impl Component for App {
         let click_back_callback = self.link.callback(move |_| Msg::Clear(GridId::Back));
 
         html! {
-            <div class={"container"}>
+          <>
+            <nav class="navbar navbar-expand-md">
+              <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
+            </nav>
+            <main class={"container"}>
               <div class={"row"}>
-                <div class={"col align-self-center"}>
-                  <h4>{"Front"}</h4>
-                  <table class={"user-select-none"}>
-                    { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
-                  </table>
+                <div class={"col"} style={"min-height: 2em"}>
                 </div>
+              </div>
+              <div class={"row"}>
                 <div class={"col"}>
-                  <button type="button" class={"btn btn-primary"} onclick=click_front_callback>{"Clear Front"}</button>
+                  <div class="card">
+                    <h4 class="card-header">{"Front"}</h4>
+                    <div class="card-body">
+                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
+                      {self.grid_table("XXX", &self.front)}
+                      <a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>
+                    </div>
+                  </div>
                 </div>
 
-                <div class={"col align-self-center"}>
-                  <h4>{"Back"}</h4>
-                  <table class={"user-select-none"}>
-                    { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
-                  </table>
-                </div>
                 <div class={"col"}>
-                  <button type="button" class={"btn btn-primary"} onclick=click_back_callback>{"Clear Back"}</button>
+                  <div class="card">
+                  <h4 class="card-header">{"Back"}</h4>
+                    <div class="card-body">
+                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
+                      {self.grid_table("XXX", &self.back)}
+                      <a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div class={"row"}>
-                <div class={"col align-self-center"}>
-                  <h4>{"Pattern"}</h4>
-                  <table class={"user-select-none"}>
-                    { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-                  </table>
+                <div class={"col"} style={"min-height: 2em"}>
                 </div>
               </div>
-            </div>
+
+              <div class={"row"}>
+                <div class={"col"}>
+                  <div class="card">
+                    <h4 class="card-header">{"Pattern"}</h4>
+                    <div class="card-body">
+                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
+                      <table class={"user-select-none"}>
+                        { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
+                      </table>
+                      <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
+                      <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class={"row"}>
+                <div class={"col"} style={"min-height: 2em"}>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-body">
+                      <h3 class="card-title">
+                        {"Stuff"}
+                      </h3>
+                      <ul>
+                        <li>{"We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it."}</li>
+                        <li>{"What should the 'output' be?"}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </main>
+            <footer class="footer">
+              <div class="container">
+                <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
+              </div>
+            </footer>
+          </>
         }
     }
 }

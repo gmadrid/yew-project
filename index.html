@@ -10,13 +10,24 @@
     <title>Two color double-knitting</title>
     <script src="/pkg/bundle.js" defer></script>
     <style>
-      body { background: #ddd }
-      table { background: white; border-collapse: collapse }
+      body { background: lightgray }
+      nav { background: darkgray }
+      table { border-collapse: collapse; margin-bottom: 1em; margin-top: 1em}
       td { height: 20px; width: 20px; border: 2px solid black;
 	   text-align: center; vertical-align: middle; line-height: 1.0;}
       td.on { background: darkgray }
       td.on.hover { background: red }
       td.off.hover { background: pink }
+
+      .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 3em;
+        line-height: 3em;
+        background: darkgray;
+        text-align: right;
+      }
     </style>
 </head>
 
