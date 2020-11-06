@@ -16,10 +16,14 @@ pub enum GridId {
 }
 
 pub enum Msg {
+    // Mouse events
     Down(GridId, u16, u16), // (id, row, col)
     Up,
     Enter(GridId, u16, u16), // (id, row, col)
     Exit,
+
+    // User actions
+    Clear(GridId),
 }
 
 /*
@@ -85,6 +89,12 @@ impl Grid {
 
     pub fn cols(&self) -> std::ops::Range<u16> {
         0..self.width
+    }
+
+    pub fn clear(&mut self) {
+        let old_size = self.cells.len();
+        self.cells.clear();
+        self.cells.resize_with(old_size, Default::default);
     }
 }
 
@@ -224,6 +234,11 @@ impl Component for App {
                 self.value = None;
                 false
             }
+            Msg::Clear(grid_id) => {
+                let grid = self.grid_by_id_mut(grid_id);
+                grid.clear();
+                true
+            }
         }
     }
 
@@ -232,6 +247,9 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
+        let click_front_callback = self.link.callback(move |_| Msg::Clear(GridId::Front));
+        let click_back_callback = self.link.callback(move |_| Msg::Clear(GridId::Back));
+
         html! {
             <div class={"container"}>
             <div class={"row"}>
@@ -240,12 +258,19 @@ impl Component for App {
             { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
                 </table>
             </div>
+            <div class={"col"}>
+                <button onclick=click_front_callback>{"Clear Front"}</button>
+            </div>
 
             <div class={"col align-self-center"}>
         <table>
             { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
                 </table>
             </div>
+            <div class={"col"}>
+                <button onclick=click_back_callback>{"Clear Back"}</button>
+            </div>
+
             </div>
 
             <div class={"row"}>
@@ -254,6 +279,7 @@ impl Component for App {
             { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
             </table>
             </div>
+
             </div>
 
             </div>
