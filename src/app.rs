@@ -6,19 +6,20 @@ pub struct App {
     back: Grid,
 
     value: Option<bool>,
+    hover: Option<(GridId, u16, u16)>
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum GridId {
     Front,
     Back,
 }
 
 pub enum Msg {
-    Click(GridId, u16, u16), // (id, row, col)
     Down(GridId, u16, u16),  // (id, row, col)
-    Enter(GridId, u16, u16), // (id, row, col)
     Up,
+    Enter(GridId, u16, u16), // (id, row, col)
+    Exit,
 }
 
 /*
@@ -106,10 +107,25 @@ impl App {
     pub fn view_cell(&self, grid: &Grid, row: u16, col: u16) -> Html {
         let value = grid.cell(row, col);
         let cls = if value { "on" } else { "off" };
+	let mut classes = vec![cls];
 	let grid_id = grid.id;
-	let click_callback = self.link.callback(move |_| Msg::Click(grid_id, row, col));
+
+	let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col));
+	let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col));
+	let exit_callback = self.link.callback(|_| Msg::Exit);
+	let up_callback = self.link.callback(|_| Msg::Up);
+
+	if Some((grid_id, row, col) ) == self.hover {
+	    classes.push("hover");
+	}
+
         html! {
-            <td class=cls onclick=click_callback > </td>
+            <td class=classes
+	     onmousedown=down_callback
+	     onmouseenter=enter_callback
+	     onmouseleave=exit_callback
+	     onmouseup=up_callback
+	     > </td>
         }
     }
 
@@ -128,9 +144,6 @@ impl App {
 	let cls = if value { "on"} else { "off"};
 	classes.push(cls);
 
-	let grid_id = if col % 2 == 1 { GridId::Front } else { GridId::Back };
-	let click_callback = self.link.callback(move |_| Msg::Click(grid_id, row, col / 2));
-	
 	if col % 2 == 0 {
 	    classes.push("purl");
 	}
@@ -138,8 +151,23 @@ impl App {
 	    "•"
 	} else { ""};
 
+	let grid_id = grid.id;
+	let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col / 2));
+	let up_callback = self.link.callback(move |_| Msg::Up);
+	let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col / 2));
+	let exit_callback = self.link.callback(|_| Msg::Exit);
+
+	if Some((grid_id, row, col / 2) ) == self.hover {
+	    classes.push("hover");
+	}
+
 	html! {
-	    <td class=classes onclick=click_callback >{content}</td>
+	    <td class=classes
+	     onmousedown=down_callback
+	     onmouseenter=enter_callback
+	     onmouseup=up_callback
+	     onmouseleave=exit_callback
+	     >{content}</td>
 	}
     }
 }
@@ -154,17 +182,42 @@ impl Component for App {
             front: Grid::new(GridId::Front, 10, 10),
             back: Grid::new(GridId::Back, 10, 10),
 	    value: None,
+	    hover: None,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
 	match msg {
-	    Msg::Click(id, row, col) => {
+	    Msg::Down(id, row, col) => {
 		let grid = self.grid_by_id_mut(id);
+		let value = Some(!grid.cell(row, col));
 		grid.toggle_cell(row, col);
+
+		self.value = value;
 		true
 	    }
-	    _ => { false }
+	    Msg::Enter(id, row, col) => {
+		if let Some(value) = self.value {
+		    let grid = self.grid_by_id_mut(id);
+		    grid.set_cell(row, col, value);
+		}
+
+		self.hover = Some((id, row, col));
+
+		true
+	    }
+	    Msg::Exit => {
+		if self.hover.is_some() {
+		    self.hover = None;
+		    true
+		} else {
+		    false
+		}
+	    }
+	    Msg::Up => {
+		self.value = None;
+		false
+	    }
 	}
     }
 
