@@ -10,15 +10,37 @@ use super::gridtrait::GridTrait;
 const MAX_GRID_WIDTH: usize = 256;
 const MAX_GRID_HEIGHT: usize = 256;
 
-struct BigGrid<T> {
+pub struct BigGrid<T> {
     cells: [T; MAX_GRID_WIDTH * MAX_GRID_HEIGHT],
     height: usize,
     width: usize,
 }
 
-impl<T> BigGrid<T> {
+impl<T> BigGrid<T>
+where
+    T: Copy + Default,
+{
+    pub fn new(height: usize, width: usize) -> BigGrid<T> {
+        BigGrid {
+            cells: [T::default(); MAX_GRID_WIDTH * MAX_GRID_HEIGHT],
+            height,
+            width,
+        }
+    }
+
     fn coords_to_index(&self, row: usize, col: usize) -> usize {
         row * MAX_GRID_WIDTH + col
+    }
+}
+
+impl<T> BigGrid<T>
+where
+    T: std::ops::Not<Output = T> + Copy + Default,
+{
+    pub fn toggle_cell(&mut self, row: usize, col: usize) {
+        let index = self.coords_to_index(row, col);
+        self.cells[index] = !self.cells[index];
+        //self.set_cell(row, col, !self.cell(row, col));
     }
 }
 
