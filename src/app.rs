@@ -142,8 +142,8 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            front: BigGrid::new(10, 10),
-            back: BigGrid::new(10, 10),
+            front: BigGrid::new(20, 20),
+            back: BigGrid::new(20, 20),
             value: None,
             hover: None,
         }
@@ -163,19 +163,21 @@ impl Component for App {
                 if let Some(value) = self.value {
                     let grid = self.grid_by_id_mut(id);
                     grid.set_cell(row, col, value);
-                }
-
-                self.hover = Some((id, row, col));
-
-                true
-            }
-            Msg::Exit => {
-                if self.hover.is_some() {
-                    self.hover = None;
                     true
                 } else {
+                    //self.hover = Some((id, row, col));
+
                     false
                 }
+            }
+            Msg::Exit => {
+                false
+                //                 if self.hover.is_some() {
+                //                     self.hover = None;
+                // //                    true
+                //                 } else {
+                //                     false
+                //                 }
             }
             Msg::Up => {
                 self.value = None;
@@ -202,7 +204,8 @@ impl Component for App {
             <nav class="navbar navbar-expand-md">
               <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
             </nav>
-            <main class={"container"}>
+
+            <main class={"main container"}>
               <div class={"row"}>
                 <div class={"col"} style={"min-height: 2em"}>
                 </div>
@@ -267,6 +270,7 @@ impl Component for App {
                       <ul>
                         <li>{"We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it."}</li>
                         <li>{"What should the 'output' be?"}</li>
+                        <li>{"What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"}</li>
                       </ul>
                     </div>
                   </div>
