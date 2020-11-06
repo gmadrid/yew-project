@@ -125,7 +125,7 @@ impl App {
         }
     }
 
-    fn grid_table(&self, title: &str, grid_id: GridId /* grid: &BigGrid<bool>*/) -> Html {
+    fn grid_table(&self, grid_id: GridId /* grid: &BigGrid<bool>*/) -> Html {
         let num_rows = self.grid_by_id(grid_id).num_rows();
         html! {
           <table class={"user-select-none"}>
@@ -216,7 +216,7 @@ impl Component for App {
                     <h4 class="card-header">{"Front"}</h4>
                     <div class="card-body">
                       <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
-                      {self.grid_table("XXX", GridId::Front)}
+                      {self.grid_table(GridId::Front)}
                       <a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ impl Component for App {
                   <h4 class="card-header">{"Back"}</h4>
                     <div class="card-body">
                       <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
-                      {self.grid_table("XXX", GridId::Back)}
+                      {self.grid_table(GridId::Back)}
                       <a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>
                     </div>
                   </div>

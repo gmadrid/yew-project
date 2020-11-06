@@ -3,7 +3,6 @@
 mod app;
 mod biggrid;
 mod gridtrait;
-mod vecwrapper;
 
 use wasm_bindgen::prelude::*;
 
