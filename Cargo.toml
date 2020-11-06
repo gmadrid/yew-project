@@ -5,6 +5,7 @@ version = "0.1.0"
 authors = ["George Madrid <gmadrid@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/gmadrid/colortoo"
+license = ""
 
 [lib]
 crate-type = ["cdylib", "rlib"]
