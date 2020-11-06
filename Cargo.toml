@@ -1,8 +1,10 @@
 [package]
 name = "colortoo"
+description = "A utility for creating two-color double-knitting patterns"
 version = "0.1.0"
 authors = ["George Madrid <gmadrid@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/gmadrid/colortoo"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

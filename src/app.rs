@@ -252,38 +252,37 @@ impl Component for App {
 
         html! {
             <div class={"container"}>
-            <div class={"row"}>
-            <div class={"col align-self-center"}>
-            <table>
-            { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
-                </table>
-            </div>
-            <div class={"col"}>
-                <button onclick=click_front_callback>{"Clear Front"}</button>
-            </div>
+              <div class={"row"}>
+                <div class={"col align-self-center"}>
+                  <h4>{"Front"}</h4>
+                  <table class={"user-select-none"}>
+                    { for self.front.rows().map(|rn| self.view_row(&self.front, rn)) }
+                  </table>
+                </div>
+                <div class={"col"}>
+                  <button type="button" class={"btn btn-primary"} onclick=click_front_callback>{"Clear Front"}</button>
+                </div>
 
-            <div class={"col align-self-center"}>
-        <table>
-            { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
-                </table>
-            </div>
-            <div class={"col"}>
-                <button onclick=click_back_callback>{"Clear Back"}</button>
-            </div>
+                <div class={"col align-self-center"}>
+                  <h4>{"Back"}</h4>
+                  <table class={"user-select-none"}>
+                    { for self.back.rows().map(|rn| self.view_row(&self.back, rn)) }
+                  </table>
+                </div>
+                <div class={"col"}>
+                  <button type="button" class={"btn btn-primary"} onclick=click_back_callback>{"Clear Back"}</button>
+                </div>
+              </div>
 
+              <div class={"row"}>
+                <div class={"col align-self-center"}>
+                  <h4>{"Pattern"}</h4>
+                  <table class={"user-select-none"}>
+                    { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
+                  </table>
+                </div>
+              </div>
             </div>
-
-            <div class={"row"}>
-            <div class={"col align-self-center"}>
-            <table>
-            { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-            </table>
-            </div>
-
-            </div>
-
-            </div>
-
-            }
+        }
     }
 }
