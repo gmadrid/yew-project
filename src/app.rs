@@ -1,4 +1,5 @@
 use crate::biggrid::BigGrid;
+use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use yew::prelude::*;
 
@@ -205,75 +206,63 @@ impl Component for App {
               <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
             </nav>
 
-            <main class={"main container"}>
-              <div class={"row"}>
-                <div class={"col"} style={"min-height: 2em"}>
-                </div>
-              </div>
+            <main class="main container">
+              { bootstrap::spacer() }
               <div class={"row"}>
                 <div class={"col"}>
-                  <div class="card">
-                    <h4 class="card-header">{"Front"}</h4>
-                    <div class="card-body">
-                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
-                      {self.grid_table(GridId::Front)}
-                      <a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>
-                    </div>
-                  </div>
+                  {bootstrap::card("Front", "Some explanation stuff", || {
+                      html! {
+                          <>
+                              {self.grid_table(GridId::Front)}
+                              <a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>
+                              </>
+                      }
+                  })}
                 </div>
 
                 <div class={"col"}>
-                  <div class="card">
-                  <h4 class="card-header">{"Back"}</h4>
-                    <div class="card-body">
-                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
-                      {self.grid_table(GridId::Back)}
-                      <a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>
-                    </div>
-                  </div>
+                  {bootstrap::card("Back", "Some explanation about the back", || {
+                      html! {
+                          <>
+                            {self.grid_table(GridId::Back)}
+                            <a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>
+                          </>
+                      }
+                  })}
                 </div>
               </div>
 
-              <div class={"row"}>
-                <div class={"col"} style={"min-height: 2em"}>
-                </div>
-              </div>
+             { bootstrap::spacer() }
 
               <div class={"row"}>
                 <div class={"col"}>
-                  <div class="card">
-                    <h4 class="card-header">{"Pattern"}</h4>
-                    <div class="card-body">
-                      <h6 class="card-subtitle">{"Some explanation goes here"}</h6>
-                      <table class={"user-select-none"}>
-                        { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-                      </table>
-                      <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
-                      <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
-                    </div>
-                  </div>
+                  {bootstrap::card("Pattern", "Some explanation of the pattern", || {
+                     html! {
+                         <>
+                           <table class={"user-select-none"}>
+                             { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
+                           </table>
+                           <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
+                           <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
+                         </>
+                     }
+                  })}
                 </div>
               </div>
 
-              <div class={"row"}>
-                <div class={"col"} style={"min-height: 2em"}>
-                </div>
-              </div>
+              { bootstrap::spacer() }
 
               <div class="row">
                 <div class="col">
-                  <div class="card">
-                    <div class="card-body">
-                      <h3 class="card-title">
-                        {"Stuff"}
-                      </h3>
-                      <ul>
-                        <li>{"We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it."}</li>
-                        <li>{"What should the 'output' be?"}</li>
-                        <li>{"What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"}</li>
-                      </ul>
-                    </div>
-                  </div>
+                  {bootstrap::card("Notes", "", || {
+                      bootstrap::ul(&[
+                          "We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it.",
+                          "What should the 'output' be?",
+                          "What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"
+                          ])
+                  })
+
+                  }
                 </div>
               </div>
 
