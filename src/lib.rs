@@ -3,6 +3,7 @@
 mod app;
 mod biggrid;
 mod bootstrap;
+mod download;
 mod gridtrait;
 
 use wasm_bindgen::prelude::*;

@@ -1,32 +1,45 @@
 use yew::prelude::{html, Html};
 
-pub fn row(content_fn: impl FnOnce() -> Html) -> Html {
+pub fn concat(first_html: Html, second_html: Html) -> Html {
     html! {
-        <div class="row">
-            {content_fn()}
+        <>
+          {first_html}
+          {second_html}
+        </>
+    }
+}
+
+pub fn row(content: Html) -> Html {
+    div(&["row"], content)
+}
+
+pub fn col(content: Html) -> Html {
+    div(&["col"], content)
+}
+
+pub fn div(classes: &[&str], content: Html) -> Html {
+    html! {
+        <div class=classes>
+          {content}
         </div>
     }
 }
 
 pub fn spacer() -> Html {
-    row(|| {
-        html! {
-            <div class="col" style="min-height: 2em"></div>
-        }
+    row(html! {
+        <div class="col" style="min-height: 2em"></div>
     })
 }
 
 pub fn maybe(txt: Option<&str>, content_fn: impl FnOnce(&str) -> Html) -> Html {
     if let Some(txt) = txt {
-        html! {
-            {content_fn(txt)}
-        }
+        content_fn(txt)
     } else {
         html! {}
     }
 }
 
-pub fn card(header: &str, subtitle: &str, body_fn: impl FnOnce() -> Html) -> Html {
+pub fn card(header: &str, subtitle: &str, body: Html) -> Html {
     let maybe_str = if subtitle.is_empty() {
         None
     } else {
@@ -41,7 +54,7 @@ pub fn card(header: &str, subtitle: &str, body_fn: impl FnOnce() -> Html) -> Htm
                       <h6 class="card-subtitle">{s}</h6>
                   }
               })}
-              {body_fn()}
+              {body}
             </div>
         </div>
     }

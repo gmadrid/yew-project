@@ -27,6 +27,7 @@ pub enum Msg {
 
     // User actions
     Clear(GridId),
+    Export,
 }
 
 impl App {
@@ -134,6 +135,13 @@ impl App {
           </table>
         }
     }
+
+    fn export(&self) -> bool {
+        let text = "George was here again";
+        let filename = "george_too.txt";
+        crate::download::download(text, filename);
+        false
+    }
 }
 
 impl Component for App {
@@ -189,6 +197,7 @@ impl Component for App {
                 grid.clear();
                 true
             }
+            Msg::Export => self.export(),
         }
     }
 
@@ -200,6 +209,8 @@ impl Component for App {
         let click_front_callback = self.link.callback(move |_| Msg::Clear(GridId::Front));
         let click_back_callback = self.link.callback(move |_| Msg::Clear(GridId::Back));
 
+        let export_callback = self.link.callback(|_| Msg::Export);
+
         html! {
           <>
             <nav class="navbar navbar-expand-md">
@@ -208,64 +219,44 @@ impl Component for App {
 
             <main class="main container">
               { bootstrap::spacer() }
-              <div class={"row"}>
-                <div class={"col"}>
-                  {bootstrap::card("Front", "Some explanation stuff", || {
-                      html! {
-                          <>
-                              {self.grid_table(GridId::Front)}
-                              <a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>
-                              </>
-                      }
-                  })}
-                </div>
-
-                <div class={"col"}>
-                  {bootstrap::card("Back", "Some explanation about the back", || {
-                      html! {
-                          <>
-                            {self.grid_table(GridId::Back)}
-                            <a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>
-                          </>
-                      }
-                  })}
-                </div>
-              </div>
-
-             { bootstrap::spacer() }
-
-              <div class={"row"}>
-                <div class={"col"}>
-                  {bootstrap::card("Pattern", "Some explanation of the pattern", || {
-                     html! {
-                         <>
-                           <table class={"user-select-none"}>
-                             { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-                           </table>
-                           <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
-                           <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
-                         </>
-                     }
-                  })}
-                </div>
-              </div>
+              { bootstrap::row(bootstrap::concat(
+                  bootstrap::col(
+                      bootstrap::card("Front", "Lorem ipsum",
+                        bootstrap::concat(
+                            self.grid_table(GridId::Front),
+                            html!{<a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>}))),
+                  bootstrap::col(
+                      bootstrap::card("Back", "Some explanation stuff",
+                        bootstrap::concat(
+                            self.grid_table(GridId::Back),
+                            html!{<a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>}))),
+              ))}
 
               { bootstrap::spacer() }
 
-              <div class="row">
-                <div class="col">
-                  {bootstrap::card("Notes", "", || {
-                      bootstrap::ul(&[
-                          "We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it.",
-                          "What should the 'output' be?",
-                          "What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"
-                          ])
-                  })
+              { bootstrap::row(bootstrap::col(bootstrap::card("Pattern", "Some explanation of the pattern",
+                 html! {
+                     <>
+                       <table class={"user-select-none"}>
+                         { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
+                       </table>
+                       <a href="#" class="btn btn-primary" onclick=export_callback>{"Test export"}</a>
+                       <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
+                       <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
+                     </>
+                 }
+              )))}
 
-                  }
-                </div>
-              </div>
-
+              { bootstrap::spacer() }
+              {
+                bootstrap::row(bootstrap::col(
+                  bootstrap::card("Notes", "",
+                    bootstrap::ul(&[
+                        "We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it.",
+                        "What should the 'output' be?",
+                        "What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"
+                        ]))))
+              }
             </main>
             <footer class="footer">
               <div class="container">
