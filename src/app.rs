@@ -38,14 +38,14 @@ impl App {
         }
     }
 
-    pub fn grid_by_id_mut(&mut self, id: GridId) -> &mut BigGrid<bool> {
+    fn grid_by_id_mut(&mut self, id: GridId) -> &mut BigGrid<bool> {
         match id {
             GridId::Front => &mut self.front,
             GridId::Back => &mut self.back,
         }
     }
 
-    pub fn view_row(&self, grid_id: GridId, row: usize) -> Html {
+    fn view_row(&self, grid_id: GridId, row: usize) -> Html {
         let grid = self.grid_by_id(grid_id);
         let num_cols = grid.num_cols();
         html! {
@@ -55,7 +55,7 @@ impl App {
         }
     }
 
-    pub fn view_cell(&self, grid_id: GridId, row: usize, col: usize) -> Html {
+    fn view_cell(&self, grid_id: GridId, row: usize, col: usize) -> Html {
         let grid = self.grid_by_id(grid_id);
         let value = grid.cell(row, col);
         let cls = if value { "on" } else { "off" };
@@ -80,7 +80,7 @@ impl App {
         }
     }
 
-    pub fn combined_view_row(&self, row: usize) -> Html {
+    fn combined_view_row(&self, row: usize) -> Html {
         html! {
             <tr>
             { for (0..(self.front.num_cols() * 2)).map(|cn| self.combined_view_cell(row, cn)) }
@@ -88,7 +88,7 @@ impl App {
         }
     }
 
-    pub fn combined_view_cell(&self, row: usize, combined_col: usize) -> Html {
+    fn combined_view_cell(&self, row: usize, combined_col: usize) -> Html {
         let mut classes = vec![];
         let (grid_id, content) = if combined_col % 2 == 1 {
             (GridId::Front, "")
