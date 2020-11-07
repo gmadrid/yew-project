@@ -142,6 +142,47 @@ impl App {
         crate::download::download(text, filename);
         false
     }
+
+    fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
+        let grid = self.grid_by_id_mut(id);
+        let value = Some(!grid.cell(row, col));
+        grid.toggle_cell(row, col);
+
+        self.value = value;
+        true
+    }
+
+    fn msg_enter(&mut self, id: GridId, row: usize, col: usize) -> bool {
+        if let Some(value) = self.value {
+            let grid = self.grid_by_id_mut(id);
+            grid.set_cell(row, col, value);
+            true
+        } else {
+            //self.hover = Some((id, row, col));
+            false
+        }
+    }
+
+    fn msg_exit(&self) -> bool {
+        false
+        //                 if self.hover.is_some() {
+        //                     self.hover = None;
+        //                     true
+        //                 } else {
+        //                     false
+        //                 }
+    }
+
+    fn msg_up(&mut self) -> bool {
+        self.value = None;
+        false
+    }
+
+    fn msg_clear(&mut self, grid_id: GridId) -> bool {
+        let grid = self.grid_by_id_mut(grid_id);
+        grid.clear();
+        true
+    }
 }
 
 impl Component for App {
@@ -160,43 +201,11 @@ impl Component for App {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Down(id, row, col) => {
-                let grid = self.grid_by_id_mut(id);
-                let value = Some(!grid.cell(row, col));
-                grid.toggle_cell(row, col);
-
-                self.value = value;
-                true
-            }
-            Msg::Enter(id, row, col) => {
-                if let Some(value) = self.value {
-                    let grid = self.grid_by_id_mut(id);
-                    grid.set_cell(row, col, value);
-                    true
-                } else {
-                    //self.hover = Some((id, row, col));
-
-                    false
-                }
-            }
-            Msg::Exit => {
-                false
-                //                 if self.hover.is_some() {
-                //                     self.hover = None;
-                // //                    true
-                //                 } else {
-                //                     false
-                //                 }
-            }
-            Msg::Up => {
-                self.value = None;
-                false
-            }
-            Msg::Clear(grid_id) => {
-                let grid = self.grid_by_id_mut(grid_id);
-                grid.clear();
-                true
-            }
+            Msg::Down(id, row, col) => self.msg_down(id, row, col),
+            Msg::Enter(id, row, col) => self.msg_enter(id, row, col),
+            Msg::Exit => self.msg_exit(),
+            Msg::Up => self.msg_up(),
+            Msg::Clear(grid_id) => self.msg_clear(grid_id),
             Msg::Export => self.export(),
         }
     }
@@ -206,8 +215,8 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
-        let click_front_callback = self.link.callback(move |_| Msg::Clear(GridId::Front));
-        let click_back_callback = self.link.callback(move |_| Msg::Clear(GridId::Back));
+        let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
+        let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
 
         let export_callback = self.link.callback(|_| Msg::Export);
 
