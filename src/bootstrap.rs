@@ -1,5 +1,9 @@
 use yew::prelude::{html, Html};
 
+pub fn empty() -> Html {
+    html! {}
+}
+
 pub fn concat(first_html: Html, second_html: Html) -> Html {
     html! {
         <>
@@ -35,7 +39,7 @@ pub fn maybe(txt: Option<&str>, content_fn: impl FnOnce(&str) -> Html) -> Html {
     if let Some(txt) = txt {
         content_fn(txt)
     } else {
-        html! {}
+        empty()
     }
 }
 
