@@ -1,3 +1,4 @@
+use crate::app::GridId;
 use yew::prelude::*;
 
 pub struct GridCell {
@@ -5,11 +6,14 @@ pub struct GridCell {
     props: Props,
 }
 
-pub enum Msg {}
+pub enum Msg {
+    Click,
+}
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
-    pub val: usize,
+    pub val: bool,
+    pub onclick: Callback<(GridId, usize, usize)>,
 }
 
 impl GridCell {}
@@ -19,11 +23,17 @@ impl Component for GridCell {
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        yew::services::ConsoleService::log("MAKE A CELL");
         GridCell { link, props }
     }
 
     fn update(&mut self, msg: Msg) -> bool {
-        match msg {}
+        match msg {
+            Click => {
+                self.props.onclick.emit((GridId::Front, 5, 5));
+                false
+            }
+        }
     }
 
     fn change(&mut self, props: Props) -> bool {
@@ -36,6 +46,12 @@ impl Component for GridCell {
     }
 
     fn view(&self) -> Html {
-        html! { <td>{self.props.val}</td>}
+        let cls = if self.props.val { "on" } else { "off" };
+
+        let onclick_callback = self.props.onclick.reform(|_| {
+            yew::services::ConsoleService::log("THIS IS A LOG");
+            (GridId::Front, 5, 5)
+        });
+        html! { <td onclick=onclick_callback class=cls></td>}
     }
 }
