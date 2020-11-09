@@ -1,5 +1,6 @@
 use crate::biggrid::BigGrid;
 use crate::bootstrap;
+use crate::components::GridTable;
 use crate::gridtrait::GridTrait;
 use yew::prelude::*;
 
@@ -192,8 +193,8 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            front: BigGrid::new(20, 20),
-            back: BigGrid::new(20, 20),
+            front: BigGrid::new(8, 11),
+            back: BigGrid::new(8, 11),
             value: None,
             hover: None,
         }
@@ -225,6 +226,8 @@ impl Component for App {
             <nav class="navbar navbar-expand-md">
               <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
             </nav>
+
+            <GridTable/>
 
             <main class="main container">
               { bootstrap::spacer() }
