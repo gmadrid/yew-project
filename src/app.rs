@@ -282,8 +282,6 @@ impl Component for App {
         let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
         let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
 
-        let export_callback = self.link.callback(|_| Msg::Export);
-
         let onclick_callback = self.link.callback(|(grid_id, row, col)| {
             yew::services::ConsoleService::log("in grid play callback");
             Msg::Down(grid_id, row, col)
@@ -320,9 +318,6 @@ impl Component for App {
                        <table id="pattern" class={"user-select-none"}>
                          { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
                        </table>
-                       <a href="#" class="btn btn-primary" onclick=export_callback>{"Test export"}</a>
-                       <a href="#" class="card-link" >{"Export (unimplemented)"}</a>
-                       <a href="#" class="card-link" >{"(...and whatever functions we want to add)"}</a>
                      </>
                  }
               )))}
