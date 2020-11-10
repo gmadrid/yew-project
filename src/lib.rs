@@ -3,7 +3,7 @@
 mod app;
 mod biggrid;
 mod bootstrap;
-mod components;
+//mod components;
 mod download;
 mod gridtrait;
 mod simplegrid;

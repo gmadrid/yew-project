@@ -1,7 +1,7 @@
 use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use crate::simplegrid::SimpleGrid;
-use crate::tablerender::{InputRenderer, TableRenderer};
+use crate::tablerender::InputRenderer;
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -278,11 +278,6 @@ impl Component for App {
     fn view(&self) -> Html {
         let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
         let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
-
-        let onclick_callback = self.link.callback(|(grid_id, row, col)| {
-            yew::services::ConsoleService::log("in grid play callback");
-            Msg::Down(grid_id, row, col)
-        });
 
         html! {
           <>
