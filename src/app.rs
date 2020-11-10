@@ -93,7 +93,7 @@ impl App {
          onmouseenter=enter_callback
          onmouseleave=exit_callback
          onmouseup=up_callback
-         > </td>
+         >{no_dot()}</td>
         }
     }
 
