@@ -1,7 +1,6 @@
-use crate::biggrid::BigGrid;
 use crate::bootstrap;
-use crate::components::GridTable;
 use crate::gridtrait::GridTrait;
+use crate::simplegrid::SimpleGrid;
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -10,8 +9,8 @@ const GRID_WIDTH: usize = 15;
 
 pub struct App {
     link: ComponentLink<Self>,
-    front: BigGrid<bool>,
-    back: BigGrid<bool>,
+    front: SimpleGrid<bool>,
+    back: SimpleGrid<bool>,
 
     value: Option<bool>,
     hover: Option<(GridId, usize, usize)>,
@@ -26,8 +25,8 @@ pub enum GridId {
 impl GridId {
     pub fn table_id(&self) -> &str {
         match self {
-            Front => "front",
-            Back => "back",
+            GridId::Front => "front",
+            GridId::Back => "back",
         }
     }
 }
@@ -49,14 +48,14 @@ pub enum Msg {
 }
 
 impl App {
-    fn grid_by_id(&self, id: GridId) -> &BigGrid<bool> {
+    fn grid_by_id(&self, id: GridId) -> &SimpleGrid<bool> {
         match id {
             GridId::Front => &self.front,
             GridId::Back => &self.back,
         }
     }
 
-    fn grid_by_id_mut(&mut self, id: GridId) -> &mut BigGrid<bool> {
+    fn grid_by_id_mut(&mut self, id: GridId) -> &mut SimpleGrid<bool> {
         match id {
             GridId::Front => &mut self.front,
             GridId::Back => &mut self.back,
@@ -231,7 +230,7 @@ fn dot() -> Html {
 }
 
 fn grid_play(link: &ComponentLink<App>) -> Html {
-    let mut grid = Rc::new(BigGrid::<bool>::new(6, 9));
+    let mut grid = Rc::new(SimpleGrid::<bool>::new(6, 9));
     Rc::get_mut(&mut grid).unwrap().set_cell(1, 1, true);
     Rc::get_mut(&mut grid).unwrap().set_cell(2, 2, true);
     Rc::get_mut(&mut grid).unwrap().set_cell(3, 2, true);
@@ -242,7 +241,7 @@ fn grid_play(link: &ComponentLink<App>) -> Html {
     });
 
     html! {
-        <GridTable onclick=onclick_callback grid=grid/>
+        //<GridTable onclick=onclick_callback grid=grid/>
     }
 }
 
@@ -253,8 +252,8 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            front: BigGrid::new(GRID_HEIGHT, GRID_WIDTH),
-            back: BigGrid::new(GRID_HEIGHT, GRID_WIDTH),
+            front: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
+            back: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
             value: None,
             hover: None,
         }
