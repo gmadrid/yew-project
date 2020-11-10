@@ -13,6 +13,8 @@ pub enum Msg {
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
     pub val: bool,
+    pub row: usize,
+    pub col: usize,
     pub onclick: Callback<(GridId, usize, usize)>,
 }
 
@@ -30,7 +32,9 @@ impl Component for GridCell {
     fn update(&mut self, msg: Msg) -> bool {
         match msg {
             Click => {
-                self.props.onclick.emit((GridId::Front, 5, 5));
+                self.props
+                    .onclick
+                    .emit((GridId::Front, self.props.row, self.props.col));
                 false
             }
         }
@@ -48,9 +52,11 @@ impl Component for GridCell {
     fn view(&self) -> Html {
         let cls = if self.props.val { "on" } else { "off" };
 
-        let onclick_callback = self.props.onclick.reform(|_| {
-            yew::services::ConsoleService::log("THIS IS A LOG");
-            (GridId::Front, 5, 5)
+        let row = self.props.row;
+        let col = self.props.col;
+        let onclick_callback = self.props.onclick.reform(move |_| {
+            //yew::services::ConsoleService::log("THIS IS A LOG");
+            (GridId::Front, row, col)
         });
         html! { <td onclick=onclick_callback class=cls></td>}
     }

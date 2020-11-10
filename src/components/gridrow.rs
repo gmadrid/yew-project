@@ -41,6 +41,8 @@ impl Component for GridRow {
     fn view(&self) -> Html {
         let make_cell = |col: usize| {
             html! { <GridCell
+                row=self.props.row
+                col=col
             onclick=self.props.onclick.clone()
             val=self.props.grid.as_ref().cell(self.props.row, col) /> }
         };

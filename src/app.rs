@@ -5,10 +5,13 @@ use crate::gridtrait::GridTrait;
 use std::rc::Rc;
 use yew::prelude::*;
 
+const GRID_HEIGHT: usize = 15;
+const GRID_WIDTH: usize = 15;
+
 pub struct App {
     link: ComponentLink<Self>,
-    front: Rc<BigGrid<bool>>,
-    back: Rc<BigGrid<bool>>,
+    front: BigGrid<bool>,
+    back: BigGrid<bool>,
 
     value: Option<bool>,
     hover: Option<(GridId, usize, usize)>,
@@ -27,6 +30,10 @@ pub enum Msg {
     Enter(GridId, usize, usize), // (id, row, col)
     Exit,
 
+    // State changes
+    SetCell(GridId, usize, usize, bool), // (id, row, col, value)
+    NoOp,
+
     // User actions
     Clear(GridId),
     Export,
@@ -40,7 +47,7 @@ impl App {
         }
     }
 
-    fn grid_by_id_mut(&mut self, id: GridId) -> &mut Rc<BigGrid<bool>> {
+    fn grid_by_id_mut(&mut self, id: GridId) -> &mut BigGrid<bool> {
         match id {
             GridId::Front => &mut self.front,
             GridId::Back => &mut self.back,
@@ -106,6 +113,10 @@ impl App {
         let cls = if value { "on" } else { "off" };
         classes.push(cls);
 
+        if (grid.num_rows() - row) % 5 == 1 {
+            classes.push("fiver")
+        }
+
         let down_callback = self
             .link
             .callback(move |_| Msg::Down(grid_id, row, real_col));
@@ -147,17 +158,19 @@ impl App {
 
     fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
         let grid = self.grid_by_id_mut(id);
-        let value = Some(!grid.cell(row, col));
-        Rc::get_mut(grid).unwrap().toggle_cell(row, col);
+        let value = !grid.cell(row, col);
+        grid.toggle_cell(row, col);
+        self.value = Some(value);
 
-        self.value = value;
-        true
+        //        self.link.send_message(Msg::SetCell(id, row, col, value));
+
+        false
     }
 
     fn msg_enter(&mut self, id: GridId, row: usize, col: usize) -> bool {
         if let Some(value) = self.value {
             let grid = self.grid_by_id_mut(id);
-            Rc::get_mut(grid).unwrap().set_cell(row, col, value);
+            grid.set_cell(row, col, value);
             true
         } else {
             //self.hover = Some((id, row, col));
@@ -182,7 +195,13 @@ impl App {
 
     fn msg_clear(&mut self, grid_id: GridId) -> bool {
         let grid = self.grid_by_id_mut(grid_id);
-        Rc::get_mut(grid).unwrap().clear();
+        grid.clear();
+        true
+    }
+
+    fn msg_set_cell(&mut self, grid_id: GridId, row: usize, col: usize, value: bool) -> bool {
+        let grid = self.grid_by_id_mut(grid_id);
+        grid.set_cell(row, col, value);
         true
     }
 }
@@ -193,9 +212,9 @@ fn grid_play(link: &ComponentLink<App>) -> Html {
     Rc::get_mut(&mut grid).unwrap().set_cell(2, 2, true);
     Rc::get_mut(&mut grid).unwrap().set_cell(3, 2, true);
 
-    let onclick_callback = link.callback(|(grid_id, _, _)| {
+    let onclick_callback = link.callback(|(grid_id, row, col)| {
         yew::services::ConsoleService::log("in grid play callback");
-        Msg::Clear(grid_id)
+        Msg::Down(grid_id, row, col)
     });
 
     html! {
@@ -210,8 +229,8 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            front: Rc::new(BigGrid::new(8, 11)),
-            back: Rc::new(BigGrid::new(8, 11)),
+            front: BigGrid::new(GRID_HEIGHT, GRID_WIDTH),
+            back: BigGrid::new(GRID_HEIGHT, GRID_WIDTH),
             value: None,
             hover: None,
         }
@@ -223,8 +242,12 @@ impl Component for App {
             Msg::Enter(id, row, col) => self.msg_enter(id, row, col),
             Msg::Exit => self.msg_exit(),
             Msg::Up => self.msg_up(),
+
             Msg::Clear(grid_id) => self.msg_clear(grid_id),
             Msg::Export => self.export(),
+
+            Msg::NoOp => false,
+            Msg::SetCell(id, row, col, value) => self.msg_set_cell(id, row, col, value),
         }
     }
 
@@ -238,13 +261,18 @@ impl Component for App {
 
         let export_callback = self.link.callback(|_| Msg::Export);
 
+        let onclick_callback = self.link.callback(|(grid_id, row, col)| {
+            yew::services::ConsoleService::log("in grid play callback");
+            Msg::Down(grid_id, row, col)
+        });
+
         html! {
           <>
             <nav class="navbar navbar-expand-md">
               <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
             </nav>
 
-            //{grid_play(&self.link)}
+            // {grid_play(&self.link)}
 
             <main class="main container">
               { bootstrap::spacer() }
