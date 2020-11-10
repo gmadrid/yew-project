@@ -6,6 +6,7 @@ mod bootstrap;
 mod components;
 mod download;
 mod gridtrait;
+mod simplegrid;
 
 use wasm_bindgen::prelude::*;
 
