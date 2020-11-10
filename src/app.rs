@@ -7,6 +7,8 @@ use yew::prelude::*;
 const GRID_HEIGHT: usize = 15;
 const GRID_WIDTH: usize = 15;
 
+const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
+
 pub struct App {
     link: ComponentLink<Self>,
     front: SimpleGrid<bool>,
@@ -261,7 +263,8 @@ impl Component for App {
             </main>
             <footer class="footer">
               <div class="container">
-                <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
+                 <small>{"Version "}{VERSION_NUMBER}</small>
+                 <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
               </div>
             </footer>
           </>
