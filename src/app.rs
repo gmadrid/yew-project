@@ -15,6 +15,7 @@ pub struct App {
     back: SimpleGrid<bool>,
 
     value: Option<bool>,
+    printable_page: bool,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -23,17 +24,6 @@ pub enum GridId {
     Back,
 }
 
-/*
-impl GridId {
-    pub fn table_id(&self) -> &str {
-        match self {
-            GridId::Front => "front",
-            GridId::Back => "back",
-        }
-    }
-}
-*/
-
 pub enum Msg {
     // Mouse events
     Down(GridId, usize, usize), // (id, row, col)
@@ -41,13 +31,9 @@ pub enum Msg {
     Enter(GridId, usize, usize), // (id, row, col)
     Exit,
 
-    // State changes
-    //    SetCell(GridId, usize, usize, bool), // (id, row, col, value)
-    //    NoOp,
-
     // User actions
+    TogglePrintable,
     Clear(GridId),
-    //    Export,
 }
 
 impl App {
@@ -113,6 +99,69 @@ impl App {
         grid.clear();
         true
     }
+
+    fn msg_toggle_printable(&mut self) -> bool {
+        self.printable_page = !self.printable_page;
+        true
+    }
+
+    fn display_nav(&self) -> Html {
+        if self.printable_page {
+            return bootstrap::empty();
+        }
+        html! {
+          <>
+            <nav class="navbar navbar-expand-md">
+              <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
+            </nav>
+          </>
+        }
+    }
+
+    fn display_inputs(&self) -> Html {
+        if self.printable_page {
+            return bootstrap::empty();
+        }
+
+        let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
+        let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
+
+        html! {
+          <>
+            { bootstrap::spacer() }
+
+            { bootstrap::row(bootstrap::concat(
+                bootstrap::col(
+                    bootstrap::card("Front", "Lorem ipsum",
+                      bootstrap::concat(
+                          self.grid_table(GridId::Front),
+                          html!{<a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>}))),
+                bootstrap::col(
+                    bootstrap::card("Back", "Some explanation stuff",
+                      bootstrap::concat(
+                          self.grid_table(GridId::Back),
+                          html!{<a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>}))),
+            ))}
+
+            { bootstrap::spacer() }
+          </>
+        }
+    }
+
+    fn display_footer(&self) -> Html {
+        if self.printable_page {
+            return bootstrap::empty();
+        }
+
+        html! {
+          <footer class="footer">
+            <div class="container">
+               <small>{"Version "}{VERSION_NUMBER}</small>
+               <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
+            </div>
+          </footer>
+        }
+    }
 }
 
 impl Component for App {
@@ -125,6 +174,7 @@ impl Component for App {
             front: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
             back: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
             value: None,
+            printable_page: false,
         }
     }
 
@@ -136,10 +186,7 @@ impl Component for App {
             Msg::Up => self.msg_up(),
 
             Msg::Clear(grid_id) => self.msg_clear(grid_id),
-            // Msg::Export => self.export(),
-            //
-            // Msg::NoOp => false,
-            // Msg::SetCell(id, row, col, value) => self.msg_set_cell(id, row, col, value),
+            Msg::TogglePrintable => self.msg_toggle_printable(),
         }
     }
 
@@ -148,42 +195,36 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
-        let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
-        let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
+        let printable_callback = self.link.callback(|_| Msg::TogglePrintable);
+        let printable_text = if self.printable_page {
+            "Return to input page"
+        } else {
+            "Show printable page"
+        };
 
         html! {
           <>
-            <nav class="navbar navbar-expand-md">
-              <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
-            </nav>
+            { self.display_nav() }
 
             <main class="main container">
-              { bootstrap::spacer() }
-              { bootstrap::row(bootstrap::concat(
-                  bootstrap::col(
-                      bootstrap::card("Front", "Lorem ipsum",
-                        bootstrap::concat(
-                            self.grid_table(GridId::Front),
-                            html!{<a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>}))),
-                  bootstrap::col(
-                      bootstrap::card("Back", "Some explanation stuff",
-                        bootstrap::concat(
-                            self.grid_table(GridId::Back),
-                            html!{<a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>}))),
-              ))}
+              { self.display_inputs() }
 
-              { bootstrap::spacer() }
+              { bootstrap::row(bootstrap::col(
+                  bootstrap::card(
+                      html! {
+                        <>
+                          <span>{"Pattern "}</span>
 
-              { bootstrap::row(bootstrap::col(bootstrap::card("Pattern", "Some explanation of the pattern",
+                          <a class="noprint"
+                             onclick=printable_callback
+                             style="float:right" href="#"><small>{printable_text}</small></a>
+                        </>
+                      },
+                      "Some explanation of the pattern",
               self.pattern_table()
               )))}
             </main>
-            <footer class="footer">
-              <div class="container">
-                 <small>{"Version "}{VERSION_NUMBER}</small>
-                 <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
-              </div>
-            </footer>
+            { self.display_footer() }
           </>
         }
     }

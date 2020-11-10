@@ -43,7 +43,7 @@ pub fn maybe(txt: Option<&str>, content_fn: impl FnOnce(&str) -> Html) -> Html {
     }
 }
 
-pub fn card(header: &str, subtitle: &str, body: Html) -> Html {
+pub fn card(header: impl Into<Html>, subtitle: &str, body: Html) -> Html {
     let maybe_str = if subtitle.is_empty() {
         None
     } else {
