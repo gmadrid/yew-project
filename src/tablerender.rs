@@ -1,0 +1,153 @@
+use crate::bootstrap;
+use crate::gridtrait::GridTrait;
+use yew::prelude::*;
+
+fn no_dot() -> Html {
+    html! {
+        <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
+        </svg>
+    }
+}
+
+pub fn render_table(renderer: impl TableRenderer) -> Html {
+    // for all rows:
+    //   render left;
+    //   render row
+    //      render cells
+    //   render right
+    // render footer
+    //   render footer_cell
+    html! {
+        <table class="user-select-none">
+        {for (0..renderer.num_data_rows()).map(|rn| {
+            {render_full_row(&renderer, rn)}
+        })}
+            {renderer.render_footer_row()}
+        </table>
+    }
+}
+
+fn render_full_row(renderer: &impl TableRenderer, row_num: usize) -> Html {
+    render_row(renderer, row_num)
+}
+
+fn render_row(renderer: &impl TableRenderer, row_num: usize) -> Html {
+    html! {<tr>
+        {renderer.render_left_cell(row_num)}
+        {renderer.render_data_row(row_num)}
+        {renderer.render_right_cell(row_num)}
+    </tr>
+    }
+}
+
+pub trait TableRenderer {
+    fn num_data_rows(&self) -> usize;
+    fn num_data_cols(&self) -> usize;
+
+    fn render_data_row(&self, row: usize) -> Html;
+    fn render_data_cell(&self, row: usize, col: usize) -> Html; // ???
+
+    fn render_left_cell(&self, row: usize) -> Html;
+    fn render_right_cell(&self, row: usize) -> Html;
+
+    fn render_footer_row(&self) -> Html;
+    fn render_footer_cell(&self, col: usize) -> Html; // ???
+}
+
+pub struct InputRenderer<'a, G>
+where
+    G: GridTrait<bool>,
+{
+    grid: &'a G,
+}
+
+impl<'a, G> InputRenderer<'a, G>
+where
+    G: GridTrait<bool>,
+{
+    pub fn render_table(grid: &'a impl GridTrait<bool>) -> Html {
+        render_table(InputRenderer::<'a> { grid })
+    }
+}
+
+impl<'a, G> TableRenderer for InputRenderer<'a, G>
+where
+    G: GridTrait<bool>,
+{
+    fn num_data_rows(&self) -> usize {
+        self.grid.num_rows()
+    }
+
+    fn num_data_cols(&self) -> usize {
+        self.grid.num_cols()
+    }
+
+    fn render_data_row(&self, row: usize) -> Html {
+        html! {
+            <>
+            {for (0..self.num_data_cols()).map(|cn| self.render_data_cell(row, cn))}
+            </>
+        }
+    }
+
+    fn render_data_cell(&self, row: usize, col: usize) -> Html {
+        let value = self.grid.cell(row, col);
+        let mut classes = vec![if value { "on" } else { "off" }];
+
+        let display_col_num = self.grid.num_cols() - col;
+        if display_col_num % 5 == 0 && display_col_num != self.grid.num_cols() {
+            classes.push("vfiver");
+        }
+
+        let display_row_num = self.grid.num_rows() - row;
+        if display_row_num % 5 == 0 && display_row_num != self.grid.num_rows() {
+            classes.push("hfiver");
+        }
+        html! {
+            <td class=classes>{no_dot()}</td>
+        }
+    }
+
+    fn render_left_cell(&self, row: usize) -> Html {
+        let displayed_row_num = self.num_data_rows() - row;
+        html! {
+            <td class="left">
+              { if displayed_row_num % 2 == 0 {
+                  html!{displayed_row_num}
+              } else {
+                  bootstrap::empty()
+              }}
+            </td>
+        }
+    }
+
+    fn render_right_cell(&self, row: usize) -> Html {
+        let displayed_row_num = self.num_data_rows() - row;
+        html! {
+            <td class="right">
+              { if displayed_row_num % 2 != 0 {
+                  html!{displayed_row_num}
+              } else {
+                  bootstrap::empty()
+              }}
+            </td>
+        }
+    }
+
+    fn render_footer_row(&self) -> Html {
+        let num_data_cols = self.num_data_cols();
+        html! {
+            <tr class={"tablefooter"}>
+                <td></td>  // skipping the "left" column
+                {for (0..num_data_cols).map(|cn| {
+                    html!{<td>{num_data_cols - cn}</td>}
+                })}
+                <td></td>  // skipping the "right" column
+            </tr>
+        }
+    }
+
+    fn render_footer_cell(&self, col: usize) -> Html {
+        todo!()
+    }
+}

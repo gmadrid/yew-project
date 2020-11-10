@@ -1,6 +1,7 @@
 use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use crate::simplegrid::SimpleGrid;
+use crate::tablerender::{InputRenderer, TableRenderer};
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -148,13 +149,9 @@ impl App {
         }
     }
 
-    fn grid_table(&self, grid_id: GridId /* grid: &BigGrid<bool>*/) -> Html {
-        let num_rows = self.grid_by_id(grid_id).num_rows();
-        html! {
-          <table id={grid_id.table_id()} class={"user-select-none"}>
-            { for (0..num_rows).map(|rn| self.view_row(grid_id, rn)) }
-          </table>
-        }
+    fn grid_table(&self, grid_id: GridId) -> Html {
+        let grid = self.grid_by_id(grid_id);
+        InputRenderer::<SimpleGrid<bool>>::render_table(grid)
     }
 
     fn export(&self) -> bool {

@@ -7,6 +7,7 @@ mod components;
 mod download;
 mod gridtrait;
 mod simplegrid;
+mod tablerender;
 
 use wasm_bindgen::prelude::*;
 
