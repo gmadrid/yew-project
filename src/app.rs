@@ -199,7 +199,7 @@ impl Component for App {
         let printable_text = if self.printable_page {
             "Return to input page"
         } else {
-            "Show printable page"
+            "Show printable pattern"
         };
 
         html! {
