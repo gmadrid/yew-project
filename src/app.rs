@@ -326,17 +326,6 @@ impl Component for App {
                      </>
                  }
               )))}
-
-              { bootstrap::spacer() }
-              {
-                bootstrap::row(bootstrap::col(
-                  bootstrap::card("Notes", "",
-                    bootstrap::ul(&[
-                        "We can explore 'local persistence' where data is stored in the browser. Of course, this complicates the UI and implementation. And I've never done it before, so I have to figure out how to do it.",
-                        "What should the 'output' be?",
-                        "What about sizing? Is this specifically for the class, so the size should be fixed, or is it a general-purpose tool where we should allow resizing?"
-                        ]))))
-              }
             </main>
             <footer class="footer">
               <div class="container">
