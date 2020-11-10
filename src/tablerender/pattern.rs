@@ -70,26 +70,6 @@ where
         }
     }
 
-    /*
-    let down_callback = self
-        .link
-        .callback(move |_| Msg::Down(grid_id, row, real_col));
-    let up_callback = self.link.callback(move |_| Msg::Up);
-    let enter_callback = self
-        .link
-        .callback(move |_| Msg::Enter(grid_id, row, real_col));
-    let exit_callback = self.link.callback(|_| Msg::Exit);
-
-    html! {
-        <td class=classes
-         onmousedown=down_callback
-         onmouseenter=enter_callback
-         onmouseup=up_callback
-         onmouseleave=exit_callback
-         >{content}</td>
-    }
-
-    */
     fn render_data_cell(&self, row: usize, col: usize) -> Html // ???
     {
         let mut classes = vec![];
@@ -118,8 +98,23 @@ where
             classes.push("hfiver");
         }
 
+        type Message = <app::App as Component>::Message;
+        let down_callback = self
+            .link
+            .callback(move |_| Message::Down(grid_id, row, real_col));
+        let up_callback = self.link.callback(|_| Message::Up);
+        let enter_callback = self
+            .link
+            .callback(move |_| Message::Enter(grid_id, row, real_col));
+        let exit_callback = self.link.callback(|_| Message::Exit);
+
         html! {
-            <td class=classes>{content}</td>
+            <td class=classes
+                onmousedown=down_callback
+                onmouseenter=enter_callback
+                onmouseup=up_callback
+                onmouseleave=exit_callback
+            >{content}</td>
         }
     }
 
