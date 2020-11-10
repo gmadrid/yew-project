@@ -1,6 +1,7 @@
 use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use crate::simplegrid::SimpleGrid;
+use crate::tablerender::InputRenderer;
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -148,13 +149,9 @@ impl App {
         }
     }
 
-    fn grid_table(&self, grid_id: GridId /* grid: &BigGrid<bool>*/) -> Html {
-        let num_rows = self.grid_by_id(grid_id).num_rows();
-        html! {
-          <table id={grid_id.table_id()} class={"user-select-none"}>
-            { for (0..num_rows).map(|rn| self.view_row(grid_id, rn)) }
-          </table>
-        }
+    fn grid_table(&self, grid_id: GridId) -> Html {
+        let grid = self.grid_by_id(grid_id);
+        InputRenderer::<SimpleGrid<bool>>::render_table(&self.link, grid_id, grid)
     }
 
     fn export(&self) -> bool {
@@ -281,11 +278,6 @@ impl Component for App {
     fn view(&self) -> Html {
         let click_front_callback = self.link.callback(|_| Msg::Clear(GridId::Front));
         let click_back_callback = self.link.callback(|_| Msg::Clear(GridId::Back));
-
-        let onclick_callback = self.link.callback(|(grid_id, row, col)| {
-            yew::services::ConsoleService::log("in grid play callback");
-            Msg::Down(grid_id, row, col)
-        });
 
         html! {
           <>
