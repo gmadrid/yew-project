@@ -62,9 +62,9 @@ pub fn card(header: &str, subtitle: &str, body: Html) -> Html {
             </div>
         </div>
     }
-    //              <h6 class="card-subtitle">{subtitle}</h6>
 }
 
+/*
 pub fn ul(items: &[&str]) -> Html {
     html! {
         <ul>
@@ -72,3 +72,4 @@ pub fn ul(items: &[&str]) -> Html {
         </ul>
     }
 }
+*/

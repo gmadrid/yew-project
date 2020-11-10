@@ -2,7 +2,6 @@ use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use crate::simplegrid::SimpleGrid;
 use crate::tablerender::InputRenderer;
-use std::rc::Rc;
 use yew::prelude::*;
 
 const GRID_HEIGHT: usize = 15;
@@ -23,6 +22,7 @@ pub enum GridId {
     Back,
 }
 
+/*
 impl GridId {
     pub fn table_id(&self) -> &str {
         match self {
@@ -31,6 +31,7 @@ impl GridId {
         }
     }
 }
+*/
 
 pub enum Msg {
     // Mouse events
@@ -60,41 +61,6 @@ impl App {
         match id {
             GridId::Front => &mut self.front,
             GridId::Back => &mut self.back,
-        }
-    }
-
-    fn view_row(&self, grid_id: GridId, row: usize) -> Html {
-        let grid = self.grid_by_id(grid_id);
-        let num_cols = grid.num_cols();
-        html! {
-            <tr>
-            { for (0..num_cols).map(|cn| self.view_cell(grid_id, row, cn)) }
-            </tr>
-        }
-    }
-
-    fn view_cell(&self, grid_id: GridId, row: usize, col: usize) -> Html {
-        let grid = self.grid_by_id(grid_id);
-        let value = grid.cell(row, col);
-        let cls = if value { "on" } else { "off" };
-        let mut classes = vec![cls];
-
-        let down_callback = self.link.callback(move |_| Msg::Down(grid_id, row, col));
-        let enter_callback = self.link.callback(move |_| Msg::Enter(grid_id, row, col));
-        let exit_callback = self.link.callback(|_| Msg::Exit);
-        let up_callback = self.link.callback(|_| Msg::Up);
-
-        if Some((grid_id, row, col)) == self.hover {
-            classes.push("hover");
-        }
-
-        html! {
-            <td class=classes
-         onmousedown=down_callback
-         onmouseenter=enter_callback
-         onmouseleave=exit_callback
-         onmouseup=up_callback
-         >{no_dot()}</td>
         }
     }
 
@@ -167,8 +133,6 @@ impl App {
         grid.toggle_cell(row, col);
         self.value = Some(value);
 
-        //        self.link.send_message(Msg::SetCell(id, row, col, value));
-
         true
     }
 
@@ -178,19 +142,12 @@ impl App {
             grid.set_cell(row, col, value);
             true
         } else {
-            //self.hover = Some((id, row, col));
             false
         }
     }
 
     fn msg_exit(&self) -> bool {
         false
-        //                 if self.hover.is_some() {
-        //                     self.hover = None;
-        //                     true
-        //                 } else {
-        //                     false
-        //                 }
     }
 
     fn msg_up(&mut self) -> bool {
@@ -223,22 +180,6 @@ fn dot() -> Html {
         <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
           <circle cx="7.5" cy="7.5" r="4"/>
         </svg>
-    }
-}
-
-fn grid_play(link: &ComponentLink<App>) -> Html {
-    let mut grid = Rc::new(SimpleGrid::<bool>::new(6, 9));
-    Rc::get_mut(&mut grid).unwrap().set_cell(1, 1, true);
-    Rc::get_mut(&mut grid).unwrap().set_cell(2, 2, true);
-    Rc::get_mut(&mut grid).unwrap().set_cell(3, 2, true);
-
-    let onclick_callback = link.callback(|(grid_id, row, col)| {
-        yew::services::ConsoleService::log("in grid play callback");
-        Msg::Down(grid_id, row, col)
-    });
-
-    html! {
-        //<GridTable onclick=onclick_callback grid=grid/>
     }
 }
 
