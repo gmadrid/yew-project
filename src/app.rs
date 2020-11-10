@@ -23,6 +23,15 @@ pub enum GridId {
     Back,
 }
 
+impl GridId {
+    pub fn table_id(&self) -> &str {
+        match self {
+            Front => "front",
+            Back => "back",
+        }
+    }
+}
+
 pub enum Msg {
     // Mouse events
     Down(GridId, usize, usize), // (id, row, col)
@@ -100,10 +109,10 @@ impl App {
     fn combined_view_cell(&self, row: usize, combined_col: usize) -> Html {
         let mut classes = vec![];
         let (grid_id, content) = if combined_col % 2 == 1 {
-            (GridId::Front, "")
+            (GridId::Front, bootstrap::empty())
         } else {
             classes.push("purl");
-            (GridId::Back, "•")
+            (GridId::Back, dot() /*"•"*/)
         };
         let grid = self.grid_by_id(grid_id);
 
@@ -143,7 +152,7 @@ impl App {
     fn grid_table(&self, grid_id: GridId /* grid: &BigGrid<bool>*/) -> Html {
         let num_rows = self.grid_by_id(grid_id).num_rows();
         html! {
-          <table class={"user-select-none"}>
+          <table id={grid_id.table_id()} class={"user-select-none"}>
             { for (0..num_rows).map(|rn| self.view_row(grid_id, rn)) }
           </table>
         }
@@ -164,7 +173,7 @@ impl App {
 
         //        self.link.send_message(Msg::SetCell(id, row, col, value));
 
-        false
+        true
     }
 
     fn msg_enter(&mut self, id: GridId, row: usize, col: usize) -> bool {
@@ -206,6 +215,13 @@ impl App {
     }
 }
 
+fn dot() -> Html {
+    html! {
+        <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7.5" cy="7.5" r="4"/>
+        </svg>
+    }
+}
 fn grid_play(link: &ComponentLink<App>) -> Html {
     let mut grid = Rc::new(BigGrid::<bool>::new(6, 9));
     Rc::get_mut(&mut grid).unwrap().set_cell(1, 1, true);
@@ -294,7 +310,7 @@ impl Component for App {
               { bootstrap::row(bootstrap::col(bootstrap::card("Pattern", "Some explanation of the pattern",
                  html! {
                      <>
-                       <table class={"user-select-none"}>
+                       <table id="pattern" class={"user-select-none"}>
                          { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
                        </table>
                        <a href="#" class="btn btn-primary" onclick=export_callback>{"Test export"}</a>
