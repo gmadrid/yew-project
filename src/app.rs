@@ -109,10 +109,10 @@ impl App {
     fn combined_view_cell(&self, row: usize, combined_col: usize) -> Html {
         let mut classes = vec![];
         let (grid_id, content) = if combined_col % 2 == 1 {
-            (GridId::Front, bootstrap::empty())
+            (GridId::Front, no_dot())
         } else {
             classes.push("purl");
-            (GridId::Back, dot() /*"•"*/)
+            (GridId::Back, dot())
         };
         let grid = self.grid_by_id(grid_id);
 
@@ -215,6 +215,13 @@ impl App {
     }
 }
 
+fn no_dot() -> Html {
+    html! {
+        <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
+        </svg>
+    }
+}
+
 fn dot() -> Html {
     html! {
         <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
@@ -222,6 +229,7 @@ fn dot() -> Html {
         </svg>
     }
 }
+
 fn grid_play(link: &ComponentLink<App>) -> Html {
     let mut grid = Rc::new(BigGrid::<bool>::new(6, 9));
     Rc::get_mut(&mut grid).unwrap().set_cell(1, 1, true);
