@@ -2,7 +2,6 @@
 
 mod app;
 mod bootstrap;
-mod download;
 mod gridtrait;
 mod simplegrid;
 mod tablerender;

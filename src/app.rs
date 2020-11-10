@@ -15,7 +15,6 @@ pub struct App {
     back: SimpleGrid<bool>,
 
     value: Option<bool>,
-    hover: Option<(GridId, usize, usize)>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -43,12 +42,12 @@ pub enum Msg {
     Exit,
 
     // State changes
-    SetCell(GridId, usize, usize, bool), // (id, row, col, value)
-    NoOp,
+    //    SetCell(GridId, usize, usize, bool), // (id, row, col, value)
+    //    NoOp,
 
     // User actions
     Clear(GridId),
-    Export,
+    //    Export,
 }
 
 impl App {
@@ -66,57 +65,6 @@ impl App {
         }
     }
 
-    fn combined_view_row(&self, row: usize) -> Html {
-        html! {
-            <tr>
-            { for (0..(self.front.num_cols() * 2)).map(|cn| self.combined_view_cell(row, cn)) }
-            </tr>
-        }
-    }
-
-    fn combined_view_cell(&self, row: usize, combined_col: usize) -> Html {
-        let mut classes = vec![];
-        let (grid_id, content) = if combined_col % 2 == 1 {
-            (GridId::Front, no_dot())
-        } else {
-            classes.push("purl");
-            (GridId::Back, dot())
-        };
-        let grid = self.grid_by_id(grid_id);
-
-        let real_col = combined_col / 2;
-
-        let value = grid.cell(row, real_col);
-        let cls = if value { "on" } else { "off" };
-        classes.push(cls);
-
-        if (grid.num_rows() - row) % 5 == 1 {
-            classes.push("fiver")
-        }
-
-        let down_callback = self
-            .link
-            .callback(move |_| Msg::Down(grid_id, row, real_col));
-        let up_callback = self.link.callback(move |_| Msg::Up);
-        let enter_callback = self
-            .link
-            .callback(move |_| Msg::Enter(grid_id, row, real_col));
-        let exit_callback = self.link.callback(|_| Msg::Exit);
-
-        if Some((grid_id, row, real_col)) == self.hover {
-            classes.push("hover");
-        }
-
-        html! {
-            <td class=classes
-             onmousedown=down_callback
-             onmouseenter=enter_callback
-             onmouseup=up_callback
-             onmouseleave=exit_callback
-             >{content}</td>
-        }
-    }
-
     fn grid_table(&self, grid_id: GridId) -> Html {
         let grid = self.grid_by_id(grid_id);
         InputRenderer::<SimpleGrid<bool>>::render_table(&self.link, grid_id, grid)
@@ -130,13 +78,6 @@ impl App {
             GridId::Back,
             &self.back,
         )
-    }
-
-    fn export(&self) -> bool {
-        let text = "George was here again";
-        let filename = "george_too.txt";
-        crate::download::download(text, filename);
-        false
     }
 
     fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
@@ -172,27 +113,6 @@ impl App {
         grid.clear();
         true
     }
-
-    fn msg_set_cell(&mut self, grid_id: GridId, row: usize, col: usize, value: bool) -> bool {
-        let grid = self.grid_by_id_mut(grid_id);
-        grid.set_cell(row, col, value);
-        true
-    }
-}
-
-fn no_dot() -> Html {
-    html! {
-        <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
-        </svg>
-    }
-}
-
-fn dot() -> Html {
-    html! {
-        <svg width="1em" height="1em" viewBox="0 0 15 15" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="7.5" cy="7.5" r="4"/>
-        </svg>
-    }
 }
 
 impl Component for App {
@@ -205,7 +125,6 @@ impl Component for App {
             front: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
             back: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
             value: None,
-            hover: None,
         }
     }
 
@@ -217,10 +136,10 @@ impl Component for App {
             Msg::Up => self.msg_up(),
 
             Msg::Clear(grid_id) => self.msg_clear(grid_id),
-            Msg::Export => self.export(),
-
-            Msg::NoOp => false,
-            Msg::SetCell(id, row, col, value) => self.msg_set_cell(id, row, col, value),
+            // Msg::Export => self.export(),
+            //
+            // Msg::NoOp => false,
+            // Msg::SetCell(id, row, col, value) => self.msg_set_cell(id, row, col, value),
         }
     }
 
@@ -237,8 +156,6 @@ impl Component for App {
             <nav class="navbar navbar-expand-md">
               <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
             </nav>
-
-            // {grid_play(&self.link)}
 
             <main class="main container">
               { bootstrap::spacer() }

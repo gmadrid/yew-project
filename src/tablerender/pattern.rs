@@ -38,7 +38,7 @@ where
         back_id: GridId,
         back: &'a impl GridTrait<bool>,
     ) -> Html {
-        /// TODO: add consistency checks for the two tables.
+        // TODO: add consistency checks for the two tables.
         render_table(PatternRenderer::<'a> {
             front_id,
             front,
@@ -70,6 +70,26 @@ where
         }
     }
 
+    /*
+    let down_callback = self
+        .link
+        .callback(move |_| Msg::Down(grid_id, row, real_col));
+    let up_callback = self.link.callback(move |_| Msg::Up);
+    let enter_callback = self
+        .link
+        .callback(move |_| Msg::Enter(grid_id, row, real_col));
+    let exit_callback = self.link.callback(|_| Msg::Exit);
+
+    html! {
+        <td class=classes
+         onmousedown=down_callback
+         onmouseenter=enter_callback
+         onmouseup=up_callback
+         onmouseleave=exit_callback
+         >{content}</td>
+    }
+
+    */
     fn render_data_cell(&self, row: usize, col: usize) -> Html // ???
     {
         let mut classes = vec![];
@@ -147,7 +167,8 @@ where
             </tr>
         }
     }
-    fn render_footer_cell(&self, col: usize) -> Html // ???
+
+    fn render_footer_cell(&self, _: usize) -> Html // ???
     {
         bootstrap::empty()
     }
