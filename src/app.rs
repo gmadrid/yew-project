@@ -1,7 +1,7 @@
 use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use crate::simplegrid::SimpleGrid;
-use crate::tablerender::InputRenderer;
+use crate::tablerender::{InputRenderer, PatternRenderer};
 use yew::prelude::*;
 
 const GRID_HEIGHT: usize = 15;
@@ -118,6 +118,16 @@ impl App {
     fn grid_table(&self, grid_id: GridId) -> Html {
         let grid = self.grid_by_id(grid_id);
         InputRenderer::<SimpleGrid<bool>>::render_table(&self.link, grid_id, grid)
+    }
+
+    fn pattern_table(&self) -> Html {
+        PatternRenderer::<SimpleGrid<bool>, SimpleGrid<bool>>::render_table(
+            &self.link,
+            GridId::Front,
+            &self.front,
+            GridId::Back,
+            &self.back,
+        )
     }
 
     fn export(&self) -> bool {
@@ -246,13 +256,7 @@ impl Component for App {
               { bootstrap::spacer() }
 
               { bootstrap::row(bootstrap::col(bootstrap::card("Pattern", "Some explanation of the pattern",
-                 html! {
-                     <>
-                       <table id="pattern" class={"user-select-none"}>
-                         { for (0..(self.back.num_rows())).map(|rn| self.combined_view_row(rn)) }
-                       </table>
-                     </>
-                 }
+              self.pattern_table()
               )))}
             </main>
             <footer class="footer">
