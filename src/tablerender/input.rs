@@ -92,7 +92,8 @@ where
         html! {
             <td class="left">
               { if displayed_row_num % 2 == 0 {
-                  html!{<small>{displayed_row_num}</small>}
+                  // +2 is a weird wrinkle specifically for Alasdair's class.
+                  html!{<small>{displayed_row_num +2}</small>}
               } else {
                   bootstrap::empty()
               }}
@@ -105,7 +106,8 @@ where
         html! {
             <td class="right">
               { if displayed_row_num % 2 != 0 {
-                  html!{<small>{displayed_row_num}</small>}
+                  // +2 is a weird wrinkle specifically for Alasdair's class.
+                  html!{<small>{displayed_row_num+2}</small>}
               } else {
                   bootstrap::empty()
               }}

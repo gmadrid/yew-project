@@ -75,6 +75,9 @@ where
         let mut classes = vec![];
         if col % 2 == 0 {
             classes.push("purl");
+            if col != 0 {
+                classes.push("vfiver");
+            }
         }
         let content = if col % 2 == 0 { purl_dot() } else { no_dot() };
 
@@ -105,7 +108,8 @@ where
         html! {
             <td class="left">
               { if displayed_row_num % 2 == 0 {
-                  html!{<small>{displayed_row_num}</small>}
+                  // +2 is a weird wrinkle specifically for Alasdair's class.
+                  html!{<small>{displayed_row_num + 2}</small>}
               } else {
                   bootstrap::empty()
               }}
@@ -118,7 +122,8 @@ where
         html! {
             <td class="right">
               { if displayed_row_num % 2 != 0 {
-                  html!{<small>{displayed_row_num}</small>}
+                  // +2 is a weird wrinkle specifically for Alasdair's class.
+                  html!{<small>{displayed_row_num + 2}</small>}
               } else {
                   bootstrap::empty()
               }}
