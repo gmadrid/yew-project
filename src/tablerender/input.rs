@@ -12,7 +12,7 @@ where
 {
     grid_id: GridId,
     grid: &'a G,
-    link: &'a ComponentLink<crate::app::App>,
+    link: &'a ComponentLink<app::App>,
 }
 
 impl<'a, G> InputRenderer<'a, G>
