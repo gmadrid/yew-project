@@ -151,7 +151,7 @@ impl App {
 
     fn grid_table(&self, grid_id: GridId) -> Html {
         let grid = self.grid_by_id(grid_id);
-        InputRenderer::<SimpleGrid<bool>>::render_table(grid)
+        InputRenderer::<SimpleGrid<bool>>::render_table(&self.link, grid_id, grid)
     }
 
     fn export(&self) -> bool {

@@ -1,3 +1,5 @@
+use crate::app;
+use crate::app::GridId;
 use crate::bootstrap;
 use crate::gridtrait::GridTrait;
 use yew::prelude::*;
@@ -58,15 +60,25 @@ pub struct InputRenderer<'a, G>
 where
     G: GridTrait<bool>,
 {
+    grid_id: GridId,
     grid: &'a G,
+    link: &'a ComponentLink<crate::app::App>,
 }
 
 impl<'a, G> InputRenderer<'a, G>
 where
     G: GridTrait<bool>,
 {
-    pub fn render_table(grid: &'a impl GridTrait<bool>) -> Html {
-        render_table(InputRenderer::<'a> { grid })
+    pub fn render_table(
+        link: &'a ComponentLink<crate::app::App>,
+        grid_id: GridId,
+        grid: &'a impl GridTrait<bool>,
+    ) -> Html {
+        render_table(InputRenderer::<'a> {
+            grid,
+            grid_id,
+            link,
+        })
     }
 }
 
@@ -102,9 +114,26 @@ where
         let display_row_num = self.grid.num_rows() - row;
         if display_row_num % 5 == 0 && display_row_num != self.grid.num_rows() {
             classes.push("hfiver");
-        }
+        };
+
+        let grid_id = self.grid_id.clone();
+        type Message = <app::App as Component>::Message;
+        let down_callback = self
+            .link
+            .callback(move |_| Message::Down(grid_id, row, col));
+        let enter_callback = self
+            .link
+            .callback(move |_| Message::Enter(grid_id, row, col));
+        let exit_callback = self.link.callback(|_| Message::Exit);
+        let up_callback = self.link.callback(|_| Message::Up);
+
         html! {
-            <td class=classes>{no_dot()}</td>
+            <td class=classes
+            onmousedown=down_callback
+            onmouseenter=enter_callback
+            onmouseleave=exit_callback
+            onmouseup=up_callback
+            >{no_dot()}</td>
         }
     }
 
@@ -113,7 +142,7 @@ where
         html! {
             <td class="left">
               { if displayed_row_num % 2 == 0 {
-                  html!{displayed_row_num}
+                  html!{<small>{displayed_row_num}</small>}
               } else {
                   bootstrap::empty()
               }}
@@ -126,7 +155,7 @@ where
         html! {
             <td class="right">
               { if displayed_row_num % 2 != 0 {
-                  html!{displayed_row_num}
+                  html!{<small>{displayed_row_num}</small>}
               } else {
                   bootstrap::empty()
               }}
@@ -140,7 +169,7 @@ where
             <tr class={"tablefooter"}>
                 <td></td>  // skipping the "left" column
                 {for (0..num_data_cols).map(|cn| {
-                    html!{<td>{num_data_cols - cn}</td>}
+                    html!{<td><small>{num_data_cols - cn}</small></td>}
                 })}
                 <td></td>  // skipping the "right" column
             </tr>
