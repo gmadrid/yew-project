@@ -12,8 +12,18 @@ install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "--
 description = "Bundle the wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
-args = [ "./main.js", "--format", "iife", "--file", "./pkg/bundle.js" ]
+args = [ "./twocolor.js", "--format", "iife", "--file", "./pkg/twocolor.js" ]
+
+[tasks.bundle2]
+description = "Bundle the wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./other.js", "--format", "iife", "--file", "./pkg/other.js" ]
 
 [tasks.watch-bundle]
 watch=true
 dependencies = ["default"]
+
+[tasks.watch-bundle2]
+watch=true
+dependencies = ["bundle2"]
