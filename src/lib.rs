@@ -4,6 +4,7 @@ mod app;
 mod bootstrap;
 mod components;
 mod gridtrait;
+mod meta_grid;
 mod other;
 mod simplegrid;
 mod tablerender;

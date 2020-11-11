@@ -8,12 +8,14 @@ pub struct InputComponent {
     input_ref: NodeRef,
     err_ref: NodeRef,
 
+    text: String,
     meta_vec: Vec<u8>,
 }
 
 #[derive(Properties, Clone)]
 pub struct Props {
     pub callback: Callback<Vec<u8>>,
+    pub start: String,
 }
 
 pub enum Msg {
@@ -45,12 +47,15 @@ impl Component for InputComponent {
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let meta_vec = parse_input(&props.start).unwrap_or(vec![2, 3, 2]);
+        props.callback.emit(meta_vec.clone());
         InputComponent {
             link,
             callback: props.callback,
             input_ref: Default::default(),
             err_ref: Default::default(),
-            meta_vec: Default::default(),
+            text: props.start,
+            meta_vec: meta_vec,
         }
     }
 
@@ -101,7 +106,7 @@ impl Component for InputComponent {
 
         html! {
           <>
-            <input ref=self.input_ref.clone() onchange=change_callback type="text"/>
+            <input ref=self.input_ref.clone() onchange=change_callback type="text" value=self.text/>
             <span ref=self.err_ref.clone() class=".errspan"></span>
           </>
         }

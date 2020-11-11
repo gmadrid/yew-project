@@ -1,5 +1,6 @@
 use crate::components::InputComponent;
 use crate::gridtrait::GridTrait;
+use crate::meta_grid::MetaGrid;
 use yew::prelude::*;
 
 fn no_dot() -> Html {
@@ -18,8 +19,8 @@ fn color_sq(color: Color) -> Html {
     }
 }
 
-#[derive(PartialEq, Eq, Clone, Copy)]
-enum Color {
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub enum Color {
     White,
     Gray,
     Blue,
@@ -117,11 +118,14 @@ pub struct Other {
 
     row_grid_cols: Vec<u8>,
     col_grid_cols: Vec<u8>,
+    current_color: Color,
 }
 
 pub enum Msg {
     NewRowVec(Vec<u8>),
     NewColVec(Vec<u8>),
+    SelectColor(Color),
+    SetCell(usize, usize),
 }
 
 impl Other {
@@ -130,41 +134,75 @@ impl Other {
           <>
             <h1>{"Palette"}</h1>
             <table id="palettetable">
-            <tr><td class="colora">{no_dot()}</td><td>{"Color A"}</td>
-            <td class="colorb">{no_dot()}</td><td>{"Color B"}</td>
-            <td class="colorc">{no_dot()}</td><td>{"Color C"}</td>
-            <td class="colord">{no_dot()}</td><td>{"Color D"}</td>
-            <td class="colore">{no_dot()}</td><td>{"Color E"}</td>
-            <td class="colorf">{no_dot()}</td><td>{"Color F"}</td>
-            <td class="colorg">{no_dot()}</td><td>{"Color G"}</td>
-            <td class="colorh">{no_dot()}</td><td>{"Color H"}</td></tr>
+            <tr><td onclick=self.link.callback(|_| Msg::SelectColor(Color::White)) class="colora">{color_sq(Color::White)}</td><td>{"Color A"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Gray)) class="colorb">{color_sq(Color::Gray)}</td><td>{"Color B"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Blue)) class="colorc">{color_sq(Color::Blue)}</td><td>{"Color C"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Orange)) class="colord">{color_sq(Color::Orange)}</td><td>{"Color D"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Yellow)) class="colore">{color_sq(Color::Yellow)}</td><td>{"Color E"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Red)) class="colorf">{color_sq(Color::Red)}</td><td>{"Color F"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Green)) class="colorg">{color_sq(Color::Green)}</td><td>{"Color G"}</td>
+            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Brown)) class="colorh">{color_sq(Color::Brown)}</td><td>{"Color H"}</td></tr>
             </table>
           </>
         }
     }
 
-    fn display_base_cell(&self, row_num: usize, col_num: usize) -> Html {
+    fn render_base_cell(&self, row_num: usize, col_num: usize) -> Html {
+        let click_callback = self.link.callback(move |_| Msg::SetCell(row_num, col_num));
         html! {
-            <td>
-            {color_sq(Color::White)}
+            <td onclick=click_callback>
+                {color_sq(self.base_grid.cell(row_num, col_num))}
             </td>
         }
     }
 
-    fn display_base_row(&self, row_num: usize) -> Html {
+    fn render_base_row(&self, row_num: usize) -> Html {
         html! {
             <tr>
-            {for (0..self.base_grid.num_cols()).map(|cn| self.display_base_cell(row_num, cn))}
+            {for (0..self.base_grid.num_cols()).map(|cn| self.render_base_cell(row_num, cn))}
             </tr>
         }
     }
 
-    fn display_base_grid(&self) -> Html {
+    fn render_base_grid(&self) -> Html {
         html! {
             <table>
-              {for (0..self.base_grid.num_rows()).map(|rn| self.display_base_row(rn))}
+              {for (0..self.base_grid.num_rows()).map(|rn| self.render_base_row(rn))}
             </table>
             //<span style={color_string}>{"Some text"}</span>
+        }
+    }
+
+    fn render_meta_cell(
+        &self,
+        grid: &impl GridTrait<Color>,
+        row_num: usize,
+        col_num: usize,
+    ) -> Html {
+        html! {
+            <td>
+            {color_sq(grid.cell(row_num, col_num))}
+            </td>
+        }
+    }
+
+    fn render_meta_row(&self, grid: &impl GridTrait<Color>, row_num: usize) -> Html {
+        html! {
+            <tr>
+            {for (0..grid.num_cols()).map(|cn| {
+                self.render_meta_cell(grid, row_num, cn)
+            })}
+            </tr>
+        }
+    }
+
+    fn render_meta_grid(&self) -> Html {
+        let meta_grid = MetaGrid::new(&self.base_grid, &self.row_grid_cols, &self.col_grid_cols);
+
+        html! {
+            <table>
+              {for (0..meta_grid.num_rows()).map(|rn| self.render_meta_row(&meta_grid, rn))}
+            </table>
         }
     }
 }
@@ -174,11 +212,16 @@ impl Component for Other {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let mut grid = ColorGrid::new();
+        grid.set_cell(1, 1, Color::Red);
+        grid.set_cell(2, 2, Color::Red);
+        grid.set_cell(4, 4, Color::Red);
         Other {
             link,
-            base_grid: ColorGrid::new(),
+            base_grid: grid,
             row_grid_cols: Default::default(),
             col_grid_cols: Default::default(),
+            current_color: Color::Gray,
         }
     }
 
@@ -186,7 +229,10 @@ impl Component for Other {
         match msg {
             Msg::NewRowVec(vec) => self.row_grid_cols = vec,
             Msg::NewColVec(vec) => self.col_grid_cols = vec,
+            Msg::SelectColor(color) => self.current_color = color,
+            Msg::SetCell(row, col) => self.base_grid.set_cell(row, col, self.current_color),
         }
+
         self.base_grid
             .resize(self.row_grid_cols.len(), self.col_grid_cols.len());
         true
@@ -213,11 +259,18 @@ impl Component for Other {
           <>
             {self.render_palette()}
             <h1>{"Metapixel config"}</h1>
-            <div>{"Metapixel config (x-axis):"}<InputComponent callback=x_callback/><small>{" Pixel count: "}{col_count}</small></div>
-            <div>{"Metapixel config (y-axis):"}<InputComponent callback=y_callback/><small>{" Pixel count: "}{row_count}</small></div>
+            <div>{"Metapixel config (x-axis):"}
+              <InputComponent start="1,1,2,2,3,2,2,1,1" callback=x_callback/>
+              <small>{" Pixel count: "}{col_count}</small>
+            </div>
+            <div>{"Metapixel config (y-axis):"}
+              <InputComponent start="1,1,2,2,3,2,2,1,1" callback=y_callback/>
+              <small>{" Pixel count: "}{row_count}</small>
+            </div>
             <h1>{"Pixel grid"}</h1>
-            {self.display_base_grid()}
+            {self.render_base_grid()}
             <h1>{"Metapixel grid"}</h1>
+            {self.render_meta_grid()}
           </>
         }
     }
