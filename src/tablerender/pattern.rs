@@ -153,7 +153,7 @@ where
               {for (0..self.num_data_cols()).map(|cn| {
                   let display_num = (self.num_data_cols() - cn) / 2;
                   if cn % 2 == 0 {
-                    html!{<td class="patternfootercell purl" colspan=2><small>{display_num}</small></td>}
+                    html!{<td class="patternfootercell purl" colspan=2><small>{display_num + 2}</small></td>}
                   } else {
                     bootstrap::empty()
                   }

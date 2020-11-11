@@ -121,7 +121,7 @@ where
             <tr class={"tablefooter"}>
                 <td></td>  // skipping the "left" column
                 {for (0..num_data_cols).map(|cn| {
-                    html!{<td><small>{num_data_cols - cn}</small></td>}
+                    html!{<td><small>{num_data_cols - cn + 2}</small></td>}
                 })}
                 <td></td>  // skipping the "right" column
             </tr>

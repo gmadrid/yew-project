@@ -112,7 +112,8 @@ impl App {
         html! {
           <>
             <nav class="navbar navbar-expand-md">
-              <a style="color:black" class="navbar-brand">{"Two-color double-knitting pattern generator"}</a>
+              <a style="color:black" class="navbar-brand">{"Two-pattern double-knitting chart generator"}</a>
+              <small>{"This tool can be used to plan out a two-pattern chart during Alasdair Post-Quinn's workshop, \"Two-pattern Double-knitting\". The handout for that workshop will further explain what to do."}</small>
             </nav>
           </>
         }
@@ -132,12 +133,12 @@ impl App {
 
             { bootstrap::row(bootstrap::concat(
                 bootstrap::col(
-                    bootstrap::card("Front", "Lorem ipsum",
+                    bootstrap::card("Layer 1", "Transcribe a chart from Page 5 here.",
                       bootstrap::concat(
                           self.grid_table(GridId::Front),
                           html!{<a href="#" class="btn btn-primary" onclick=click_front_callback>{"Clear"}</a>}))),
                 bootstrap::col(
-                    bootstrap::card("Back", "Some explanation stuff",
+                    bootstrap::card("Layer 2", "Transcribe a chart from Page 6 here.",
                       bootstrap::concat(
                           self.grid_table(GridId::Back),
                           html!{<a href="#" class="btn btn-primary" onclick=click_back_callback>{"Clear"}</a>}))),
@@ -213,14 +214,14 @@ impl Component for App {
                   bootstrap::card(
                       html! {
                         <>
-                          <span>{"Pattern "}</span>
+                          <span>{"Chart 2"}</span>
 
                           <a class="noprint"
                              onclick=printable_callback
                              style="float:right" href="#"><small>{printable_text}</small></a>
                         </>
                       },
-                      "Some explanation of the pattern",
+                      "Follow this chart within the green box in Chart 1 on Page 7.",
               self.pattern_table()
               )))}
             </main>
