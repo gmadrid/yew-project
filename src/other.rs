@@ -178,12 +178,15 @@ impl Other {
     }
 
     fn render_base_grid(&self) -> Html {
-        html! {
-            <table>
-              {for (0..self.base_grid.num_rows()).map(|rn| self.render_base_row(rn))}
-            </table>
-            //<span style={color_string}>{"Some text"}</span>
-        }
+        bootstrap::card(
+            "Pixel grid",
+            "",
+            html! {
+                <table>
+                  {for (0..self.base_grid.num_rows()).map(|rn| self.render_base_row(rn))}
+                </table>
+            },
+        )
     }
 
     fn render_meta_cell(
@@ -211,12 +214,15 @@ impl Other {
 
     fn render_meta_grid(&self) -> Html {
         let meta_grid = MetaGrid::new(&self.base_grid, &self.row_grid_cols, &self.col_grid_cols);
-
-        html! {
-            <table>
-              {for (0..meta_grid.num_rows()).map(|rn| self.render_meta_row(&meta_grid, rn))}
-            </table>
-        }
+        bootstrap::card(
+            "Metapixel grid",
+            "",
+            html! {
+                <table>
+                  {for (0..meta_grid.num_rows()).map(|rn| self.render_meta_row(&meta_grid, rn))}
+                </table>
+            },
+        )
     }
 }
 
@@ -292,10 +298,14 @@ impl Component for Other {
             })}
             </div>
           </div>
-            <h1>{"Pixel grid"}</h1>
+          {bootstrap::spacer()}
+          <div class="row"><div class="col">
             {self.render_base_grid()}
-            <h1>{"Metapixel grid"}</h1>
+          </div></div>
+          {bootstrap::spacer()}
+          <div class="row"><div class="col">
             {self.render_meta_grid()}
+          </div></div>
           </main>
         }
     }
