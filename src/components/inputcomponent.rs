@@ -60,18 +60,15 @@ impl Component for InputComponent {
     }
 
     fn update(&mut self, _: Self::Message) -> ShouldRender {
-        yew::services::ConsoleService::log("in update()");
         let val = self
             .input_ref
             .cast::<HtmlInputElement>()
             .expect("no expect")
             .value();
-        yew::services::ConsoleService::log(&format!("got value: {}", val));
 
         let result = parse_input(&val);
         let err_element = self.err_ref.cast::<HtmlElement>().expect("no err element");
 
-        yew::services::ConsoleService::log(&format!("'{:?}' result", result));
         match result {
             Ok(vec) => {
                 err_element.set_inner_text("");
@@ -80,7 +77,6 @@ impl Component for InputComponent {
             }
             Err(err_text) => {
                 err_element.set_inner_text(&err_text);
-                yew::services::ConsoleService::log("got an error");
             }
         }
 
@@ -97,12 +93,7 @@ impl Component for InputComponent {
     }
 
     fn view(&self) -> Html {
-        yew::services::ConsoleService::log("RENDERING INPUT");
-
-        let change_callback = self.link.callback(|_| {
-            yew::services::ConsoleService::log("in change_callback");
-            Msg::ChangeEvent
-        });
+        let change_callback = self.link.callback(|_| Msg::ChangeEvent);
 
         html! {
           <>

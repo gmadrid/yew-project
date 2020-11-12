@@ -3,18 +3,9 @@ use crate::gridtrait::GridTrait;
 use crate::meta_grid::MetaGrid;
 use yew::prelude::*;
 
-fn no_dot() -> Html {
+fn sq() -> Html {
     html! {
-        <svg width="1em" height="1em" viewBox="0 0 50 50" class="bi bi-circle-fill" fill="black" xmlns="http://www.w3.org/2000/svg">
-        </svg>
-    }
-}
-
-fn color_sq(color: Color) -> Html {
-    let color_str = color.to_string();
-    let style_str = format!("background: {}", color_str);
-    html! {
-        <svg style=style_str width="1em" height="1em" viewBox="0 0 50 50" class="bi bi-circle-fill" fill=color_str xmlns="http://www.w3.org/2000/svg">
+        <svg width="20px" height="20px" viewBox="0 0 50 50" class="bi bi-circle-fill" xmlns="http://www.w3.org/2000/svg">
         </svg>
     }
 }
@@ -29,6 +20,12 @@ pub enum Color {
     Red,
     Green,
     Brown,
+}
+
+impl Color {
+    pub fn style_str(&self) -> String {
+        format!("background: {}", self.to_string())
+    }
 }
 
 impl From<u8> for Color {
@@ -129,19 +126,29 @@ pub enum Msg {
 }
 
 impl Other {
+    fn render_palette_cell(&self, color: Color) -> Html {
+        html! {
+            <td onclick=self.link.callback(move |_| Msg::SelectColor(color))
+            style={color.style_str()}
+            >{sq()}</td>
+        }
+    }
+
     fn render_palette(&self) -> Html {
         html! {
           <>
             <h1>{"Palette"}</h1>
             <table id="palettetable">
-            <tr><td onclick=self.link.callback(|_| Msg::SelectColor(Color::White)) class="colora">{color_sq(Color::White)}</td><td>{"Color A"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Gray)) class="colorb">{color_sq(Color::Gray)}</td><td>{"Color B"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Blue)) class="colorc">{color_sq(Color::Blue)}</td><td>{"Color C"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Orange)) class="colord">{color_sq(Color::Orange)}</td><td>{"Color D"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Yellow)) class="colore">{color_sq(Color::Yellow)}</td><td>{"Color E"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Red)) class="colorf">{color_sq(Color::Red)}</td><td>{"Color F"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Green)) class="colorg">{color_sq(Color::Green)}</td><td>{"Color G"}</td>
-            <td onclick=self.link.callback(|_| Msg::SelectColor(Color::Brown)) class="colorh">{color_sq(Color::Brown)}</td><td>{"Color H"}</td></tr>
+            <tr>
+            {self.render_palette_cell(Color::White)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Gray)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Blue)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Orange)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Yellow)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Red)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Green)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::Brown)}<td>{"Color A"}</td>
+            </tr>
             </table>
           </>
         }
@@ -149,9 +156,11 @@ impl Other {
 
     fn render_base_cell(&self, row_num: usize, col_num: usize) -> Html {
         let click_callback = self.link.callback(move |_| Msg::SetCell(row_num, col_num));
+        let style_str = self.base_grid.cell(row_num, col_num).style_str();
+
         html! {
-            <td onclick=click_callback>
-                {color_sq(self.base_grid.cell(row_num, col_num))}
+            <td style=style_str onclick=click_callback>
+                {sq()}
             </td>
         }
     }
@@ -179,9 +188,10 @@ impl Other {
         row_num: usize,
         col_num: usize,
     ) -> Html {
+        let style_str = grid.cell(row_num, col_num).style_str();
         html! {
-            <td>
-            {color_sq(grid.cell(row_num, col_num))}
+            <td style=style_str>
+            {sq()}
             </td>
         }
     }
@@ -213,9 +223,17 @@ impl Component for Other {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         let mut grid = ColorGrid::new();
-        grid.set_cell(1, 1, Color::Red);
-        grid.set_cell(2, 2, Color::Red);
-        grid.set_cell(4, 4, Color::Red);
+        for row in 0..100 {
+            for col in 0..100 {
+                let color = if row % 2 == col % 2 {
+                    Color::Orange
+                } else {
+                    Color::White
+                };
+                // NOTE: This only works because ColorGrid doesn't bounds check.
+                grid.set_cell(row, col, color);
+            }
+        }
         Other {
             link,
             base_grid: grid,
@@ -246,17 +264,11 @@ impl Component for Other {
         let row_count = self.base_grid.num_rows();
         let col_count = self.base_grid.num_cols();
 
-        let x_callback = self.link.callback(|vec| {
-            yew::services::ConsoleService::log("GOT HERE");
-            Msg::NewColVec(vec)
-        });
-        let y_callback = self.link.callback(|vec| {
-            yew::services::ConsoleService::log("GOT HERE");
-            Msg::NewRowVec(vec)
-        });
+        let x_callback = self.link.callback(|vec| Msg::NewColVec(vec));
+        let y_callback = self.link.callback(|vec| Msg::NewRowVec(vec));
 
         html! {
-          <>
+          <main class="main container">
             {self.render_palette()}
             <h1>{"Metapixel config"}</h1>
             <div>{"Metapixel config (x-axis):"}
@@ -271,7 +283,7 @@ impl Component for Other {
             {self.render_base_grid()}
             <h1>{"Metapixel grid"}</h1>
             {self.render_meta_grid()}
-          </>
+          </main>
         }
     }
 }
