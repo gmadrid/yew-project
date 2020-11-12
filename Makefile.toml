@@ -1,5 +1,5 @@
 [tasks.default]
-alias = "bundle"
+alias = "twopattern-bundle"
 
 [tasks.wasm]
 description = "Build the wasm code"
@@ -8,22 +8,21 @@ args = ["build", "--target", "web"]
 dependencies = [ "format" ]
 install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "--help" }
 
-[tasks.bundle]
+[tasks.twopattern-bundle]
 description = "Bundle the wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./twocolor.js", "--format", "iife", "--file", "./pkg/twocolor.js" ]
 
-[tasks.bundle2]
+[tasks.metapixel-bundle]
 description = "Bundle the wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./other.js", "--format", "iife", "--file", "./pkg/other.js" ]
 
-[tasks.watch-bundle]
-watch=true
-dependencies = ["default"]
+[tasks.all-bundles]
+dependencies = ["twopattern-bundle", "metapixel-bundle"]
 
-[tasks.watch-bundle2]
-watch=true
-dependencies = ["bundle2"]
+[tasks.watch-all-bundles]
+dependencies = ["all-bundles"]
+watch = { postpone = true, no_git_ignore = true, watch = ["./src"] }
