@@ -165,7 +165,6 @@ impl Other {
 
         html! {
             <td style=style_str onclick=click_callback>
-                {sq()}
             </td>
         }
     }
@@ -196,7 +195,6 @@ impl Other {
         let style_str = grid.cell(row_num, col_num).style_str();
         html! {
             <td style=style_str>
-            {sq()}
             </td>
         }
     }
