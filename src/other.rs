@@ -1,3 +1,4 @@
+use crate::bootstrap;
 use crate::components::InputComponent;
 use crate::gridtrait::GridTrait;
 use crate::meta_grid::MetaGrid;
@@ -126,28 +127,32 @@ pub enum Msg {
 }
 
 impl Other {
-    fn render_palette_cell(&self, color: Color) -> Html {
+    fn render_palette_cell(&self, color: Color, selected: bool) -> Html {
+        let class = if color == self.current_color {
+            "selected"
+        } else {
+            ""
+        };
         html! {
-            <td onclick=self.link.callback(move |_| Msg::SelectColor(color))
+            <td class=class onclick=self.link.callback(move |_| Msg::SelectColor(color))
             style={color.style_str()}
-            >{sq()}</td>
+            ></td>
         }
     }
 
     fn render_palette(&self) -> Html {
         html! {
           <>
-            <h1>{"Palette"}</h1>
             <table id="palettetable">
             <tr>
-            {self.render_palette_cell(Color::White)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Gray)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Blue)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Orange)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Yellow)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Red)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Green)}<td>{"Color A"}</td>
-            {self.render_palette_cell(Color::Brown)}<td>{"Color A"}</td>
+            {self.render_palette_cell(Color::White, true)}
+            {self.render_palette_cell(Color::Gray, false)}
+            {self.render_palette_cell(Color::Blue, false)}
+            {self.render_palette_cell(Color::Orange, false)}
+            {self.render_palette_cell(Color::Yellow, false)}
+            {self.render_palette_cell(Color::Red, false)}
+            {self.render_palette_cell(Color::Green, false)}
+            {self.render_palette_cell(Color::Brown, false)}
             </tr>
             </table>
           </>
@@ -269,16 +274,26 @@ impl Component for Other {
 
         html! {
           <main class="main container">
-            {self.render_palette()}
-            <h1>{"Metapixel config"}</h1>
-            <div>{"Metapixel config (x-axis):"}
-              <InputComponent start="1,1,2,2,3,2,2,1,1" callback=x_callback/>
-              <small>{" Pixel count: "}{col_count}</small>
+          {bootstrap::spacer()}
+          <div id="topstuff" class="row">
+            <div class="col">
+              {bootstrap::card("Palette", "", self.render_palette())}
             </div>
-            <div>{"Metapixel config (y-axis):"}
-              <InputComponent start="1,1,2,2,3,2,2,1,1" callback=y_callback/>
-              <small>{" Pixel count: "}{row_count}</small>
+            <div class="col">
+              {bootstrap::card("Metapixel config", "", html!{
+                <>
+                <div>{"Metapixel config (x-axis):"}
+                  <InputComponent start="1,1,2,2,3,2,2,1,1" callback=x_callback/>
+                  <small>{" Pixel count: "}{col_count}</small>
+                </div>
+                <div>{"Metapixel config (y-axis):"}
+                  <InputComponent start="1,1,2,2,3,2,2,1,1" callback=y_callback/>
+                  <small>{" Pixel count: "}{row_count}</small>
+                </div>
+                </>
+            })}
             </div>
+          </div>
             <h1>{"Pixel grid"}</h1>
             {self.render_base_grid()}
             <h1>{"Metapixel grid"}</h1>
