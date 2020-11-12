@@ -205,12 +205,26 @@ impl Other {
     ) -> Html {
         let (base_row, base_col) = grid.to_base(row_num, col_num);
 
+        let mut classes = vec![];
+        if row_num > 0 {
+            let (prev_base_row, _) = grid.to_base(row_num - 1, col_num);
+            if prev_base_row != base_row {
+                classes.push("meta_grid_horiz");
+            }
+        }
+        if col_num > 0 {
+            let (_, prev_base_col) = grid.to_base(row_num, col_num - 1);
+            if prev_base_col != base_col {
+                classes.push("meta_grid_vert");
+            }
+        }
+
         let click_callback = self
             .link
             .callback(move |_| Msg::SetCell(base_row, base_col));
         let style_str = grid.cell(row_num, col_num).style_str();
         html! {
-            <td onclick=click_callback style=style_str>
+            <td class=classes onclick=click_callback style=style_str>
             </td>
         }
     }
