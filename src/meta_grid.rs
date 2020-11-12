@@ -1,6 +1,10 @@
 use crate::gridtrait::GridTrait;
 use crate::other::Color;
 
+pub trait IndirectGrid {
+    fn to_base(&self, row: usize, col: usize) -> (usize, usize);
+}
+
 pub struct MetaGrid<'a, GRID>
 where
     GRID: GridTrait<Color>,
@@ -23,7 +27,19 @@ where
     }
 }
 
-fn indirect_index(index: usize, vec: &Vec<u8>) -> usize {
+impl<'a, GRID> IndirectGrid for MetaGrid<'a, GRID>
+where
+    GRID: GridTrait<Color>,
+{
+    fn to_base(&self, row: usize, col: usize) -> (usize, usize) {
+        (
+            base_index(row, self.row_indices),
+            base_index(col, self.col_indices),
+        )
+    }
+}
+
+fn base_index(index: usize, vec: &Vec<u8>) -> usize {
     let mut high = 0;
     for (base_idx, step) in vec.into_iter().enumerate() {
         high += step;
@@ -48,8 +64,8 @@ where
 
     fn cell(&self, row: usize, col: usize) -> Color {
         // TODO: You should speed this up by pre-computing these offsets.
-        let base_x = indirect_index(row, &self.row_indices);
-        let base_y = indirect_index(col, &self.col_indices);
+        let base_x = base_index(row, &self.row_indices);
+        let base_y = base_index(col, &self.col_indices);
         self.grid.cell(base_x, base_y)
     }
 

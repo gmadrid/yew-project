@@ -1,15 +1,8 @@
 use crate::bootstrap;
 use crate::components::InputComponent;
 use crate::gridtrait::GridTrait;
-use crate::meta_grid::MetaGrid;
+use crate::meta_grid::{IndirectGrid, MetaGrid};
 use yew::prelude::*;
-
-fn sq() -> Html {
-    html! {
-        <svg width="20px" height="20px" viewBox="0 0 50 50" class="bi bi-circle-fill" xmlns="http://www.w3.org/2000/svg">
-        </svg>
-    }
-}
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Color {
@@ -40,6 +33,21 @@ impl From<u8> for Color {
             6 => Color::Green,
             7 => Color::Brown,
             _ => Color::White,
+        }
+    }
+}
+
+impl From<Color> for u8 {
+    fn from(color: Color) -> u8 {
+        match color {
+            Color::Gray => 1,
+            Color::Blue => 2,
+            Color::Orange => 3,
+            Color::Yellow => 4,
+            Color::Red => 5,
+            Color::Green => 6,
+            Color::Brown => 7,
+            Color::White => 8,
         }
     }
 }
@@ -191,18 +199,27 @@ impl Other {
 
     fn render_meta_cell(
         &self,
-        grid: &impl GridTrait<Color>,
+        grid: &(impl GridTrait<Color> + IndirectGrid),
         row_num: usize,
         col_num: usize,
     ) -> Html {
+        let (base_row, base_col) = grid.to_base(row_num, col_num);
+
+        let click_callback = self
+            .link
+            .callback(move |_| Msg::SetCell(base_row, base_col));
         let style_str = grid.cell(row_num, col_num).style_str();
         html! {
-            <td style=style_str>
+            <td onclick=click_callback style=style_str>
             </td>
         }
     }
 
-    fn render_meta_row(&self, grid: &impl GridTrait<Color>, row_num: usize) -> Html {
+    fn render_meta_row(
+        &self,
+        grid: &(impl GridTrait<Color> + IndirectGrid),
+        row_num: usize,
+    ) -> Html {
         html! {
             <tr>
             {for (0..grid.num_cols()).map(|cn| {
