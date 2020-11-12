@@ -127,7 +127,7 @@ pub enum Msg {
 }
 
 impl Other {
-    fn render_palette_cell(&self, color: Color, selected: bool) -> Html {
+    fn render_palette_cell(&self, color: Color) -> Html {
         let class = if color == self.current_color {
             "selected"
         } else {
@@ -145,14 +145,14 @@ impl Other {
           <>
             <table id="palettetable">
             <tr>
-            {self.render_palette_cell(Color::White, true)}
-            {self.render_palette_cell(Color::Gray, false)}
-            {self.render_palette_cell(Color::Blue, false)}
-            {self.render_palette_cell(Color::Orange, false)}
-            {self.render_palette_cell(Color::Yellow, false)}
-            {self.render_palette_cell(Color::Red, false)}
-            {self.render_palette_cell(Color::Green, false)}
-            {self.render_palette_cell(Color::Brown, false)}
+            {self.render_palette_cell(Color::White)}
+            {self.render_palette_cell(Color::Gray)}
+            {self.render_palette_cell(Color::Blue)}
+            {self.render_palette_cell(Color::Orange)}
+            {self.render_palette_cell(Color::Yellow)}
+            {self.render_palette_cell(Color::Red)}
+            {self.render_palette_cell(Color::Green)}
+            {self.render_palette_cell(Color::Brown)}
             </tr>
             </table>
           </>
