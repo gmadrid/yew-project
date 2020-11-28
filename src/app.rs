@@ -1,5 +1,5 @@
 use crate::bootstrap;
-use crate::gridtrait::GridTrait;
+use crate::grids::GridTrait;
 use crate::simplegrid::SimpleGrid;
 use crate::tablerender::{InputRenderer, PatternRenderer};
 use yew::prelude::*;

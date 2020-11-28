@@ -1,7 +1,7 @@
 use super::{no_dot, TableRenderer};
 use crate::app::{self, GridId};
 use crate::bootstrap;
-use crate::gridtrait::GridTrait;
+use crate::grids::GridTrait;
 use yew::prelude::*;
 
 use super::render_table;

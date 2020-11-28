@@ -1,4 +1,4 @@
-use super::gridtrait::GridTrait;
+use super::grids::GridTrait;
 
 pub struct SimpleGrid<T> {
     cells: Vec<T>,

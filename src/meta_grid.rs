@@ -1,5 +1,4 @@
-use crate::gridtrait::GridTrait;
-use crate::other::Color;
+use crate::grids::{Color, GridTrait};
 
 pub trait IndirectGrid {
     fn to_base(&self, row: usize, col: usize) -> (usize, usize);
@@ -88,7 +87,7 @@ mod test {
 
         let tot = indirect.iter().sum();
         let base_indices = (0..tot)
-            .map(|idx| indirect_index(idx as usize, &indirect))
+            .map(|idx| base_index(idx as usize, &indirect))
             .collect::<Vec<_>>();
 
         assert_eq!(
