@@ -72,14 +72,27 @@ impl App {
         )
     }
 
-    fn reference_tables(&self) -> Html {
+    fn reference_card(&self) -> Html {
         if !self.printable_page {
             empty()
         } else {
             let flipped = FlippedGrid::new(&self.back);
             bootstrap::concat(
-                SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.front),
-                SimpleRenderer::<FlippedGrid<SimpleGrid<bool>>>::render_table(&flipped),
+                bootstrap::spacer(),
+                bootstrap::card(
+                    "Reference",
+                    "",
+                    bootstrap::row(bootstrap::concat(
+                        bootstrap::col(bootstrap::concat(
+                            bootstrap::h5("Layer 1"),
+                            SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.front),
+                        )),
+                        bootstrap::col(bootstrap::concat(
+                            bootstrap::h5("Layer 2"),
+                            SimpleRenderer::<FlippedGrid<SimpleGrid<bool>>>::render_table(&flipped),
+                        )),
+                    )),
+                ),
             )
         }
     }
@@ -229,22 +242,21 @@ impl Component for App {
               { self.display_inputs() }
 
               { bootstrap::row(bootstrap::col(
-                  bootstrap::card(
+                  bootstrap::concat(
+                    bootstrap::card(
                       html! {
                         <>
                           <span>{"Chart 2"}</span>
 
                           <a class="noprint"
-                             onclick=printable_callback
-                             style="float:right" href="#"><small>{printable_text}</small></a>
+                              onclick=printable_callback
+                              style="float:right" href="#"><small>{printable_text}</small></a>
                         </>
                       },
                       "Follow this chart within the green box in Chart 1 on Page 7.",
-              bootstrap::concat(
-                self.pattern_table(),
-                self.reference_tables(),
-              )
-              )))}
+                      self.pattern_table()),
+                    self.reference_card())
+              ))}
             </main>
             { self.display_footer() }
           </>
