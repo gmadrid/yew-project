@@ -15,7 +15,7 @@ where
     G: GridTrait<bool>,
 {
     pub fn render_table(grid: &'a impl GridTrait<bool>) -> Html {
-        render_table(SimpleRenderer::<'a> { grid })
+        render_table(SimpleRenderer::<'a> { grid }, Some("minitable"))
     }
 }
 

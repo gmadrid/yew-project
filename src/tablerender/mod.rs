@@ -15,9 +15,13 @@ fn no_dot() -> Html {
     }
 }
 
-pub fn render_table(renderer: impl TableRenderer) -> Html {
+pub fn render_table(renderer: impl TableRenderer, class: Option<&str>) -> Html {
+    let mut classes = vec!["user-select-none"];
+    if let Some(class) = class {
+        classes.push(class);
+    }
     html! {
-        <table class="user-select-none">
+        <table class=classes>
         {for (0..renderer.num_data_rows()).map(|rn| {
             {render_full_row(&renderer, rn)}
         })}

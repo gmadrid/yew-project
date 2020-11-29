@@ -22,11 +22,14 @@ where
         grid_id: GridId,
         grid: &'a impl GridTrait<bool>,
     ) -> Html {
-        render_table(InputRenderer::<'a> {
-            grid,
-            grid_id,
-            link,
-        })
+        render_table(
+            InputRenderer::<'a> {
+                grid,
+                grid_id,
+                link,
+            },
+            None,
+        )
     }
 }
 

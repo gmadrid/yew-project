@@ -39,13 +39,16 @@ where
         back: &'a impl GridTrait<bool>,
     ) -> Html {
         // TODO: add consistency checks for the two tables.
-        render_table(PatternRenderer::<'a> {
-            front_id,
-            front,
-            back_id,
-            back,
-            link,
-        })
+        render_table(
+            PatternRenderer::<'a> {
+                front_id,
+                front,
+                back_id,
+                back,
+                link,
+            },
+            None,
+        )
     }
 }
 
