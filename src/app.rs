@@ -1,7 +1,13 @@
 use crate::bootstrap;
+
+use crate::grids::FlippedGrid;
 use crate::grids::GridTrait;
 use crate::simplegrid::SimpleGrid;
+
+use crate::tablerender::SimpleRenderer;
 use crate::tablerender::{InputRenderer, PatternRenderer};
+
+use bootstrap::empty;
 use yew::prelude::*;
 
 const GRID_HEIGHT: usize = 15;
@@ -64,6 +70,18 @@ impl App {
             GridId::Back,
             &self.back,
         )
+    }
+
+    fn reference_tables(&self) -> Html {
+        if !self.printable_page {
+            empty()
+        } else {
+            let flipped = FlippedGrid::new(&self.back);
+            bootstrap::concat(
+                SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.front),
+                SimpleRenderer::<FlippedGrid<SimpleGrid<bool>>>::render_table(&flipped),
+            )
+        }
     }
 
     fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
@@ -222,7 +240,10 @@ impl Component for App {
                         </>
                       },
                       "Follow this chart within the green box in Chart 1 on Page 7.",
-              self.pattern_table()
+              bootstrap::concat(
+                self.pattern_table(),
+                self.reference_tables(),
+              )
               )))}
             </main>
             { self.display_footer() }

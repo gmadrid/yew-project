@@ -1,9 +1,12 @@
+use yew::prelude::*;
+
 mod input;
 mod pattern;
-use yew::prelude::*;
+mod simple;
 
 pub use input::InputRenderer;
 pub use pattern::PatternRenderer;
+pub use simple::SimpleRenderer;
 
 fn no_dot() -> Html {
     html! {

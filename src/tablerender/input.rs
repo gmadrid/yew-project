@@ -1,10 +1,8 @@
-use super::{no_dot, TableRenderer};
+use super::{no_dot, render_table, TableRenderer};
 use crate::app::{self, GridId};
 use crate::bootstrap;
 use crate::grids::GridTrait;
 use yew::prelude::*;
-
-use super::render_table;
 
 pub struct InputRenderer<'a, G>
 where
