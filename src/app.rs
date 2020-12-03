@@ -1,7 +1,13 @@
 use crate::bootstrap;
+
+use crate::grids::FlippedGrid;
 use crate::grids::GridTrait;
 use crate::simplegrid::SimpleGrid;
+
+use crate::tablerender::SimpleRenderer;
 use crate::tablerender::{InputRenderer, PatternRenderer};
+
+use bootstrap::empty;
 use yew::prelude::*;
 
 const GRID_HEIGHT: usize = 15;
@@ -64,6 +70,31 @@ impl App {
             GridId::Back,
             &self.back,
         )
+    }
+
+    fn reference_card(&self) -> Html {
+        if !self.printable_page {
+            empty()
+        } else {
+            let flipped = FlippedGrid::new(&self.back);
+            bootstrap::concat(
+                bootstrap::spacer(),
+                bootstrap::card(
+                    "Reference",
+                    "",
+                    bootstrap::row(bootstrap::concat(
+                        bootstrap::col(bootstrap::concat(
+                            bootstrap::h5("Layer 1"),
+                            SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.front),
+                        )),
+                        bootstrap::col(bootstrap::concat(
+                            bootstrap::h5("Layer 2"),
+                            SimpleRenderer::<FlippedGrid<SimpleGrid<bool>>>::render_table(&flipped),
+                        )),
+                    )),
+                ),
+            )
+        }
     }
 
     fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
@@ -211,19 +242,21 @@ impl Component for App {
               { self.display_inputs() }
 
               { bootstrap::row(bootstrap::col(
-                  bootstrap::card(
+                  bootstrap::concat(
+                    bootstrap::card(
                       html! {
                         <>
                           <span>{"Chart 2"}</span>
 
                           <a class="noprint"
-                             onclick=printable_callback
-                             style="float:right" href="#"><small>{printable_text}</small></a>
+                              onclick=printable_callback
+                              style="float:right" href="#"><small>{printable_text}</small></a>
                         </>
                       },
                       "Follow this chart within the green box in Chart 1 on Page 7.",
-              self.pattern_table()
-              )))}
+                      self.pattern_table()),
+                    self.reference_card())
+              ))}
             </main>
             { self.display_footer() }
           </>

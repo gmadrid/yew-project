@@ -1,10 +1,8 @@
-use super::{no_dot, TableRenderer};
+use super::{no_dot, render_table, TableRenderer};
 use crate::app::{self, GridId};
 use crate::bootstrap;
 use crate::grids::GridTrait;
 use yew::prelude::*;
-
-use super::render_table;
 
 pub struct InputRenderer<'a, G>
 where
@@ -24,11 +22,14 @@ where
         grid_id: GridId,
         grid: &'a impl GridTrait<bool>,
     ) -> Html {
-        render_table(InputRenderer::<'a> {
-            grid,
-            grid_id,
-            link,
-        })
+        render_table(
+            InputRenderer::<'a> {
+                grid,
+                grid_id,
+                link,
+            },
+            None,
+        )
     }
 }
 

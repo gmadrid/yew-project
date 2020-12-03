@@ -15,7 +15,12 @@ pub enum Color {
 
 impl Color {
     pub fn style_str(&self) -> String {
-        format!("background: {}", self.to_string())
+        // By default, printers don't bring the background-color.
+        // color-adjust (and -webkit-print-color-adjust) override this setting in modern browsers.
+        format!(
+            "background: {}; color-adjust:exact; -webkit-print-color-adjust: exact;",
+            self.to_string()
+        )
     }
 }
 
