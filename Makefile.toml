@@ -26,3 +26,13 @@ dependencies = ["twopattern-bundle", "metapixel-bundle"]
 [tasks.watch-all-bundles]
 dependencies = ["all-bundles"]
 watch = { postpone = true, no_git_ignore = true, watch = ["./src"] }
+
+[tasks.clean-pkg]
+description = "Clean out the /pkg directory"
+command = "rm"
+args = [ "-rf", "pkg" ]
+
+[tasks.make-dist]
+dependencies = ["clean", "clean-pkg", "twopattern-bundle"]
+command = "zip"
+args = [ "-r", "dist-${CARGO_MAKE_CRATE_VERSION}.zip", "index.html", "pkg" ]
