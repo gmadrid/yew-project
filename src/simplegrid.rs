@@ -1,5 +1,7 @@
 use super::grids::GridTrait;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct SimpleGrid<T> {
     cells: Vec<T>,
     height: usize,

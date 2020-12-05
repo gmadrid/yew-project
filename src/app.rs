@@ -8,18 +8,36 @@ use crate::tablerender::SimpleRenderer;
 use crate::tablerender::{InputRenderer, PatternRenderer};
 
 use bootstrap::empty;
+use serde::{Deserialize, Serialize};
+use yew::format::Json;
 use yew::prelude::*;
+use yew::services::storage::Area;
+use yew::services::StorageService;
 
 const GRID_HEIGHT: usize = 15;
 const GRID_WIDTH: usize = 15;
 
+const STORAGE_KEY: &str = "SAVED_CHART";
 const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
+
+#[derive(Serialize, Deserialize)]
+struct Stored {
+    front: SimpleGrid<bool>,
+    back: SimpleGrid<bool>,
+}
+
+impl Default for Stored {
+    fn default() -> Self {
+        Stored {
+            front: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
+            back: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
+        }
+    }
+}
 
 pub struct App {
     link: ComponentLink<Self>,
-    front: SimpleGrid<bool>,
-    back: SimpleGrid<bool>,
-
+    stored: Stored,
     value: Option<bool>,
     printable_page: bool,
 }
@@ -45,15 +63,15 @@ pub enum Msg {
 impl App {
     fn grid_by_id(&self, id: GridId) -> &SimpleGrid<bool> {
         match id {
-            GridId::Front => &self.front,
-            GridId::Back => &self.back,
+            GridId::Front => &self.stored.front,
+            GridId::Back => &self.stored.back,
         }
     }
 
     fn grid_by_id_mut(&mut self, id: GridId) -> &mut SimpleGrid<bool> {
         match id {
-            GridId::Front => &mut self.front,
-            GridId::Back => &mut self.back,
+            GridId::Front => &mut self.stored.front,
+            GridId::Back => &mut self.stored.back,
         }
     }
 
@@ -66,9 +84,9 @@ impl App {
         PatternRenderer::<SimpleGrid<bool>, SimpleGrid<bool>>::render_table(
             &self.link,
             GridId::Front,
-            &self.front,
+            &self.stored.front,
             GridId::Back,
-            &self.back,
+            &self.stored.back,
         )
     }
 
@@ -76,7 +94,7 @@ impl App {
         if !self.printable_page {
             empty()
         } else {
-            let flipped = FlippedGrid::new(&self.back);
+            let flipped = FlippedGrid::new(&self.stored.back);
             bootstrap::concat(
                 bootstrap::spacer(),
                 bootstrap::card(
@@ -85,7 +103,7 @@ impl App {
                     bootstrap::row(bootstrap::concat(
                         bootstrap::col(bootstrap::concat(
                             bootstrap::h5("Layer 1"),
-                            SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.front),
+                            SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.stored.front),
                         )),
                         bootstrap::col(bootstrap::concat(
                             bootstrap::h5("Layer 2"),
@@ -201,25 +219,31 @@ impl Component for App {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let storage = StorageService::new(Area::Local).unwrap();
+        let Json(stored) = storage.restore(STORAGE_KEY);
         App {
             link,
-            front: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
-            back: SimpleGrid::new(GRID_HEIGHT, GRID_WIDTH),
+            stored: stored.unwrap_or_else(|_| Stored::default()),
             value: None,
             printable_page: false,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::Down(id, row, col) => self.msg_down(id, row, col),
-            Msg::Enter(id, row, col) => self.msg_enter(id, row, col),
-            Msg::Exit => self.msg_exit(),
-            Msg::Up => self.msg_up(),
+        let (save, should_render) = match msg {
+            Msg::Down(id, row, col) => (false, self.msg_down(id, row, col)),
+            Msg::Enter(id, row, col) => (false, self.msg_enter(id, row, col)),
+            Msg::Exit => (false, self.msg_exit()),
+            Msg::Up => (true, self.msg_up()),
 
-            Msg::Clear(grid_id) => self.msg_clear(grid_id),
-            Msg::TogglePrintable => self.msg_toggle_printable(),
+            Msg::Clear(grid_id) => (true, self.msg_clear(grid_id)),
+            Msg::TogglePrintable => (false, self.msg_toggle_printable()),
+        };
+        if save {
+            let mut storage = StorageService::new(Area::Local).unwrap();
+            storage.store(STORAGE_KEY, Json(&self.stored));
         }
+        should_render
     }
 
     fn change(&mut self, _: <Self as yew::Component>::Properties) -> bool {

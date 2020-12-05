@@ -66,8 +66,10 @@ checksum = "8100e46ff92eb85bf6dc2930c73f2a4f7176393c84a9446b3d501e1b354e7b34"
 
 [[package]]
 name = "colortoo"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
+ "serde",
+ "serde_json",
  "wasm-bindgen",
  "web-sys",
  "yew",
