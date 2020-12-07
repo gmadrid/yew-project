@@ -86,7 +86,7 @@ impl Other {
 
     fn render_meta_cell(
         &self,
-        grid: &(impl GridTrait<Color> + IndirectGrid),
+        grid: &(impl GridTrait + IndirectGrid),
         row_num: usize,
         col_num: usize,
     ) -> Html {
@@ -116,11 +116,7 @@ impl Other {
         }
     }
 
-    fn render_meta_row(
-        &self,
-        grid: &(impl GridTrait<Color> + IndirectGrid),
-        row_num: usize,
-    ) -> Html {
+    fn render_meta_row(&self, grid: &(impl GridTrait + IndirectGrid), row_num: usize) -> Html {
         html! {
             <tr>
             {for (0..grid.num_cols()).map(|cn| {
@@ -191,8 +187,8 @@ impl Component for Other {
         let row_count = self.base_grid.num_rows();
         let col_count = self.base_grid.num_cols();
 
-        let x_callback = self.link.callback(|vec| Msg::NewColVec(vec));
-        let y_callback = self.link.callback(|vec| Msg::NewRowVec(vec));
+        let x_callback = self.link.callback(Msg::NewColVec);
+        let y_callback = self.link.callback(Msg::NewRowVec);
 
         html! {
           <main class="main container">

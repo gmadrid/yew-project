@@ -6,7 +6,7 @@ use yew::prelude::*;
 
 pub struct InputRenderer<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     grid_id: GridId,
     grid: &'a G,
@@ -15,12 +15,12 @@ where
 
 impl<'a, G> InputRenderer<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     pub fn render_table(
         link: &'a ComponentLink<crate::app::App>,
         grid_id: GridId,
-        grid: &'a impl GridTrait<bool>,
+        grid: &'a impl GridTrait,
     ) -> Html {
         render_table(
             InputRenderer::<'a> {
@@ -35,7 +35,7 @@ where
 
 impl<'a, G> TableRenderer for InputRenderer<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     fn num_data_rows(&self) -> usize {
         self.grid.num_rows()
@@ -55,7 +55,7 @@ where
 
     fn render_data_cell(&self, row: usize, col: usize) -> Html {
         let value = self.grid.cell(row, col);
-        let mut classes = vec![if value { "on" } else { "off" }];
+        let mut classes = vec![if !value.is_white() { "on" } else { "off" }];
 
         let display_col_num = self.grid.num_cols() - col;
         if display_col_num % 5 == 0 && display_col_num != self.grid.num_cols() {
@@ -67,7 +67,7 @@ where
             classes.push("hfiver");
         };
 
-        let grid_id = self.grid_id.clone();
+        let grid_id = self.grid_id;
         type Message = <app::App as Component>::Message;
         let down_callback = self
             .link

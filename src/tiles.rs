@@ -1,12 +1,12 @@
 use crate::bootstrap;
-use crate::grids::{GridTrait, TiledGrid};
+use crate::grids::{Color, GridTrait, TiledGrid};
 use crate::simplegrid::SimpleGrid;
 use yew::prelude::*;
 
 pub struct Tiles {
     link: ComponentLink<Self>,
 
-    base_grid: SimpleGrid<bool>,
+    base_grid: SimpleGrid,
 }
 
 pub enum Msg {
@@ -18,7 +18,7 @@ impl Tiles {
         self.render_grid(&self.base_grid, "")
     }
 
-    fn render_grid(&self, grid: &impl GridTrait<bool>, class: &str) -> Html {
+    fn render_grid(&self, grid: &impl GridTrait, class: &str) -> Html {
         let mut classes = Vec::default();
         if !class.is_empty() {
             classes.push(class);
@@ -30,7 +30,7 @@ impl Tiles {
         }
     }
 
-    fn render_base_row(&self, grid: &impl GridTrait<bool>, row_num: usize) -> Html {
+    fn render_base_row(&self, grid: &impl GridTrait, row_num: usize) -> Html {
         html! {
             <tr>
             {for (0..grid.num_cols()).map(|cn| self.render_base_cell(grid, row_num, cn))}
@@ -38,14 +38,10 @@ impl Tiles {
         }
     }
 
-    fn render_base_cell(&self, grid: &impl GridTrait<bool>, row: usize, col: usize) -> Html {
+    fn render_base_cell(&self, grid: &impl GridTrait, row: usize, col: usize) -> Html {
         let click_callback = self.link.callback(move |_| Msg::SetCell(row, col));
         let value = grid.cell(row, col);
-        let style_str = if value {
-            "background: darkgray; color-adjust:exact; -webkit-print-color-adjust: exact;"
-        } else {
-            ""
-        };
+        let style_str = value.style_str();
 
         html! {
             <td style=style_str onclick=click_callback>
@@ -82,7 +78,15 @@ impl Component for Tiles {
                 let col = col % self.base_grid.num_cols();
 
                 let curr_val = self.base_grid.cell(row, col);
-                self.base_grid.set_cell(row, col, !curr_val);
+                self.base_grid.set_cell(
+                    row,
+                    col,
+                    if curr_val.is_white() {
+                        Color::Gray
+                    } else {
+                        Color::White
+                    },
+                );
             }
         }
         true
