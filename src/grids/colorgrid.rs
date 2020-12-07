@@ -1,73 +1,5 @@
 use super::gridtrait::GridTrait;
-use super::{MAX_GRID_HEIGHT, MAX_GRID_WIDTH};
-
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum Color {
-    White,
-    Gray,
-    Blue,
-    Orange,
-    Yellow,
-    Red,
-    Green,
-    Brown,
-}
-
-impl Color {
-    pub fn style_str(&self) -> String {
-        // By default, printers don't bring the background-color.
-        // color-adjust (and -webkit-print-color-adjust) override this setting in modern browsers.
-        format!(
-            "background: {}; color-adjust:exact; -webkit-print-color-adjust: exact;",
-            self.to_string()
-        )
-    }
-}
-
-impl From<u8> for Color {
-    fn from(f: u8) -> Color {
-        match f {
-            1 => Color::Gray,
-            2 => Color::Blue,
-            3 => Color::Orange,
-            4 => Color::Yellow,
-            5 => Color::Red,
-            6 => Color::Green,
-            7 => Color::Brown,
-            _ => Color::White,
-        }
-    }
-}
-
-impl From<Color> for u8 {
-    fn from(color: Color) -> u8 {
-        match color {
-            Color::Gray => 1,
-            Color::Blue => 2,
-            Color::Orange => 3,
-            Color::Yellow => 4,
-            Color::Red => 5,
-            Color::Green => 6,
-            Color::Brown => 7,
-            Color::White => 8,
-        }
-    }
-}
-
-impl ToString for Color {
-    fn to_string(&self) -> String {
-        match self {
-            Color::White => "white".to_owned(),
-            Color::Gray => "gray".to_owned(),
-            Color::Blue => "blue".to_owned(),
-            Color::Orange => "orange".to_owned(),
-            Color::Yellow => "yellow".to_owned(),
-            Color::Red => "red".to_owned(),
-            Color::Green => "green".to_owned(),
-            Color::Brown => "brown".to_owned(),
-        }
-    }
-}
+use super::{Color, MAX_GRID_HEIGHT, MAX_GRID_WIDTH};
 
 pub struct ColorGrid {
     cells: Vec<Color>,
@@ -90,7 +22,7 @@ impl ColorGrid {
     }
 }
 
-impl GridTrait<Color> for ColorGrid {
+impl GridTrait for ColorGrid {
     fn num_rows(&self) -> usize {
         self.num_rows
     }

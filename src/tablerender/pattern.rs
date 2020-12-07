@@ -16,8 +16,8 @@ fn purl_dot() -> Html {
 
 pub struct PatternRenderer<'a, G1, G2>
 where
-    G1: GridTrait<bool>,
-    G2: GridTrait<bool>,
+    G1: GridTrait,
+    G2: GridTrait,
 {
     front_id: GridId,
     front: &'a G1,
@@ -28,15 +28,15 @@ where
 
 impl<'a, G1, G2> PatternRenderer<'a, G1, G2>
 where
-    G1: GridTrait<bool>,
-    G2: GridTrait<bool>,
+    G1: GridTrait,
+    G2: GridTrait,
 {
     pub fn render_table(
         link: &'a ComponentLink<app::App>,
         front_id: GridId,
-        front: &'a impl GridTrait<bool>,
+        front: &'a impl GridTrait,
         back_id: GridId,
-        back: &'a impl GridTrait<bool>,
+        back: &'a impl GridTrait,
     ) -> Html {
         // TODO: add consistency checks for the two tables.
         render_table(
@@ -54,8 +54,8 @@ where
 
 impl<'a, G1, G2> TableRenderer for PatternRenderer<'a, G1, G2>
 where
-    G1: GridTrait<bool>,
-    G2: GridTrait<bool>,
+    G1: GridTrait,
+    G2: GridTrait,
 {
     fn num_data_rows(&self) -> usize {
         self.front.num_rows()
@@ -90,7 +90,7 @@ where
         } else {
             (self.front_id, self.front.cell(row, real_col))
         };
-        if value {
+        if !value.is_white() {
             classes.push("on");
         } else {
             classes.push("off");

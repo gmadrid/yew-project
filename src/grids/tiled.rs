@@ -1,8 +1,8 @@
-use super::GridTrait;
+use super::{Color, GridTrait};
 
 pub struct TiledGrid<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     grid: &'a G,
     repeat_x: u8,
@@ -11,7 +11,7 @@ where
 
 impl<'a, G> TiledGrid<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     pub fn new(grid: &'a G) -> TiledGrid<'a, G> {
         TiledGrid {
@@ -26,9 +26,9 @@ where
     }
 }
 
-impl<'a, G> GridTrait<bool> for TiledGrid<'a, G>
+impl<'a, G> GridTrait for TiledGrid<'a, G>
 where
-    G: GridTrait<bool>,
+    G: GridTrait,
 {
     fn num_rows(&self) -> usize {
         self.repeat_x as usize * self.grid.num_rows()
@@ -38,12 +38,12 @@ where
         self.repeat_y as usize * self.grid.num_cols()
     }
 
-    fn cell(&self, row: usize, col: usize) -> bool {
+    fn cell(&self, row: usize, col: usize) -> Color {
         let (base_row, base_col) = self.to_base(row, col);
         self.grid.cell(base_row, base_col)
     }
 
-    fn set_cell(&mut self, _: usize, _: usize, _: bool) {
+    fn set_cell(&mut self, _: usize, _: usize, _: Color) {
         unimplemented!("TiledGrid is not mutable")
     }
 

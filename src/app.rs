@@ -1,7 +1,7 @@
 use crate::bootstrap;
 
-use crate::grids::FlippedGrid;
 use crate::grids::GridTrait;
+use crate::grids::{Color, FlippedGrid};
 use crate::simplegrid::SimpleGrid;
 
 use crate::tablerender::SimpleRenderer;
@@ -22,8 +22,8 @@ const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(Serialize, Deserialize)]
 struct Stored {
-    front: SimpleGrid<bool>,
-    back: SimpleGrid<bool>,
+    front: SimpleGrid,
+    back: SimpleGrid,
 }
 
 impl Default for Stored {
@@ -38,7 +38,7 @@ impl Default for Stored {
 pub struct App {
     link: ComponentLink<Self>,
     stored: Stored,
-    value: Option<bool>,
+    value: Option<Color>,
     printable_page: bool,
 }
 
@@ -61,14 +61,14 @@ pub enum Msg {
 }
 
 impl App {
-    fn grid_by_id(&self, id: GridId) -> &SimpleGrid<bool> {
+    fn grid_by_id(&self, id: GridId) -> &SimpleGrid {
         match id {
             GridId::Front => &self.stored.front,
             GridId::Back => &self.stored.back,
         }
     }
 
-    fn grid_by_id_mut(&mut self, id: GridId) -> &mut SimpleGrid<bool> {
+    fn grid_by_id_mut(&mut self, id: GridId) -> &mut SimpleGrid {
         match id {
             GridId::Front => &mut self.stored.front,
             GridId::Back => &mut self.stored.back,
@@ -77,11 +77,11 @@ impl App {
 
     fn grid_table(&self, grid_id: GridId) -> Html {
         let grid = self.grid_by_id(grid_id);
-        InputRenderer::<SimpleGrid<bool>>::render_table(&self.link, grid_id, grid)
+        InputRenderer::<SimpleGrid>::render_table(&self.link, grid_id, grid)
     }
 
     fn pattern_table(&self) -> Html {
-        PatternRenderer::<SimpleGrid<bool>, SimpleGrid<bool>>::render_table(
+        PatternRenderer::<SimpleGrid, SimpleGrid>::render_table(
             &self.link,
             GridId::Front,
             &self.stored.front,
@@ -103,11 +103,11 @@ impl App {
                     bootstrap::row(bootstrap::concat(
                         bootstrap::col(bootstrap::concat(
                             bootstrap::h5("Layer 1"),
-                            SimpleRenderer::<SimpleGrid<bool>>::render_table(&self.stored.front),
+                            SimpleRenderer::<SimpleGrid>::render_table(&self.stored.front),
                         )),
                         bootstrap::col(bootstrap::concat(
                             bootstrap::h5("Layer 2"),
-                            SimpleRenderer::<FlippedGrid<SimpleGrid<bool>>>::render_table(&flipped),
+                            SimpleRenderer::<FlippedGrid<SimpleGrid>>::render_table(&flipped),
                         )),
                     )),
                 ),
@@ -118,7 +118,7 @@ impl App {
     fn msg_down(&mut self, id: GridId, row: usize, col: usize) -> bool {
         let grid = self.grid_by_id_mut(id);
         let value = !grid.cell(row, col);
-        grid.toggle_cell(row, col);
+        grid.set_cell(row, col, value);
         self.value = Some(value);
 
         true
@@ -224,7 +224,7 @@ impl Component for App {
         App {
             link,
             stored: stored.unwrap_or_else(|_| Stored::default()),
-            value: None,
+            value: None::<Color>,
             printable_page: false,
         }
     }

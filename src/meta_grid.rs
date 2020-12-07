@@ -6,7 +6,7 @@ pub trait IndirectGrid {
 
 pub struct MetaGrid<'a, GRID>
 where
-    GRID: GridTrait<Color>,
+    GRID: GridTrait,
 {
     grid: &'a GRID,
     row_indices: &'a [u8],
@@ -15,7 +15,7 @@ where
 
 impl<'a, GRID> MetaGrid<'a, GRID>
 where
-    GRID: GridTrait<Color>,
+    GRID: GridTrait,
 {
     pub fn new(grid: &'a GRID, row_indices: &'a [u8], col_indices: &'a [u8]) -> Self {
         MetaGrid {
@@ -28,7 +28,7 @@ where
 
 impl<'a, GRID> IndirectGrid for MetaGrid<'a, GRID>
 where
-    GRID: GridTrait<Color>,
+    GRID: GridTrait,
 {
     fn to_base(&self, row: usize, col: usize) -> (usize, usize) {
         (
@@ -49,9 +49,9 @@ fn base_index(index: usize, vec: &[u8]) -> usize {
     panic!("too big")
 }
 
-impl<'a, GRID> GridTrait<Color> for MetaGrid<'a, GRID>
+impl<'a, GRID> GridTrait for MetaGrid<'a, GRID>
 where
-    GRID: GridTrait<Color>,
+    GRID: GridTrait,
 {
     fn num_rows(&self) -> usize {
         self.row_indices.iter().sum::<u8>() as usize

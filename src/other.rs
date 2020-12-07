@@ -86,7 +86,7 @@ impl Other {
 
     fn render_meta_cell(
         &self,
-        grid: &(impl GridTrait<Color> + IndirectGrid),
+        grid: &(impl GridTrait + IndirectGrid),
         row_num: usize,
         col_num: usize,
     ) -> Html {
@@ -116,11 +116,7 @@ impl Other {
         }
     }
 
-    fn render_meta_row(
-        &self,
-        grid: &(impl GridTrait<Color> + IndirectGrid),
-        row_num: usize,
-    ) -> Html {
+    fn render_meta_row(&self, grid: &(impl GridTrait + IndirectGrid), row_num: usize) -> Html {
         html! {
             <tr>
             {for (0..grid.num_cols()).map(|cn| {
