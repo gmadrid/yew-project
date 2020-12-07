@@ -69,7 +69,7 @@ impl Component for Tiles {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let mut grid = SimpleGrid::new(12, 8);
+        let grid = SimpleGrid::new(12, 8);
         Tiles {
             link,
             base_grid: grid,
