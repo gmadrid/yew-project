@@ -1,7 +1,5 @@
 use crate::bootstrap;
-use crate::components::InputComponent;
 use crate::grids::{GridTrait, TiledGrid};
-use crate::meta_grid::{IndirectGrid, MetaGrid};
 use crate::simplegrid::SimpleGrid;
 use yew::prelude::*;
 
