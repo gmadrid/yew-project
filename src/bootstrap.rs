@@ -1,9 +1,9 @@
 use yew::prelude::{html, Html};
 
-pub fn h4(content: impl Into<Html>) -> Html {
-    html! {<h4>{content}</h4>}
-}
-
+// pub fn h4(content: impl Into<Html>) -> Html {
+//     html! {<h4>{content}</h4>}
+// }
+//
 pub fn h5(content: impl Into<Html>) -> Html {
     html! {<h5>{content}</h5>}
 }

@@ -9,15 +9,15 @@ where
     GRID: GridTrait<Color>,
 {
     grid: &'a GRID,
-    row_indices: &'a Vec<u8>,
-    col_indices: &'a Vec<u8>,
+    row_indices: &'a [u8],
+    col_indices: &'a [u8],
 }
 
 impl<'a, GRID> MetaGrid<'a, GRID>
 where
     GRID: GridTrait<Color>,
 {
-    pub fn new(grid: &'a GRID, row_indices: &'a Vec<u8>, col_indices: &'a Vec<u8>) -> Self {
+    pub fn new(grid: &'a GRID, row_indices: &'a [u8], col_indices: &'a [u8]) -> Self {
         MetaGrid {
             grid,
             row_indices,
@@ -38,7 +38,7 @@ where
     }
 }
 
-fn base_index(index: usize, vec: &Vec<u8>) -> usize {
+fn base_index(index: usize, vec: &[u8]) -> usize {
     let mut high = 0;
     for (base_idx, step) in vec.into_iter().enumerate() {
         high += step;

@@ -47,7 +47,7 @@ impl Component for InputComponent {
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let meta_vec = parse_input(&props.start).unwrap_or(vec![2, 3, 2]);
+        let meta_vec = parse_input(&props.start).unwrap_or_else(|_| vec![2, 3, 2]);
         props.callback.emit(meta_vec.clone());
         InputComponent {
             link,
@@ -55,7 +55,7 @@ impl Component for InputComponent {
             input_ref: Default::default(),
             err_ref: Default::default(),
             text: props.start,
-            meta_vec: meta_vec,
+            meta_vec,
         }
     }
 
