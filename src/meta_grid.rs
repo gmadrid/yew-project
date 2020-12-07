@@ -40,7 +40,7 @@ where
 
 fn base_index(index: usize, vec: &[u8]) -> usize {
     let mut high = 0;
-    for (base_idx, step) in vec.into_iter().enumerate() {
+    for (base_idx, step) in vec.iter().enumerate() {
         high += step;
         if index < high as usize {
             return base_idx;

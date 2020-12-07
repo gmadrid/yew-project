@@ -191,8 +191,8 @@ impl Component for Other {
         let row_count = self.base_grid.num_rows();
         let col_count = self.base_grid.num_cols();
 
-        let x_callback = self.link.callback(|vec| Msg::NewColVec(vec));
-        let y_callback = self.link.callback(|vec| Msg::NewRowVec(vec));
+        let x_callback = self.link.callback(Msg::NewColVec);
+        let y_callback = self.link.callback(Msg::NewRowVec);
 
         html! {
           <main class="main container">

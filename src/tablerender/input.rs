@@ -67,7 +67,7 @@ where
             classes.push("hfiver");
         };
 
-        let grid_id = self.grid_id.clone();
+        let grid_id = self.grid_id;
         type Message = <app::App as Component>::Message;
         let down_callback = self
             .link
