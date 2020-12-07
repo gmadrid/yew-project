@@ -20,8 +20,14 @@ dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./other.js", "--format", "iife", "--file", "./pkg/other.js" ]
 
+[tasks.tiles-bundle]
+description = "Bundle the wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./tiles.js", "--format", "iife", "--file", "./pkg/tiles.js" ]
+
 [tasks.all-bundles]
-dependencies = ["twopattern-bundle", "metapixel-bundle"]
+dependencies = ["twopattern-bundle", "metapixel-bundle", "tiles-bundle"]
 
 [tasks.watch-all-bundles]
 dependencies = ["all-bundles"]

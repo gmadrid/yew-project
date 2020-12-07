@@ -8,6 +8,7 @@ mod meta_grid;
 mod other;
 mod simplegrid;
 mod tablerender;
+mod tiles;
 
 use wasm_bindgen::prelude::*;
 
@@ -21,5 +22,11 @@ pub fn run_twocolor_app() -> Result<(), JsValue> {
 #[wasm_bindgen]
 pub fn run_other_app() -> Result<(), JsValue> {
     yew::start_app::<other::Other>();
+    Ok(())
+}
+
+#[wasm_bindgen]
+pub fn run_tiles_app() -> Result<(), JsValue> {
+    yew::start_app::<tiles::Tiles>();
     Ok(())
 }

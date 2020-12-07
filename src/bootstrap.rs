@@ -21,6 +21,16 @@ pub fn concat(first_html: Html, second_html: Html) -> Html {
     }
 }
 
+pub fn concat_spaced(first_html: Html, second_html: Html) -> Html {
+    html! {
+        <>
+          {first_html}
+          {spacer()}
+          {second_html}
+        </>
+    }
+}
+
 pub fn row(content: Html) -> Html {
     div(&["row"], content)
 }
