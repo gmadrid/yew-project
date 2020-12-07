@@ -17,3 +17,14 @@ So,
       - main.js (and/or other js files)
       - code.webasm
 ```
+
+## Feature list
+
+* Unified UI
+  * Add some UI to the Nav bar so that all of the apps are on the same page.
+  * Share grids across the various apps.
+    * This probably means changing everything to a Color grid.
+    * With two-pattern, how do you choose a grid?
+* Tile maker
+* Allow changing colors to use custom colors.
+* Unify the grid display so that you don't DRY.
