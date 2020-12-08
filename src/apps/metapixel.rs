@@ -4,7 +4,7 @@ use crate::grids::{Color, ColorGrid, GridTrait};
 use crate::meta_grid::{IndirectGrid, MetaGrid};
 use yew::prelude::*;
 
-pub struct Other {
+pub struct Metapixel {
     link: ComponentLink<Self>,
 
     base_grid: ColorGrid,
@@ -21,7 +21,7 @@ pub enum Msg {
     SetCell(usize, usize),
 }
 
-impl Other {
+impl Metapixel {
     fn render_palette_cell(&self, color: Color) -> Html {
         let class = if color == self.current_color {
             "selected"
@@ -140,7 +140,7 @@ impl Other {
     }
 }
 
-impl Component for Other {
+impl Component for Metapixel {
     type Message = Msg;
     type Properties = ();
 
@@ -157,7 +157,7 @@ impl Component for Other {
                 grid.set_cell(row, col, color);
             }
         }
-        Other {
+        Metapixel {
             link,
             base_grid: grid,
             row_grid_cols: Default::default(),

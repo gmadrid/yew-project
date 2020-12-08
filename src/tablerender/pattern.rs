@@ -1,5 +1,5 @@
 use super::{no_dot, TableRenderer};
-use crate::app::{self, GridId};
+use crate::apps::{self, GridId};
 use crate::bootstrap;
 use crate::grids::GridTrait;
 use yew::prelude::*;
@@ -23,7 +23,7 @@ where
     front: &'a G1,
     back_id: GridId,
     back: &'a G2,
-    link: &'a ComponentLink<app::App>,
+    link: &'a ComponentLink<apps::TwoPattern>,
 }
 
 impl<'a, G1, G2> PatternRenderer<'a, G1, G2>
@@ -32,7 +32,7 @@ where
     G2: GridTrait,
 {
     pub fn render_table(
-        link: &'a ComponentLink<app::App>,
+        link: &'a ComponentLink<apps::TwoPattern>,
         front_id: GridId,
         front: &'a impl GridTrait,
         back_id: GridId,
@@ -101,7 +101,7 @@ where
             classes.push("hfiver");
         }
 
-        type Message = <app::App as Component>::Message;
+        type Message = <apps::TwoPattern as Component>::Message;
         let down_callback = self
             .link
             .callback(move |_| Message::Down(grid_id, row, real_col));

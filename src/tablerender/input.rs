@@ -1,5 +1,5 @@
 use super::{no_dot, render_table, TableRenderer};
-use crate::app::{self, GridId};
+use crate::apps::{self, GridId};
 use crate::bootstrap;
 use crate::grids::GridTrait;
 use yew::prelude::*;
@@ -10,7 +10,7 @@ where
 {
     grid_id: GridId,
     grid: &'a G,
-    link: &'a ComponentLink<app::App>,
+    link: &'a ComponentLink<apps::TwoPattern>,
 }
 
 impl<'a, G> InputRenderer<'a, G>
@@ -18,7 +18,7 @@ where
     G: GridTrait,
 {
     pub fn render_table(
-        link: &'a ComponentLink<crate::app::App>,
+        link: &'a ComponentLink<apps::TwoPattern>,
         grid_id: GridId,
         grid: &'a impl GridTrait,
     ) -> Html {
@@ -68,7 +68,7 @@ where
         };
 
         let grid_id = self.grid_id;
-        type Message = <app::App as Component>::Message;
+        type Message = <apps::TwoPattern as Component>::Message;
         let down_callback = self
             .link
             .callback(move |_| Message::Down(grid_id, row, col));

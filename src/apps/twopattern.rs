@@ -35,7 +35,7 @@ impl Default for Stored {
     }
 }
 
-pub struct App {
+pub struct TwoPattern {
     link: ComponentLink<Self>,
     stored: Stored,
     value: Option<Color>,
@@ -60,7 +60,7 @@ pub enum Msg {
     Clear(GridId),
 }
 
-impl App {
+impl TwoPattern {
     fn grid_by_id(&self, id: GridId) -> &SimpleGrid {
         match id {
             GridId::Front => &self.stored.front,
@@ -214,14 +214,14 @@ impl App {
     }
 }
 
-impl Component for App {
+impl Component for TwoPattern {
     type Message = Msg;
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         let storage = StorageService::new(Area::Local).unwrap();
         let Json(stored) = storage.restore(STORAGE_KEY);
-        App {
+        TwoPattern {
             link,
             stored: stored.unwrap_or_else(|_| Stored::default()),
             value: None::<Color>,
