@@ -18,7 +18,7 @@ args = [ "./twocolor.js", "--format", "iife", "--file", "./pkg/twocolor.js" ]
 description = "Bundle the wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
-args = [ "./other.js", "--format", "iife", "--file", "./pkg/other.js" ]
+args = [ "./metapixel.js", "--format", "iife", "--file", "./pkg/metapixel.js" ]
 
 [tasks.tiles-bundle]
 description = "Bundle the wasm"

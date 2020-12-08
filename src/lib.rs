@@ -18,7 +18,7 @@ pub fn run_twocolor_app() -> Result<(), JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn run_other_app() -> Result<(), JsValue> {
+pub fn run_metapixel_app() -> Result<(), JsValue> {
     yew::start_app::<apps::Metapixel>();
     Ok(())
 }
