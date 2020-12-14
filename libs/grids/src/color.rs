@@ -58,7 +58,6 @@ impl ToString for Color {
             Color::Red => "red".to_owned(),
             Color::Green => "green".to_owned(),
             Color::Brown => "brown".to_owned(),
-            _ => Color::White.to_string(),
         }
     }
 }
