@@ -10,12 +10,6 @@ pub enum Color {
     Red,
     Green,
     Brown,
-
-    // TODO: These currently don't do anything.
-    Custom1,
-    Custom2,
-    Custom3,
-    Custom4,
 }
 
 impl Color {
@@ -42,42 +36,13 @@ impl Default for Color {
 impl std::ops::Not for Color {
     type Output = Self;
 
+    /// !White = Gray.
+    /// !AnyOtherColor = White
     fn not(self) -> Self::Output {
         if self.is_white() {
             Color::Gray
         } else {
             Color::White
-        }
-    }
-}
-
-impl From<u8> for Color {
-    fn from(f: u8) -> Color {
-        match f {
-            1 => Color::Gray,
-            2 => Color::Blue,
-            3 => Color::Orange,
-            4 => Color::Yellow,
-            5 => Color::Red,
-            6 => Color::Green,
-            7 => Color::Brown,
-            _ => Color::White,
-        }
-    }
-}
-
-impl From<Color> for u8 {
-    fn from(color: Color) -> u8 {
-        match color {
-            Color::Gray => 1,
-            Color::Blue => 2,
-            Color::Orange => 3,
-            Color::Yellow => 4,
-            Color::Red => 5,
-            Color::Green => 6,
-            Color::Brown => 7,
-            Color::White => 8,
-            _ => 8,
         }
     }
 }

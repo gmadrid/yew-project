@@ -1,4 +1,4 @@
-use super::gridtrait::GridTrait;
+use super::GridTrait;
 use super::{Color, MAX_GRID_HEIGHT, MAX_GRID_WIDTH};
 
 pub struct ColorGrid {
