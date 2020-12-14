@@ -1,2 +1,20 @@
 [tasks.default]
-alias = "twopattern-bundle"
+alias = "testapp-bundle"
+
+[tasks.serve]
+command = "simple-http-server"
+args = [ "--nocache", "serving" ]
+imstall_crate = {crate_name = "simple-http-server", binary = "simple-http-server"}
+
+[tasks.wasm]
+description = "Build the wasm code"
+command = "wasm-pack"
+args = ["build", "--target", "web", "serving"]
+dependencies = [ "format" ]
+install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "--help" }
+
+[tasks.testapp-bundle]
+description = "Bundle the 'testapp' wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]

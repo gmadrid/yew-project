@@ -1,6 +1,6 @@
-import init, { run_twocolor_app } from './pkg/colortoo.js';
+import init, { run_testapp_app } from './pkg/serving.js';
 async function main() {
-   await init('/pkg/colortoo_bg.wasm');
+   await init('/pkg/serving_bg.wasm');
    run_testapp_app();
 }
 main()

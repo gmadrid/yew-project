@@ -11,7 +11,7 @@ impl Component for TestApp {
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-false
+        false
     }
 
     fn change(&mut self, _: <Self as yew::Component>::Properties) -> bool {
@@ -21,6 +21,7 @@ false
     fn view(&self) -> Html {
         html! {
             <main class="main container">
+              <h1>{"GEORGE IS HERE!!!!"}</h1>
             </main>
         }
     }
