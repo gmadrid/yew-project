@@ -373,6 +373,8 @@ name = "renderer"
 version = "0.1.0"
 dependencies = [
  "grids",
+ "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 
@@ -445,6 +447,8 @@ version = "0.1.0"
 dependencies = [
  "grids",
  "renderer",
+ "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 

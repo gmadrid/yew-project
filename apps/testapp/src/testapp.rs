@@ -1,4 +1,8 @@
 use grids::{Color, GridTrait, SimpleGrid};
+use renderer::decorators::{
+    CellSizeDecorator, ClassDecoratorTrait, ColorDecorator, PrintableColorDecorator,
+    RegularSizedTableDecorator,
+};
 use renderer::TableRenderer;
 use yew::prelude::*;
 use yew::prelude::{html, Html};
@@ -14,6 +18,7 @@ impl TestApp {
             x_grid.set_cell(coord, coord, Color::Red);
             x_grid.set_cell(9 - coord, coord + 5, Color::Green);
         }
+
         TestApp { x_grid }
     }
 }
@@ -35,7 +40,11 @@ impl Component for TestApp {
     }
 
     fn view(&self) -> Html {
-        let renderer = TableRenderer::new(&self.x_grid);
+        let mut renderer = TableRenderer::new(&self.x_grid);
+
+        renderer.add_class_decorator(RegularSizedTableDecorator::new());
+        renderer.add_style_decorator(ColorDecorator::new());
+        renderer.add_class_decorator(PrintableColorDecorator::new());
 
         html! {
             <main class="main container">
