@@ -1,3 +1,6 @@
+[config]
+default_to_workspace = false
+
 [tasks.default]
 alias = "testapp-bundle"
 
@@ -18,3 +21,7 @@ description = "Bundle the 'testapp' wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]
+
+# [tasks.watch-testapp-bundle]
+# dependencies = ["testapp-bundle"]
+# watch = { postpone = true, no_git_ignore = true, watch = ["./apps", "./libs", "./serving"] }

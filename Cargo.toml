@@ -2,5 +2,6 @@
 members = [
   "apps/testapp",
   "libs/grids",
+  "libs/renderer",
   "serving",
 ]

@@ -1,5 +1,5 @@
-use super::grids::Color;
-use super::grids::GridTrait;
+use crate::Color;
+use crate::GridTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
