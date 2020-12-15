@@ -4,13 +4,8 @@ use grids::{Color, GridTrait};
 static BCD_ONCE: std::sync::Once = std::sync::Once::new();
 static TB_ONCE: std::sync::Once = std::sync::Once::new();
 
+#[derive(Default)]
 pub struct BorderedCellDecorator;
-
-impl Default for BorderedCellDecorator {
-    fn default() -> Self {
-        BorderedCellDecorator
-    }
-}
 
 impl ClassDecorator for BorderedCellDecorator {
     fn register(&self, munger: &CssMunger) {
@@ -27,13 +22,8 @@ impl ClassDecorator for BorderedCellDecorator {
     }
 }
 
+#[derive(Default)]
 pub struct ThickBorders;
-
-impl Default for ThickBorders {
-    fn default() -> Self {
-        ThickBorders
-    }
-}
 
 impl ClassDecorator for ThickBorders {
     fn register(&self, munger: &CssMunger) {

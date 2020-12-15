@@ -4,13 +4,8 @@ use grids::{Color, GridTrait};
 
 static ONCE: std::sync::Once = std::sync::Once::new();
 
+#[derive(Default)]
 pub struct PrintableColorDecorator;
-
-impl Default for PrintableColorDecorator {
-    fn default() -> Self {
-        PrintableColorDecorator
-    }
-}
 
 impl ClassDecorator for PrintableColorDecorator {
     fn register(&self, munger: &CssMunger) {

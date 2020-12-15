@@ -4,13 +4,8 @@ use grids::{Color, GridTrait};
 static REGULAR_ONCE: std::sync::Once = std::sync::Once::new();
 static SMALL_ONCE: std::sync::Once = std::sync::Once::new();
 
+#[derive(Default)]
 pub struct RegularSizedTableDecorator;
-
-impl Default for RegularSizedTableDecorator {
-    fn default() -> Self {
-        RegularSizedTableDecorator
-    }
-}
 
 impl ClassDecorator for RegularSizedTableDecorator {
     fn register(&self, munger: &CssMunger) {
@@ -32,13 +27,8 @@ impl ClassDecorator for RegularSizedTableDecorator {
     }
 }
 
+#[derive(Default)]
 pub struct SmallSizedTableDecorator;
-
-impl Default for SmallSizedTableDecorator {
-    fn default() -> Self {
-        SmallSizedTableDecorator
-    }
-}
 
 impl ClassDecorator for SmallSizedTableDecorator {
     // TODO: LOTS of repetition here. DRY!

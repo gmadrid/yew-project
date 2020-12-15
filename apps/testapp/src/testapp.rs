@@ -1,7 +1,8 @@
 use grids::{Color, GridTrait, InvertedGrid, MergedGrid, SimpleGrid};
 use renderer::decorators::{
-    BorderedCellDecorator, ColorDecorator, FlatLabels, PrintableColorDecorator,
-    RegularSizedTableDecorator, RoundLabels, SmallSizedTableDecorator, ThickBorders,
+    BorderedCellDecorator, ColorDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels,
+    PrintableColorDecorator, RegularSizedTableDecorator, RoundLabels, SmallSizedTableDecorator,
+    ThickBorders,
 };
 use renderer::TableRenderer;
 use yew::prelude::*;
@@ -52,6 +53,9 @@ impl Component for TestApp {
         let mut combined_renderer = TableRenderer::new(&combined_grid);
         combined_renderer.add_class_decorator(RegularSizedTableDecorator::default());
         combined_renderer.add_style_decorator(ColorDecorator::default());
+        combined_renderer.add_class_decorator(BorderedCellDecorator::default());
+        combined_renderer.add_class_decorator(MergedBorderDecorator::default());
+        combined_renderer.set_label_decorator(MergedFlatLabels::default());
 
         let mut renderer = TableRenderer::new(&self.x_grid);
         renderer.add_class_decorator(RegularSizedTableDecorator::default());
@@ -84,12 +88,12 @@ impl Component for TestApp {
 
         html! {
             <main class="main container">
+              <h1>{"combined"}</h1>
+              {combined_renderer.render()}
               <h1>{"X grid"}</h1>
               {renderer.render()}
               <h1>{"Y grid"}</h1>
               {y_renderer.render()}
-              <h1>{"combined"}</h1>
-              {combined_renderer.render()}
               <h1>{"X small"}</h1>
               {small_x_renderer.render()}
               <h1>{"Y inverted"}</h1>

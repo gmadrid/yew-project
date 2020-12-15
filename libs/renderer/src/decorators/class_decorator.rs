@@ -1,9 +1,11 @@
 mod borderedcell;
 mod cell_size;
+mod merged_borders;
 mod printable;
 
 pub use borderedcell::{BorderedCellDecorator, ThickBorders};
 pub use cell_size::{RegularSizedTableDecorator, SmallSizedTableDecorator};
+pub use merged_borders::MergedBorderDecorator;
 pub use printable::PrintableColorDecorator;
 
 use crate::decorators::CssMunger;

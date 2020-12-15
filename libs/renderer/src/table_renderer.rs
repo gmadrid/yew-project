@@ -42,6 +42,7 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
     }
 
     pub fn set_label_decorator(&mut self, label_decorator: impl LabelDecorator + 'static) {
+        label_decorator.register(&CssMunger::new());
         let boxx: Box<dyn LabelDecorator> = Box::from(label_decorator);
         self.label_decorator = boxx;
     }
@@ -68,12 +69,20 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         }
     }
 
+    fn th_with_colspan(&self, colspan: usize, classes: &[&str], content: impl Into<Html>) -> Html {
+        if colspan == 1 {
+            html! {<th class=classes>{content}</th>}
+        } else {
+            html! {<th colspan=colspan class=classes>{content}</th>}
+        }
+    }
+
     fn render_footer_cell(&self, col: usize) -> Html {
-        if let Some((content, mut classes)) = self.label_decorator.bot(self.grid, col) {
+        if let Some((content, colspan, mut classes)) = self.label_decorator.bot(self.grid, col) {
             for decorator in &self.class_decorators {
                 classes.append(&mut decorator.label_class(self.grid, col));
             }
-            html! {<td class=classes><small>{content}</small></td>}
+            self.th_with_colspan(colspan, &classes, html! {<small>{content}</small>})
         } else {
             html! {}
         }
@@ -85,13 +94,13 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         }
 
         html! {
-          <>
+          <tr>
             <th></th>
             { for (0..self.grid.num_cols()).map(|cn| {
-                html!{<td><small>{self.render_footer_cell(cn)}</small></td>}
+                html!{{self.render_footer_cell(cn)}}
             })}
             <th></th>
-          </>
+          </tr>
         }
     }
 
