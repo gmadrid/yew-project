@@ -11,7 +11,7 @@ pub use class_decorator::{
     BorderedCellDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
     SmallSizedTableDecorator, ThickBorders,
 };
-pub use label_decorator::{EmptyLabels, FlatLabels};
+pub use label_decorator::{EmptyLabels, FlatLabels, RoundLabels};
 pub use style_decorator::ColorDecorator;
 
 pub use cssmunger::CssMunger;

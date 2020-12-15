@@ -1,9 +1,10 @@
 mod color;
 mod gridtrait;
 mod hasgridid;
-mod simplegrid;
+mod impls;
 
 pub use color::Color;
-pub use gridtrait::GridTrait;
+pub use gridtrait::{CellId, GridTrait};
 pub use hasgridid::HasGridId;
-pub use simplegrid::SimpleGrid;
+
+pub use impls::{InvertedGrid, MergedGrid, SimpleGrid};

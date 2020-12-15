@@ -4,14 +4,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct SimpleGrid {
+    id: String,
     cells: Vec<Color>,
     height: usize,
     width: usize,
 }
 
 impl SimpleGrid {
-    pub fn new(height: usize, width: usize) -> SimpleGrid {
+    pub fn new(id: impl Into<String>, height: usize, width: usize) -> SimpleGrid {
         SimpleGrid {
+            id: id.into(),
             cells: vec![Default::default(); height * width],
             height,
             width,
@@ -24,6 +26,10 @@ impl SimpleGrid {
 }
 
 impl GridTrait for SimpleGrid {
+    fn grid_id(&self) -> &str {
+        &self.id
+    }
+
     fn num_rows(&self) -> usize {
         self.height
     }

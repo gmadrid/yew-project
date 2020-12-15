@@ -1,13 +1,8 @@
 use super::LabelDecorator;
 use grids::GridTrait;
 
+#[derive(Default)]
 pub struct FlatLabels;
-
-impl Default for FlatLabels {
-    fn default() -> Self {
-        FlatLabels
-    }
-}
 
 impl LabelDecorator for FlatLabels {
     fn left(&self, grid: &dyn GridTrait, row: usize) -> Option<(String, Vec<&'static str>)> {

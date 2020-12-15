@@ -2,9 +2,11 @@ use grids::GridTrait;
 
 mod emptylabels;
 mod flatlabels;
+mod roundlabels;
 
 pub use emptylabels::EmptyLabels;
 pub use flatlabels::FlatLabels;
+pub use roundlabels::RoundLabels;
 
 pub trait LabelDecorator {
     fn left(&self, _grid: &dyn GridTrait, _row: usize) -> Option<(String, Vec<&'static str>)> {
