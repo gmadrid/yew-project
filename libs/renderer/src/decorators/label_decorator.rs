@@ -1,5 +1,4 @@
 use grids::GridTrait;
-use yew::prelude::*;
 
 mod emptylabels;
 mod flatlabels;

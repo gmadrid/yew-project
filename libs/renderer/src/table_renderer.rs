@@ -4,6 +4,8 @@ use grids::GridTrait;
 
 use yew::prelude::*;
 
+static TABLE_ONCE: std::sync::Once = std::sync::Once::new();
+
 pub struct TableRenderer<'a, GRID: GridTrait> {
     grid: &'a GRID,
 
@@ -14,6 +16,10 @@ pub struct TableRenderer<'a, GRID: GridTrait> {
 
 impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
     pub fn new(grid: &'a GRID) -> Self {
+        TABLE_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule(".tblrdr td, .tblrdr th {line-height:1.0; vertical-align: middle; text-align: center }")
+        });
         TableRenderer {
             grid,
             class_decorators: Default::default(),
@@ -42,15 +48,18 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
 
     fn render_left_label(&self, row: usize) -> Html {
         if let Some((content, classes)) = self.label_decorator.left(self.grid, row) {
-            html! {<th class=classes>{content}</th>}
+            html! {<th class=classes><small>{content}</small></th>}
         } else {
             html! {}
         }
     }
 
     fn render_right_label(&self, row: usize) -> Html {
-        if let Some((content, classes)) = self.label_decorator.right(self.grid, row) {
-            html! {<th class=classes>{content}</th>}
+        if let Some((content, mut classes)) = self.label_decorator.right(self.grid, row) {
+            for decorator in &self.class_decorators {
+                classes.append(&mut decorator.label_class(self.grid, row));
+            }
+            html! {<th class=classes><small>{content}</small></th>}
         } else {
             html! {}
         }

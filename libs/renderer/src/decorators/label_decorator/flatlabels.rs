@@ -12,7 +12,7 @@ impl Default for FlatLabels {
 impl LabelDecorator for FlatLabels {
     fn left(&self, grid: &dyn GridTrait, row: usize) -> Option<(String, Vec<&'static str>)> {
         let label = grid.num_rows() - row;
-        if label % 2 == 1 {
+        if label % 2 == 0 {
             Some((label.to_string(), vec![]))
         } else {
             Some(("".to_string(), vec![]))
@@ -21,7 +21,7 @@ impl LabelDecorator for FlatLabels {
 
     fn right(&self, grid: &dyn GridTrait, row: usize) -> Option<(String, Vec<&'static str>)> {
         let label = grid.num_rows() - row;
-        if label % 2 == 0 {
+        if label % 2 == 1 {
             Some((label.to_string(), vec![]))
         } else {
             Some(("".to_string(), vec![]))

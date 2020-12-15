@@ -13,10 +13,10 @@ pub struct TestApp {
 
 impl TestApp {
     fn new() -> Self {
-        let mut x_grid = SimpleGrid::new(22, 18);
-        for coord in 0..14 {
+        let mut x_grid = SimpleGrid::new(15, 15);
+        for coord in 0..std::cmp::min(x_grid.num_cols(), x_grid.num_rows()) {
             x_grid.set_cell(coord, coord, Color::Red);
-            x_grid.set_cell(14 - coord, coord + 5, Color::Green);
+            x_grid.set_cell(14 - coord, coord, Color::Green);
         }
 
         TestApp { x_grid }

@@ -59,10 +59,10 @@ impl ClassDecorator for ThickBorders {
         let row_p = grid.num_rows() - row;
         let col_p = grid.num_cols() - col;
 
-        if row_p % 5 == 0 {
+        if row_p % 5 == 0 && row != 0 {
             ret.push("tcktop")
         }
-        if col_p % 5 == 0 {
+        if col_p % 5 == 0 && col != 0 {
             ret.push("tckleft")
         }
 

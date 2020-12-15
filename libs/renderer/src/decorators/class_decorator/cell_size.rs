@@ -25,4 +25,8 @@ impl ClassDecorator for RegularSizedTableDecorator {
     ) -> Vec<&'static str> {
         vec!["rszcell"]
     }
+
+    fn label_class(&self, _grid: &dyn GridTrait, _row: usize) -> Vec<&'static str> {
+        vec!["rszcell"]
+    }
 }

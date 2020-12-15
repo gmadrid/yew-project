@@ -11,6 +11,7 @@ use grids::{Color, GridTrait};
 
 pub trait ClassDecorator {
     fn register(&self, _munger: &CssMunger) {}
+
     fn cell_class(
         &self,
         _grid: &dyn GridTrait,
@@ -18,6 +19,10 @@ pub trait ClassDecorator {
         _col: usize,
         _contents: Color,
     ) -> Vec<&'static str> {
+        vec![]
+    }
+
+    fn label_class(&self, _grid: &dyn GridTrait, _row: usize) -> Vec<&'static str> {
         vec![]
     }
 }
