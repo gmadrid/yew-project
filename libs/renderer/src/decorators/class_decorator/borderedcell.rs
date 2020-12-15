@@ -38,8 +38,8 @@ impl Default for ThickBorders {
 impl ClassDecorator for ThickBorders {
     fn register(&self, munger: &CssMunger) {
         TB_ONCE.call_once(|| {
-            // The rule is 'td.tckleft', including the element type in order to override
-            // any 'border' rules.
+            // The rule is 'td.tckleft', including the element type in order to override any
+            // 'border' rules.
             munger.insert_rule("td.tckleft { border-left: 3px solid black}");
             munger.insert_rule("td.tcktop { border-top: 3px solid black}");
             munger.insert_rule("td.tckright { border-right: 3px solid black}");

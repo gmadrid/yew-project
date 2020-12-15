@@ -1,4 +1,4 @@
-use crate::decorators::{ClassDecorator, CssMunger, StyleDecorator};
+use crate::decorators::{ClassDecorator, CssMunger, EmptyLabels, LabelDecorator, StyleDecorator};
 
 use grids::GridTrait;
 
@@ -9,6 +9,7 @@ pub struct TableRenderer<'a, GRID: GridTrait> {
 
     class_decorators: Vec<Box<dyn ClassDecorator>>,
     style_decorators: Vec<Box<dyn StyleDecorator>>,
+    label_decorator: Box<dyn LabelDecorator>,
 }
 
 impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
@@ -17,6 +18,7 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
             grid,
             class_decorators: Default::default(),
             style_decorators: Default::default(),
+            label_decorator: Box::from(EmptyLabels::default()),
         }
     }
 
@@ -33,12 +35,35 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         self.style_decorators.push(boxx);
     }
 
+    pub fn set_label_decorator(&mut self, label_decorator: impl LabelDecorator + 'static) {
+        let boxx: Box<dyn LabelDecorator> = Box::from(label_decorator);
+        self.label_decorator = boxx;
+    }
+
+    fn render_left_label(&self, row: usize) -> Html {
+        if let Some((content, classes)) = self.label_decorator.left(self.grid, row) {
+            html! {<th class=classes>{content}</th>}
+        } else {
+            html! {}
+        }
+    }
+
+    fn render_right_label(&self, row: usize) -> Html {
+        if let Some((content, classes)) = self.label_decorator.right(self.grid, row) {
+            html! {<th class=classes>{content}</th>}
+        } else {
+            html! {}
+        }
+    }
+
     fn render_full_row(&self, row: usize) -> Html {
         html! {
             <tr>
+              {self.render_left_label(row)}
               {for (0..self.grid.num_cols()).map(|cn| {
                   {self.render_cell(row, cn)}
               })}
+              {self.render_right_label(row)}
             </tr>
         }
     }

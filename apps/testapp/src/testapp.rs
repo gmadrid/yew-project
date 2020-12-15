@@ -1,7 +1,7 @@
 use grids::{Color, GridTrait, SimpleGrid};
 use renderer::decorators::{
-    BorderedCellDecorator, ColorDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
-    ThickBorders,
+    BorderedCellDecorator, ColorDecorator, FlatLabels, PrintableColorDecorator,
+    RegularSizedTableDecorator, ThickBorders,
 };
 use renderer::TableRenderer;
 use yew::prelude::*;
@@ -47,6 +47,7 @@ impl Component for TestApp {
         renderer.add_class_decorator(PrintableColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(ThickBorders::default());
+        renderer.set_label_decorator(FlatLabels::default());
 
         html! {
             <main class="main container">
