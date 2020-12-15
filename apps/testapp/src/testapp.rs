@@ -1,7 +1,7 @@
 use grids::{Color, GridTrait, SimpleGrid};
 use renderer::decorators::{
-    CellSizeDecorator, ClassDecoratorTrait, ColorDecorator, PrintableColorDecorator,
-    RegularSizedTableDecorator,
+    BorderedCellDecorator, ColorDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
+    ThickBorders,
 };
 use renderer::TableRenderer;
 use yew::prelude::*;
@@ -13,10 +13,10 @@ pub struct TestApp {
 
 impl TestApp {
     fn new() -> Self {
-        let mut x_grid = SimpleGrid::new(10, 15);
-        for coord in 0..10 {
+        let mut x_grid = SimpleGrid::new(22, 18);
+        for coord in 0..14 {
             x_grid.set_cell(coord, coord, Color::Red);
-            x_grid.set_cell(9 - coord, coord + 5, Color::Green);
+            x_grid.set_cell(14 - coord, coord + 5, Color::Green);
         }
 
         TestApp { x_grid }
@@ -42,9 +42,11 @@ impl Component for TestApp {
     fn view(&self) -> Html {
         let mut renderer = TableRenderer::new(&self.x_grid);
 
-        renderer.add_class_decorator(RegularSizedTableDecorator::new());
-        renderer.add_style_decorator(ColorDecorator::new());
-        renderer.add_class_decorator(PrintableColorDecorator::new());
+        renderer.add_class_decorator(RegularSizedTableDecorator::default());
+        renderer.add_style_decorator(ColorDecorator::default());
+        renderer.add_class_decorator(PrintableColorDecorator::default());
+        renderer.add_class_decorator(BorderedCellDecorator::default());
+        renderer.add_class_decorator(ThickBorders::default());
 
         html! {
             <main class="main container">

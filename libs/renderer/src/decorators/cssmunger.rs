@@ -14,11 +14,7 @@ impl CssMunger {
     }
 
     pub fn insert_rule(&self, rule: &str) {
-        self.css.insert_rule(rule);
-    }
-
-    fn tester(&self) {
-        self.css.insert_rule("body { background: purple }");
+        self.css.insert_rule(rule).expect("Could not add rule.");
     }
 
     fn find_css_stylesheet() -> Option<CssStyleSheet> {
@@ -56,9 +52,16 @@ impl CssMunger {
             &stylesheet
                 .dyn_into::<web_sys::Node>()
                 .expect("Couldn't convert CSS stylesheet into node"),
-        );
+        )
+        .expect("Could not append stylesheet");
 
         // Now that we've added the new css styleshneet, we find it. Yes, weird.
         CssMunger::find_css_stylesheet()
+    }
+}
+
+impl Default for CssMunger {
+    fn default() -> Self {
+        CssMunger::new()
     }
 }

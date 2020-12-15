@@ -3,8 +3,8 @@ use grids::Color;
 
 pub struct ColorDecorator {}
 
-impl ColorDecorator {
-    pub fn new() -> Self {
+impl Default for ColorDecorator {
+    fn default() -> Self {
         ColorDecorator {}
     }
 }

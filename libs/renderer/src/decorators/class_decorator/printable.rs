@@ -1,25 +1,31 @@
-use crate::decorators::{ClassDecoratorTrait, CssMunger};
-use grids::Color;
+use super::ClassDecorator;
+use crate::decorators::CssMunger;
+use grids::{Color, GridTrait};
 
 static ONCE: std::sync::Once = std::sync::Once::new();
 
 pub struct PrintableColorDecorator;
 
-impl PrintableColorDecorator {
-    pub fn new() -> Self {
+impl Default for PrintableColorDecorator {
+    fn default() -> Self {
         PrintableColorDecorator
     }
 }
 
-impl ClassDecoratorTrait for PrintableColorDecorator {
+impl ClassDecorator for PrintableColorDecorator {
     fn register(&self, munger: &CssMunger) {
         ONCE.call_once(|| {
-            let munger = CssMunger::new();
             munger
                 .insert_rule(".prtexact { color-adjust:exact; -webkit-print-color-adjust: exact }")
         });
     }
-    fn cell_class(&self, _row: usize, _col: usize, _contents: Color) -> Vec<&'static str> {
+    fn cell_class(
+        &self,
+        _grid: &dyn GridTrait,
+        _row: usize,
+        _col: usize,
+        _contents: Color,
+    ) -> Vec<&'static str> {
         vec!["prtexact"]
     }
 }

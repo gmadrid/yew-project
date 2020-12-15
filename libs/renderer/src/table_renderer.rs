@@ -1,4 +1,4 @@
-use crate::decorators::{ClassDecoratorTrait, CssMunger, StyleDecorator};
+use crate::decorators::{ClassDecorator, CssMunger, StyleDecorator};
 
 use grids::GridTrait;
 
@@ -7,7 +7,7 @@ use yew::prelude::*;
 pub struct TableRenderer<'a, GRID: GridTrait> {
     grid: &'a GRID,
 
-    class_decorators: Vec<Box<dyn ClassDecoratorTrait>>,
+    class_decorators: Vec<Box<dyn ClassDecorator>>,
     style_decorators: Vec<Box<dyn StyleDecorator>>,
 }
 
@@ -20,11 +20,11 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         }
     }
 
-    pub fn add_class_decorator(&mut self, class_decorator: impl ClassDecoratorTrait + 'static) {
+    pub fn add_class_decorator(&mut self, class_decorator: impl ClassDecorator + 'static) {
         let munger = CssMunger::new();
         class_decorator.register(&munger);
 
-        let boxx: Box<dyn ClassDecoratorTrait> = Box::from(class_decorator);
+        let boxx: Box<dyn ClassDecorator> = Box::from(class_decorator);
         self.class_decorators.push(boxx);
     }
 
@@ -58,7 +58,7 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
 
         let mut classes = vec![];
         for decorator in &self.class_decorators {
-            classes.append(&mut decorator.cell_class(row, col, contents))
+            classes.append(&mut decorator.cell_class(self.grid, row, col, contents))
         }
 
         html! {
@@ -68,7 +68,7 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
 
     pub fn render(&self) -> Html {
         html! {
-          <table>
+          <table class="tblrdr">
             {for (0..self.grid.num_rows()).map(|rn| {
                 {self.render_full_row(rn)}
             })}

@@ -1,3 +1,7 @@
+mod color_decorator;
+
+pub use color_decorator::ColorDecorator;
+
 use grids::Color;
 
 pub trait StyleDecorator {

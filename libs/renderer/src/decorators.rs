@@ -1,13 +1,13 @@
-mod cell_size;
-mod color_decorator;
+mod class_decorator;
 mod cssmunger;
-mod printable;
-mod traits;
+mod style_decorator;
 
-pub use traits::ClassDecoratorTrait;
-pub use traits::StyleDecorator;
+pub use class_decorator::ClassDecorator;
+pub use style_decorator::StyleDecorator;
 
-pub use cell_size::{CellSizeDecorator, RegularSizedTableDecorator};
-pub use color_decorator::ColorDecorator;
+pub use class_decorator::{
+    BorderedCellDecorator, PrintableColorDecorator, RegularSizedTableDecorator, ThickBorders,
+};
+pub use style_decorator::ColorDecorator;
+
 pub use cssmunger::CssMunger;
-pub use printable::PrintableColorDecorator;
