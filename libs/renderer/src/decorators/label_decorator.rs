@@ -15,6 +15,10 @@ pub trait LabelDecorator {
         None
     }
 
+    fn has_bot(&self) -> bool {
+        false
+    }
+
     fn bot(&self, _grid: &dyn GridTrait, _col: usize) -> Option<(String, Vec<&'static str>)> {
         None
     }

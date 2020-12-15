@@ -3,7 +3,7 @@ mod cell_size;
 mod printable;
 
 pub use borderedcell::{BorderedCellDecorator, ThickBorders};
-pub use cell_size::RegularSizedTableDecorator;
+pub use cell_size::{RegularSizedTableDecorator, SmallSizedTableDecorator};
 pub use printable::PrintableColorDecorator;
 
 use crate::decorators::CssMunger;

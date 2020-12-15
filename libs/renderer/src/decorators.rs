@@ -8,7 +8,8 @@ pub use label_decorator::LabelDecorator;
 pub use style_decorator::StyleDecorator;
 
 pub use class_decorator::{
-    BorderedCellDecorator, PrintableColorDecorator, RegularSizedTableDecorator, ThickBorders,
+    BorderedCellDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
+    SmallSizedTableDecorator, ThickBorders,
 };
 pub use label_decorator::{EmptyLabels, FlatLabels};
 pub use style_decorator::ColorDecorator;

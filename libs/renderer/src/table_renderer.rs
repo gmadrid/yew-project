@@ -47,7 +47,10 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
     }
 
     fn render_left_label(&self, row: usize) -> Html {
-        if let Some((content, classes)) = self.label_decorator.left(self.grid, row) {
+        if let Some((content, mut classes)) = self.label_decorator.left(self.grid, row) {
+            for decorator in &self.class_decorators {
+                classes.append(&mut decorator.label_class(self.grid, row));
+            }
             html! {<th class=classes><small>{content}</small></th>}
         } else {
             html! {}
@@ -62,6 +65,33 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
             html! {<th class=classes><small>{content}</small></th>}
         } else {
             html! {}
+        }
+    }
+
+    fn render_footer_cell(&self, col: usize) -> Html {
+        if let Some((content, mut classes)) = self.label_decorator.bot(self.grid, col) {
+            for decorator in &self.class_decorators {
+                classes.append(&mut decorator.label_class(self.grid, col));
+            }
+            html! {<td class=classes><small>{content}</small></td>}
+        } else {
+            html! {}
+        }
+    }
+
+    fn render_footer_row(&self) -> Html {
+        if !self.label_decorator.has_bot() {
+            return html! {};
+        }
+
+        html! {
+          <>
+            <th></th>
+            { for (0..self.grid.num_cols()).map(|cn| {
+                html!{<td><small>{self.render_footer_cell(cn)}</small></td>}
+            })}
+            <th></th>
+          </>
         }
     }
 
@@ -102,10 +132,11 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
 
     pub fn render(&self) -> Html {
         html! {
-          <table class="tblrdr">
+          <table class="tblrdr user-select-none">
             {for (0..self.grid.num_rows()).map(|rn| {
                 {self.render_full_row(rn)}
             })}
+            {self.render_footer_row()}
           </table>
         }
     }

@@ -1,7 +1,7 @@
 use grids::{Color, GridTrait, SimpleGrid};
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, FlatLabels, PrintableColorDecorator,
-    RegularSizedTableDecorator, ThickBorders,
+    RegularSizedTableDecorator, SmallSizedTableDecorator, ThickBorders,
 };
 use renderer::TableRenderer;
 use yew::prelude::*;
@@ -49,10 +49,18 @@ impl Component for TestApp {
         renderer.add_class_decorator(ThickBorders::default());
         renderer.set_label_decorator(FlatLabels::default());
 
+        let mut small_renderer = TableRenderer::new(&self.x_grid);
+        small_renderer.add_class_decorator(SmallSizedTableDecorator::default());
+        small_renderer.add_style_decorator(ColorDecorator::default());
+        small_renderer.add_class_decorator(PrintableColorDecorator::default());
+        small_renderer.add_class_decorator(BorderedCellDecorator::default());
+
         html! {
             <main class="main container">
               <h1>{"X grid"}</h1>
               {renderer.render()}
+              <h1>{"Small grid"}</h1>
+              {small_renderer.render()}
             </main>
         }
     }

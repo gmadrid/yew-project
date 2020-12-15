@@ -28,7 +28,12 @@ impl LabelDecorator for FlatLabels {
         }
     }
 
-    fn bot(&self, _grid: &dyn GridTrait, _col: usize) -> Option<(String, Vec<&'static str>)> {
-        None
+    fn has_bot(&self) -> bool {
+        true
+    }
+
+    fn bot(&self, grid: &dyn GridTrait, col: usize) -> Option<(String, Vec<&'static str>)> {
+        let label = grid.num_cols() - col;
+        Some((label.to_string(), vec![]))
     }
 }
