@@ -88,12 +88,12 @@ impl Component for TestApp {
 
         html! {
             <main class="main container">
-              <h1>{"combined"}</h1>
-              {combined_renderer.render()}
               <h1>{"X grid"}</h1>
               {renderer.render()}
               <h1>{"Y grid"}</h1>
               {y_renderer.render()}
+              <h1>{"combined"}</h1>
+              {combined_renderer.render()}
               <h1>{"X small"}</h1>
               {small_x_renderer.render()}
               <h1>{"Y inverted"}</h1>
