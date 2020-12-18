@@ -44,15 +44,5 @@ impl LabelDecorator for MergedFlatLabels {
             }
             (label.to_string(), 2, classes)
         })
-        // if col % 2 == 0 {
-        //     let label = (grid.num_cols() - col) / 2;
-        //     let mut classes = vec![];
-        //     if col != 0 {
-        //         classes.push("mleft");
-        //     }
-        //     Some((label.to_string(), 2, classes))
-        // } else {
-        //     None
-        // }
     }
 }
