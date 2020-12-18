@@ -20,3 +20,6 @@ yew = "0.17"
 
 [dependencies.grids]
 path = "../grids"
+
+[dependencies.tools]
+path = "../tools"

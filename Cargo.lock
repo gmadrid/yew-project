@@ -373,6 +373,7 @@ name = "renderer"
 version = "0.1.0"
 dependencies = [
  "grids",
+ "tools",
  "wasm-bindgen",
  "web-sys",
  "yew",
@@ -470,6 +471,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tools"
+version = "0.1.0"
+dependencies = [
+ "yew",
 ]
 
 [[package]]
