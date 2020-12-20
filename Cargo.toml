@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "apps/testapp",
+  "libs/bootstrap",
   "libs/grids",
   "libs/renderer",
   "libs/tools",

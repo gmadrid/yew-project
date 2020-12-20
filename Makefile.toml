@@ -22,6 +22,16 @@ dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]
 
+[tasks.metapixel-bundle]
+description = "Bundle the 'metapixel' wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./serving/metapixel.js", "--format", "iife", "--file", "./serving/pkg/metapixel.js" ]
+
+[tasks.all-bundles]
+description = "All bundles"
+dependencies = [ "metapixel-bundle", "testapp-bundle"]
+
 # [tasks.watch-testapp-bundle]
 # dependencies = ["testapp-bundle"]
 # watch = { postpone = true, no_git_ignore = true, watch = ["./apps", "./libs", "./serving"] }

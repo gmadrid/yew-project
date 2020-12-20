@@ -29,3 +29,9 @@ pub trait GridTrait {
 
     fn clear(&mut self);
 }
+
+pub trait ToBaseTrait {
+    fn to_base(&self, row: usize, col: usize) -> (usize, usize) {
+        (row, col)
+    }
+}

@@ -35,6 +35,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 
 [[package]]
+name = "bootstrap"
+version = "0.1.0"
+dependencies = [
+ "paste",
+ "yew",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -307,10 +315,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
 
 [[package]]
+name = "metapixel"
+version = "0.1.0"
+dependencies = [
+ "bootstrap",
+ "grids",
+ "renderer",
+ "tools",
+ "wasm-bindgen",
+ "web-sys",
+ "yew",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13bd41f508810a131401606d54ac32a467c97172d74ba7662562ebba5ad07fa0"
+
+[[package]]
+name = "paste"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5d65c4d95931acda4498f675e332fcbdc9a06705cd07086c510e9b6009cd1c1"
 
 [[package]]
 name = "pin-project"
@@ -420,6 +447,7 @@ dependencies = [
 name = "serving"
 version = "0.1.0"
 dependencies = [
+ "metapixel",
  "testapp",
  "wasm-bindgen",
  "yew",
@@ -446,8 +474,10 @@ dependencies = [
 name = "testapp"
 version = "0.1.0"
 dependencies = [
+ "bootstrap",
  "grids",
  "renderer",
+ "tools",
  "wasm-bindgen",
  "web-sys",
  "yew",
