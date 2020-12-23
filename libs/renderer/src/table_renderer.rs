@@ -158,16 +158,16 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
 
         let cell_id = self.grid.cell_id(row, col);
 
-        let cloned_cell_id = cell_id.clone();
+        let cloned_cell_id = cell_id;
         let mdown_callback: Callback<_> = self.mdown.clone().reform(move |_| cloned_cell_id);
 
-        let cloned_cell_id = cell_id.clone();
+        let cloned_cell_id = cell_id;
         let mup_callback: Callback<_> = self.mup.clone().reform(move |_| cloned_cell_id);
 
-        let cloned_cell_id = cell_id.clone();
+        let cloned_cell_id = cell_id;
         let menter_callback: Callback<_> = self.menter.clone().reform(move |_| cloned_cell_id);
 
-        let cloned_cell_id = cell_id.clone();
+        let cloned_cell_id = cell_id;
         let mleave_callback: Callback<_> = self.mleave.clone().reform(move |_| cloned_cell_id);
 
         html! {

@@ -13,7 +13,7 @@ pub struct SimpleGrid {
 impl SimpleGrid {
     pub fn new(id: GridId, height: usize, width: usize) -> SimpleGrid {
         SimpleGrid {
-            id: id,
+            id,
             cells: vec![Default::default(); height * width],
             height,
             width,
