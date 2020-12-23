@@ -1,8 +1,6 @@
 use grids::{CellId, Color, GridId, GridTrait, InvertedGrid, MergedGrid, SimpleGrid};
 use renderer::decorators::{
-    BorderedCellDecorator, ColorDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels,
-    PrintableColorDecorator, RegularSizedTableDecorator, RoundLabels, SmallSizedTableDecorator,
-    ThickBorders,
+    FlatLabels, MergedBorderDecorator, MergedFlatLabels, RoundLabels, ThickBorders,
 };
 use renderer::TableRenderer;
 use yew::html::Scope;
@@ -27,18 +25,8 @@ pub enum Message {
 
 impl TestApp {
     fn new(link: ComponentLink<Self>) -> Self {
-        let mut x_grid = SimpleGrid::new(GridId::LayerOne, 15, 15);
-        for coord in 0..std::cmp::min(x_grid.num_cols(), x_grid.num_rows()) {
-            x_grid.set_cell(coord, coord, Color::Red);
-            x_grid.set_cell(14 - coord, coord, Color::Green);
-        }
-
-        let mut y_grid = SimpleGrid::new(GridId::LayerTwo, 15, 15);
-        for row in (0..y_grid.num_rows()).step_by(4) {
-            for col in 0..y_grid.num_cols() {
-                y_grid.set_cell(row, col, Color::Gray);
-            }
-        }
+        let x_grid = SimpleGrid::new(GridId::LayerOne, 15, 15);
+        let y_grid = SimpleGrid::new(GridId::LayerTwo, 15, 15);
 
         TestApp {
             link,
@@ -91,7 +79,6 @@ impl Component for TestApp {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        let info = yew::services::ConsoleService::info;
         match msg {
             Message::Down(cell_id) => {
                 let grid = self.grid_for_id_mut(cell_id.grid_id);
