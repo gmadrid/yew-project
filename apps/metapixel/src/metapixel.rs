@@ -1,5 +1,5 @@
 use bootstrap::main_container;
-use grids::{Color, GridTrait, MetaGrid, SimpleGrid};
+use grids::{Color, GridId, GridTrait, MetaGrid, SimpleGrid};
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
 };
@@ -30,7 +30,7 @@ impl MetapixelApp {
 
     fn render_meta_grid(&self) -> Html {
         let metagrid = MetaGrid::new(
-            "metagrid",
+            GridId::SmallOne,
             &self.base_grid,
             &self.row_grid_cols,
             &self.col_grid_cols,
@@ -49,7 +49,7 @@ impl Component for MetapixelApp {
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let mut grid = SimpleGrid::new("metagrid", 5, 5);
+        let mut grid = SimpleGrid::new(GridId::Main, 5, 5);
         for row in 0..grid.num_rows() {
             for col in 0..grid.num_cols() {
                 let color = if row % 2 == col % 2 {

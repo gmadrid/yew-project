@@ -1,13 +1,25 @@
 use super::Color;
+use serde::{Deserialize, Serialize};
 
-pub struct CellId<'a> {
-    pub grid_id: &'a str,
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+pub enum GridId {
+    Main,
+    LayerOne,
+    LayerTwo,
+    SmallOne,
+    SmallTwo,
+    Combined,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+pub struct CellId {
+    pub grid_id: GridId,
     pub row: usize,
     pub col: usize,
 }
 
-impl<'a> CellId<'a> {
-    pub fn new(grid_id: &'a str, row: usize, col: usize) -> CellId {
+impl<'a> CellId {
+    pub fn new(grid_id: GridId, row: usize, col: usize) -> CellId {
         CellId { grid_id, row, col }
     }
 }
@@ -16,7 +28,7 @@ impl<'a> CellId<'a> {
 // It represents a knitting pattern.
 // It also include a facility for naming grids.
 pub trait GridTrait {
-    fn grid_id(&self) -> &str;
+    fn grid_id(&self) -> GridId;
     fn cell_id(&self, row: usize, col: usize) -> CellId {
         CellId::new(self.grid_id(), row, col)
     }

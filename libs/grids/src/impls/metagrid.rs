@@ -1,8 +1,8 @@
 use crate::gridtrait::ToBaseTrait;
-use crate::GridTrait;
+use crate::{GridId, GridTrait};
 
 pub struct MetaGrid<'a, GRID: GridTrait> {
-    id: String,
+    id: GridId,
     grid: &'a GRID,
 
     base_row_indices: Vec<u8>,
@@ -25,7 +25,7 @@ fn compute_base_indices(indices: &[u8]) -> Vec<u8> {
 
 impl<'a, GRID: GridTrait> MetaGrid<'a, GRID> {
     pub fn new(
-        id: impl Into<String>,
+        id: GridId,
         grid: &'a GRID,
         row_indices: &'a [u8],
         col_indices: &'a [u8],
@@ -34,7 +34,7 @@ impl<'a, GRID: GridTrait> MetaGrid<'a, GRID> {
         let base_col_indices = compute_base_indices(col_indices);
 
         MetaGrid {
-            id: id.into(),
+            id,
             grid,
 
             base_row_indices,
@@ -53,8 +53,8 @@ impl<'a, GRID: GridTrait> ToBaseTrait for MetaGrid<'a, GRID> {
 }
 
 impl<'a, GRID: GridTrait> GridTrait for MetaGrid<'a, GRID> {
-    fn grid_id(&self) -> &str {
-        &self.id
+    fn grid_id(&self) -> GridId {
+        self.id
     }
 
     fn num_rows(&self) -> usize {

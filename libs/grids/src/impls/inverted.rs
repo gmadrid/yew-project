@@ -1,10 +1,10 @@
-use crate::{CellId, Color, GridTrait};
+use crate::{CellId, Color, GridId, GridTrait};
 
 pub struct InvertedGrid<'a, GRID>
 where
     GRID: GridTrait,
 {
-    id: String,
+    id: GridId,
     grid: &'a GRID,
 }
 
@@ -12,11 +12,8 @@ impl<'a, GRID> InvertedGrid<'a, GRID>
 where
     GRID: GridTrait,
 {
-    pub fn new(id: impl Into<String>, grid: &'a GRID) -> Self {
-        InvertedGrid {
-            id: id.into(),
-            grid,
-        }
+    pub fn new(id: GridId, grid: &'a GRID) -> Self {
+        InvertedGrid { id, grid }
     }
 }
 
@@ -24,8 +21,8 @@ impl<'a, GRID> GridTrait for InvertedGrid<'a, GRID>
 where
     GRID: GridTrait,
 {
-    fn grid_id(&self) -> &str {
-        &self.id
+    fn grid_id(&self) -> GridId {
+        self.id
     }
 
     fn cell_id(&self, row: usize, col: usize) -> CellId {

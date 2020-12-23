@@ -1,19 +1,19 @@
 use crate::Color;
-use crate::GridTrait;
+use crate::{GridId, GridTrait};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct SimpleGrid {
-    id: String,
+    id: GridId,
     cells: Vec<Color>,
     height: usize,
     width: usize,
 }
 
 impl SimpleGrid {
-    pub fn new(id: impl Into<String>, height: usize, width: usize) -> SimpleGrid {
+    pub fn new(id: GridId, height: usize, width: usize) -> SimpleGrid {
         SimpleGrid {
-            id: id.into(),
+            id: id,
             cells: vec![Default::default(); height * width],
             height,
             width,
@@ -26,8 +26,8 @@ impl SimpleGrid {
 }
 
 impl GridTrait for SimpleGrid {
-    fn grid_id(&self) -> &str {
-        &self.id
+    fn grid_id(&self) -> GridId {
+        self.id
     }
 
     fn num_rows(&self) -> usize {

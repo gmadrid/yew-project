@@ -1,11 +1,11 @@
-use crate::{CellId, Color, GridTrait};
+use crate::{CellId, Color, GridId, GridTrait};
 
 pub struct MergedGrid<'a, GRIDONE, GRIDTWO>
 where
     GRIDONE: GridTrait,
     GRIDTWO: GridTrait,
 {
-    id: String,
+    id: GridId,
     grid_one: &'a GRIDONE,
     grid_two: &'a GRIDTWO,
 }
@@ -15,9 +15,9 @@ where
     GRIDONE: GridTrait,
     GRIDTWO: GridTrait,
 {
-    pub fn new(id: impl Into<String>, grid_one: &'a GRIDONE, grid_two: &'a GRIDTWO) -> Self {
+    pub fn new(id: GridId, grid_one: &'a GRIDONE, grid_two: &'a GRIDTWO) -> Self {
         MergedGrid {
-            id: id.into(),
+            id,
             grid_one,
             grid_two,
         }
@@ -45,8 +45,8 @@ where
     GRIDONE: GridTrait,
     GRIDTWO: GridTrait,
 {
-    fn grid_id(&self) -> &str {
-        &self.id
+    fn grid_id(&self) -> GridId {
+        self.id
     }
 
     fn cell_id(&self, row: usize, col: usize) -> CellId {

@@ -1,6 +1,6 @@
 use crate::decorators::{ClassDecorator, CssMunger, EmptyLabels, LabelDecorator, StyleDecorator};
 
-use grids::GridTrait;
+use grids::{CellId, GridTrait};
 
 use yew::prelude::*;
 
@@ -8,6 +8,11 @@ static TABLE_ONCE: std::sync::Once = std::sync::Once::new();
 
 pub struct TableRenderer<'a, GRID: GridTrait> {
     grid: &'a GRID,
+
+    mdown: Callback<CellId>,
+    mup: Callback<CellId>,
+    menter: Callback<CellId>,
+    mleave: Callback<CellId>,
 
     class_decorators: Vec<Box<dyn ClassDecorator>>,
     style_decorators: Vec<Box<dyn StyleDecorator>>,
@@ -22,10 +27,27 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         });
         TableRenderer {
             grid,
+            mdown: Callback::noop(),
+            mup: Callback::noop(),
+            menter: Callback::noop(),
+            mleave: Callback::noop(),
             class_decorators: Default::default(),
             style_decorators: Default::default(),
             label_decorator: Box::from(EmptyLabels::default()),
         }
+    }
+
+    pub fn set_interactions(
+        &mut self,
+        mdown: Callback<CellId>,
+        mup: Callback<CellId>,
+        menter: Callback<CellId>,
+        mleave: Callback<CellId>,
+    ) {
+        self.mdown = mdown;
+        self.mup = mup;
+        self.menter = menter;
+        self.mleave = mleave;
     }
 
     pub fn add_class_decorator(&mut self, class_decorator: impl ClassDecorator + 'static) {
@@ -134,8 +156,27 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
             classes.append(&mut decorator.cell_class(self.grid, row, col, contents))
         }
 
+        let cell_id = self.grid.cell_id(row, col);
+
+        let cloned_cell_id = cell_id.clone();
+        let mdown_callback: Callback<_> = self.mdown.clone().reform(move |_| cloned_cell_id);
+
+        let cloned_cell_id = cell_id.clone();
+        let mup_callback: Callback<_> = self.mup.clone().reform(move |_| cloned_cell_id);
+
+        let cloned_cell_id = cell_id.clone();
+        let menter_callback: Callback<_> = self.menter.clone().reform(move |_| cloned_cell_id);
+
+        let cloned_cell_id = cell_id.clone();
+        let mleave_callback: Callback<_> = self.mleave.clone().reform(move |_| cloned_cell_id);
+
         html! {
-            <td class=classes style=style_string></td>
+            <td
+            onmousedown=mdown_callback
+            onmouseup=mup_callback
+            onmouseenter=menter_callback
+            onmouseleave=mleave_callback
+            class=classes style=style_string></td>
         }
     }
 
