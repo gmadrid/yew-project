@@ -119,10 +119,7 @@ impl Component for TestApp {
 
     fn view(&self) -> Html {
         let combined_grid = MergedGrid::new(GridId::Combined, &self.x_grid, &self.y_grid);
-        let mut combined_renderer = TableRenderer::new(&combined_grid);
-        combined_renderer.add_class_decorator(RegularSizedTableDecorator::default());
-        combined_renderer.add_style_decorator(ColorDecorator::default());
-        combined_renderer.add_class_decorator(BorderedCellDecorator::default());
+        let mut combined_renderer = TableRenderer::regular_renderer(&combined_grid);
         combined_renderer.add_class_decorator(MergedBorderDecorator::default());
         combined_renderer.set_label_decorator(MergedFlatLabels::default());
         combined_renderer.set_interactions(
@@ -132,11 +129,7 @@ impl Component for TestApp {
             self.make_msg_callback(Message::Leave),
         );
 
-        let mut renderer = TableRenderer::new(&self.x_grid);
-        renderer.add_class_decorator(RegularSizedTableDecorator::default());
-        renderer.add_style_decorator(ColorDecorator::default());
-        renderer.add_class_decorator(PrintableColorDecorator::default());
-        renderer.add_class_decorator(BorderedCellDecorator::default());
+        let mut renderer = TableRenderer::regular_renderer(&self.x_grid);
         renderer.add_class_decorator(ThickBorders::default());
         renderer.set_label_decorator(FlatLabels::default());
         renderer.set_interactions(
@@ -146,11 +139,7 @@ impl Component for TestApp {
             self.make_msg_callback(Message::Leave),
         );
 
-        let mut y_renderer = TableRenderer::new(&self.y_grid);
-        y_renderer.add_class_decorator(RegularSizedTableDecorator::default());
-        y_renderer.add_style_decorator(ColorDecorator::default());
-        y_renderer.add_class_decorator(PrintableColorDecorator::default());
-        y_renderer.add_class_decorator(BorderedCellDecorator::default());
+        let mut y_renderer = TableRenderer::regular_renderer(&self.y_grid);
         y_renderer.add_class_decorator(ThickBorders::default());
         y_renderer.set_label_decorator(RoundLabels::default());
         y_renderer.set_interactions(
@@ -160,18 +149,10 @@ impl Component for TestApp {
             self.make_msg_callback(Message::Leave),
         );
 
-        let mut small_x_renderer = TableRenderer::new(&self.x_grid);
-        small_x_renderer.add_class_decorator(SmallSizedTableDecorator::default());
-        small_x_renderer.add_style_decorator(ColorDecorator::default());
-        small_x_renderer.add_class_decorator(PrintableColorDecorator::default());
-        small_x_renderer.add_class_decorator(BorderedCellDecorator::default());
+        let small_x_renderer = TableRenderer::small_renderer(&self.x_grid);
 
         let inverted_grid = InvertedGrid::new(GridId::SmallTwo, &self.y_grid);
-        let mut inverted_renderer = TableRenderer::new(&inverted_grid);
-        inverted_renderer.add_class_decorator(SmallSizedTableDecorator::default());
-        inverted_renderer.add_style_decorator(ColorDecorator::default());
-        inverted_renderer.add_class_decorator(PrintableColorDecorator::default());
-        inverted_renderer.add_class_decorator(BorderedCellDecorator::default());
+        let inverted_renderer = TableRenderer::small_renderer(&inverted_grid);
 
         html! {
             <main class="main container">

@@ -1,4 +1,7 @@
-use crate::decorators::{ClassDecorator, CssMunger, EmptyLabels, LabelDecorator, StyleDecorator};
+use crate::decorators::{
+    BorderedCellDecorator, ClassDecorator, ColorDecorator, CssMunger, EmptyLabels, LabelDecorator,
+    PrintableColorDecorator, RegularSizedTableDecorator, SmallSizedTableDecorator, StyleDecorator,
+};
 
 use grids::{CellId, GridTrait};
 
@@ -35,6 +38,29 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
             style_decorators: Default::default(),
             label_decorator: Box::from(EmptyLabels::default()),
         }
+    }
+
+    /// Creates a new renderer with the basic decorations: colored cells, printable, with borders.
+    /// NOTE: this renderer will not display properly because it has no size.
+    /// See small_renderer(), and regular_renderer().
+    pub fn base_renderer(grid: &'a GRID) -> Self {
+        let mut renderer = TableRenderer::new(grid);
+        renderer.add_style_decorator(ColorDecorator::default());
+        renderer.add_class_decorator(PrintableColorDecorator::default());
+        renderer.add_class_decorator(BorderedCellDecorator::default());
+        renderer
+    }
+
+    pub fn regular_renderer(grid: &'a GRID) -> Self {
+        let mut renderer = Self::base_renderer(grid);
+        renderer.add_class_decorator(RegularSizedTableDecorator::default());
+        renderer
+    }
+
+    pub fn small_renderer(grid: &'a GRID) -> Self {
+        let mut renderer = Self::base_renderer(grid);
+        renderer.add_class_decorator(SmallSizedTableDecorator::default());
+        renderer
     }
 
     pub fn set_interactions(
