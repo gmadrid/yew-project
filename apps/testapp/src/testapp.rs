@@ -2,6 +2,7 @@ use grids::{CellId, Color, GridId, GridTrait, InvertedGrid, MergedGrid, SimpleGr
 use renderer::decorators::{
     FlatLabels, MergedBorderDecorator, MergedFlatLabels, RoundLabels, ThickBorders,
 };
+use renderer::interact::{Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use yew::html::Scope;
 use yew::prelude::*;
@@ -119,12 +120,14 @@ impl Component for TestApp {
         let mut renderer = TableRenderer::regular_renderer(&self.x_grid);
         renderer.add_class_decorator(ThickBorders::default());
         renderer.set_label_decorator(FlatLabels::default());
-        renderer.set_interactions(
-            self.make_msg_callback(Message::Down),
-            self.make_msg_callback(|_| Message::Up),
-            self.make_msg_callback(Message::Enter),
-            self.make_msg_callback(Message::Leave),
-        );
+
+        //OneColorInteractor::install(&mut renderer);
+        // renderer.set_interactions(
+        //     self.make_msg_callback(Message::Down),
+        //     self.make_msg_callback(|_| Message::Up),
+        //     self.make_msg_callback(Message::Enter),
+        //     self.make_msg_callback(Message::Leave),
+        // );
 
         let mut y_renderer = TableRenderer::regular_renderer(&self.y_grid);
         y_renderer.add_class_decorator(ThickBorders::default());
