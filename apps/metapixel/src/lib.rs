@@ -2,4 +2,4 @@
 
 mod metapixel;
 
-pub use metapixel::MetapixelApp;
+pub use crate::metapixel::MetapixelApp;

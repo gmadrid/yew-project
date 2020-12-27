@@ -89,6 +89,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "crown"
+version = "0.1.0"
+dependencies = [
+ "yew",
+]
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -447,6 +454,7 @@ dependencies = [
 name = "serving"
 version = "0.1.0"
 dependencies = [
+ "crown",
  "metapixel",
  "testapp",
  "wasm-bindgen",

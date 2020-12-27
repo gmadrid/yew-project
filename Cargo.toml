@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "apps/crown",
   "apps/testapp",
   "libs/bootstrap",
   "libs/grids",

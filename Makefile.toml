@@ -28,9 +28,15 @@ dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./serving/metapixel.js", "--format", "iife", "--file", "./serving/pkg/metapixel.js" ]
 
+[tasks.crownapp-bundle]
+description = "Bundle the 'crown' wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./serving/crownapp.js", "--format", "iife", "--file", "./serving/pkg/crownapp.js" ]
+
 [tasks.all-bundles]
 description = "All bundles"
-dependencies = [ "metapixel-bundle", "testapp-bundle"]
+dependencies = [ "crownapp-bundle", "metapixel-bundle", "testapp-bundle"]
 
 # [tasks.watch-testapp-bundle]
 # dependencies = ["testapp-bundle"]
