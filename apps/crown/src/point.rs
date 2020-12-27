@@ -1,5 +1,4 @@
 use std::f64::consts::PI;
-const PI_OVER_2: f64 = PI / 2.0;
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Point {
@@ -11,30 +10,14 @@ pub struct Point {
 
 impl Point {
     pub fn coord(x: f64, y: f64) -> Point {
-        //let info = yew::services::ConsoleService::info;
-        let r = (x * x + y * y).sqrt();
         let mut theta = (y / x).atan();
-        // info(&format!(
-        //     "COORD: x:{:.3}, y:{:.3} r:{:.3} theta:{:.3}",
-        //     x,
-        //     y,
-        //     r,
-        //     theta * 180.0 / PI
-        // ));
         if x < 0.0 {
-            // info("HERE");
-            println!("FOO");
             if y < 0.0 {
-                // info("ONE");
-                println!("BAR");
                 theta -= PI;
             } else {
-                // info("TWO");
-                println!("QUUX");
                 theta += PI;
             }
         }
-        // info(&format!("computed theta (deg): {:.3}", theta * 180.0 / PI));
         Point {
             x,
             y,
@@ -53,7 +36,7 @@ impl Point {
     }
 
     pub fn polar_deg(r: f64, theta_deg: f64) -> Point {
-        Point::polar(r, theta_deg * std::f64::consts::PI / 180.0)
+        Point::polar(r, theta_deg.to_radians())
     }
 
     pub fn x(&self) -> f64 {

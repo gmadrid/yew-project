@@ -1,3 +1,4 @@
+mod arc;
 mod crownapp;
 mod point;
 
