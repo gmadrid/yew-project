@@ -2,7 +2,6 @@ use grids::{CellId, Color, GridId, GridTrait, InvertedGrid, MergedGrid, SimpleGr
 use renderer::decorators::{
     FlatLabels, MergedBorderDecorator, MergedFlatLabels, RoundLabels, ThickBorders,
 };
-use renderer::interact::{Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use yew::html::Scope;
 use yew::prelude::*;
@@ -37,14 +36,14 @@ impl TestApp {
         }
     }
 
-    fn grid_for_id(&self, id: GridId) -> &dyn GridTrait {
-        match id {
-            GridId::LayerOne => &self.x_grid,
-            GridId::LayerTwo => &self.y_grid,
-            _ => panic!("Bad mapping for grid id: {:?}", id),
-        }
-    }
-
+    // fn grid_for_id(&self, id: GridId) -> &dyn GridTrait {
+    //     match id {
+    //         GridId::LayerOne => &self.x_grid,
+    //         GridId::LayerTwo => &self.y_grid,
+    //         _ => panic!("Bad mapping for grid id: {:?}", id),
+    //     }
+    // }
+    //
     fn grid_for_id_mut(&mut self, id: GridId) -> &mut dyn GridTrait {
         match id {
             GridId::LayerOne => &mut self.x_grid,

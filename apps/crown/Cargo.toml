@@ -21,11 +21,11 @@ yew = "0.17"
 # [dependencies.bootstrap]
 # path = "../../libs/bootstrap"
 #
-# [dependencies.grids]
-# path = "../../libs/grids"
-#
-# [dependencies.renderer]
-# path = "../../libs/renderer"
-#
+[dependencies.grids]
+path = "../../libs/grids"
+
+[dependencies.renderer]
+path = "../../libs/renderer"
+
 # [dependencies.tools]
 # path = "../../libs/tools"

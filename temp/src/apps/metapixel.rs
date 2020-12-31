@@ -5,7 +5,7 @@ use crate::meta_grid::{IndirectGrid, MetaGrid};
 use yew::prelude::*;
 
 pub struct Metapixel {
-    link: ComponentLink<Self>,
+    // link: ComponentLink<Self>,
 
     base_grid: ColorGrid,
 
@@ -144,7 +144,7 @@ impl Component for Metapixel {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
         let mut grid = ColorGrid::new();
         for row in 0..100 {
             for col in 0..100 {
@@ -158,7 +158,7 @@ impl Component for Metapixel {
             }
         }
         Metapixel {
-            link,
+            // link,
             base_grid: grid,
             row_grid_cols: Default::default(),
             col_grid_cols: Default::default(),

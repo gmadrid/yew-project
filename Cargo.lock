@@ -92,6 +92,8 @@ dependencies = [
 name = "crown"
 version = "0.1.0"
 dependencies = [
+ "grids",
+ "renderer",
  "yew",
 ]
 

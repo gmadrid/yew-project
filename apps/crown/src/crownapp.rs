@@ -1,17 +1,25 @@
 use crate::arc::arc;
 use crate::point::Point;
+use grids::{GridId, SimpleGrid};
+use renderer::TableRenderer;
 use yew::prelude::*;
 
-#[derive(Default)]
-pub struct CrownApp {}
+pub struct CrownApp {
+    grid: SimpleGrid,
+}
 
 impl CrownApp {
-    pub fn new() -> Self {
-        CrownApp::default()
+    pub fn new(grid: SimpleGrid) -> Self {
+        CrownApp { grid }
     }
 
     pub fn center(&self) -> (f64, f64) {
         (150.0, 100.0)
+    }
+
+    pub fn render_grids(&self) -> Html {
+        let renderer = TableRenderer::regular_renderer(&self.grid);
+        renderer.render()
     }
 }
 
@@ -35,7 +43,7 @@ impl Component for CrownApp {
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        CrownApp::new()
+        CrownApp::new(SimpleGrid::new(GridId::Main, 25, 25))
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -49,6 +57,8 @@ impl Component for CrownApp {
     fn view(&self) -> Html {
         let d = new_d();
         html! {
+          <>
+            {self.render_grids()}
           <svg version="1.1"
             baseProfile="full"
             width="300" height="200"
@@ -59,6 +69,7 @@ impl Component for CrownApp {
             <path d={d}/>
 
           </svg>
+          </>
         }
     }
 }

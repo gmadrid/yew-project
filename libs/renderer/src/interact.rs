@@ -11,6 +11,13 @@ use yew::prelude::*;
 
 */
 
+// enum Interactions {
+//     MouseDown(CellId),
+//     MouseEnter(CellId),
+//     MouseExit(CellId),
+//     MouseUp,
+// }
+//
 pub trait Interactor<C: Component> {
     fn install<'a, GRID: GridTrait>(renderer: &mut TableRenderer<'a, GRID>) {
         renderer.set_interactions(

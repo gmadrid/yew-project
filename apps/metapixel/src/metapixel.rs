@@ -7,7 +7,7 @@ use renderer::TableRenderer;
 use yew::prelude::*;
 
 pub struct MetapixelApp {
-    link: ComponentLink<Self>,
+    // link: ComponentLink<Self>,
 
     base_grid: SimpleGrid,
     row_grid_cols: Vec<u8>,
@@ -48,7 +48,7 @@ impl Component for MetapixelApp {
     type Message = ();
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
         let mut grid = SimpleGrid::new(GridId::Main, 5, 5);
         for row in 0..grid.num_rows() {
             for col in 0..grid.num_cols() {
@@ -61,7 +61,7 @@ impl Component for MetapixelApp {
             }
         }
         MetapixelApp {
-            link,
+            // link,
             base_grid: grid,
             row_grid_cols: vec![3, 2, 1, 2, 3],
             col_grid_cols: vec![1, 2, 3, 2, 1],

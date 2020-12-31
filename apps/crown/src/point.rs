@@ -39,14 +39,14 @@ impl Point {
         Point::polar(r, theta_deg.to_radians())
     }
 
-    pub fn x(&self) -> f64 {
-        self.x
-    }
-
-    pub fn y(&self) -> f64 {
-        self.y
-    }
-
+    // pub fn x(&self) -> f64 {
+    //     self.x
+    // }
+    //
+    // pub fn y(&self) -> f64 {
+    //     self.y
+    // }
+    //
     pub fn r(&self) -> f64 {
         self.r
     }
