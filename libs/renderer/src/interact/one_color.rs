@@ -1,61 +1,62 @@
 use super::{Interactions, Interactor};
-use grids::{CellId, Color, GridTrait, HasGrids};
+use grids::{CellId, Color, GridTrait};
 use std::convert::TryInto;
-use std::marker::PhantomData;
-use yew::prelude::*;
 
-static info: fn(&str) = yew::services::ConsoleService::info;
-
-pub struct OneColorInteractor<COMP, GRID>
-where
-    COMP: Component + HasGrids,
-    GRID: GridTrait,
-{
+pub struct OneColorInteractor {
     current_color: Option<Color>,
-    grid: PhantomData<GRID>,
-    phantom: PhantomData<COMP>,
 }
 
-impl<COMP, GRID> OneColorInteractor<COMP, GRID>
-where
-    COMP: Component + HasGrids,
-    GRID: GridTrait,
-{
-    pub fn new() -> OneColorInteractor<COMP, GRID> {
+impl OneColorInteractor {
+    pub fn new() -> OneColorInteractor {
         OneColorInteractor {
             current_color: None,
-            grid: PhantomData::default(),
-            phantom: PhantomData::default(),
         }
     }
 
-    fn mouse_down(&mut self, comp: &mut COMP, interaction: Interactions) -> bool {
-        let cell_id = interaction.cell_id();
-        let mut grid = comp.grid_for_id_mut(cell_id.grid_id);
+    fn mouse_down(&mut self, grid: &mut dyn GridTrait, cell_id: CellId) -> bool {
         let color = grid.cell(cell_id.row, cell_id.col);
         self.current_color = Some(!color);
         grid.set_cell(cell_id.row, cell_id.col, !color);
-        info("WHEEEEEEEEEEEE");
         true
+    }
+
+    fn mouse_enter(&mut self, grid: &mut dyn GridTrait, cell_id: CellId) -> bool {
+        if let Some(current_color) = self.current_color {
+            let old_color = grid.cell(cell_id.row, cell_id.col);
+            if current_color != old_color {
+                grid.set_cell(cell_id.row, cell_id.col, current_color);
+                true
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
+    fn mouse_exit(&mut self, _: &mut dyn GridTrait, _: CellId) -> bool {
+        false
+    }
+
+    fn mouse_up(&mut self, _: &mut dyn GridTrait, _: CellId) -> bool {
+        self.current_color = None;
+        false
     }
 }
 
-impl<COMP, GRID> Interactor<COMP> for OneColorInteractor<COMP, GRID>
-where
-    COMP: Component + HasGrids,
-    COMP::Message: From<Interactions>,
-    GRID: GridTrait,
-{
-    type State = GRID;
-
-    fn update(&mut self, comp: &mut COMP, msg: impl TryInto<Interactions>) -> Option<bool> {
+impl Interactor for OneColorInteractor {
+    fn update(
+        &mut self,
+        grid: &mut dyn GridTrait,
+        msg: impl TryInto<Interactions>,
+    ) -> Option<bool> {
         let interaction = msg.try_into();
         if let Ok(interaction) = interaction {
             match interaction {
-                Interactions::MouseUp => Some(self.mouse_down(comp, interaction)),
-                Interactions::MouseDown(cell_id) => Some(false),
-                Interactions::MouseEnter(cell_id) => Some(false),
-                Interactions::MouseExit(cell_id) => Some(false),
+                Interactions::MouseDown(cell_id) => Some(self.mouse_down(grid, cell_id)),
+                Interactions::MouseUp(cell_id) => Some(self.mouse_up(grid, cell_id)),
+                Interactions::MouseEnter(cell_id) => Some(self.mouse_enter(grid, cell_id)),
+                Interactions::MouseExit(cell_id) => Some(self.mouse_exit(grid, cell_id)),
             }
         } else {
             None
