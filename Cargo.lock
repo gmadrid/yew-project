@@ -533,6 +533,11 @@ dependencies = [
 name = "twocolor"
 version = "0.1.0"
 dependencies = [
+ "bootstrap",
+ "grids",
+ "renderer",
+ "serde",
+ "serde_json",
  "yew",
 ]
 
