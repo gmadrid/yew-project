@@ -1,14 +1,18 @@
-use grids::{CellId, Color, GridId, GridTrait, InvertedGrid, MergedGrid, SimpleGrid};
+use grids::{CellId, Color, GridId, GridTrait, HasGrids, InvertedGrid, MergedGrid, SimpleGrid};
 use renderer::decorators::{
     FlatLabels, MergedBorderDecorator, MergedFlatLabels, RoundLabels, ThickBorders,
 };
+use renderer::interact::{Interactions, Interactor, OneColorInteractor};
 use renderer::TableRenderer;
+use std::convert::TryFrom;
 use yew::html::Scope;
 use yew::prelude::*;
 use yew::prelude::{html, Html};
 
 pub struct TestApp {
     link: ComponentLink<Self>,
+
+    interact: OneColorInteractor<Self, SimpleGrid>,
 
     x_grid: SimpleGrid,
     y_grid: SimpleGrid,
@@ -23,6 +27,31 @@ pub enum Message {
     Leave(CellId),
 }
 
+impl From<Interactions> for Message {
+    fn from(i: Interactions) -> Message {
+        match i {
+            Interactions::MouseDown(cell_id) => Message::Down(cell_id),
+            Interactions::MouseUp => Message::Up,
+            Interactions::MouseEnter(cell_id) => Message::Enter(cell_id),
+            Interactions::MouseExit(cell_id) => Message::Leave(cell_id),
+        }
+    }
+}
+
+impl TryFrom<&Message> for Interactions {
+    type Error = ();
+
+    fn try_from(msg: &Message) -> Result<Self, Self::Error> {
+        match msg {
+            Message::Down(cell_id) => Ok(Interactions::MouseDown(*cell_id)),
+            Message::Up => Ok(Interactions::MouseUp),
+            Message::Enter(cell_id) => Ok(Interactions::MouseEnter(*cell_id)),
+            Message::Leave(cell_id) => Ok(Interactions::MouseExit(*cell_id)),
+            // _ => Err(())
+        }
+    }
+}
+
 impl TestApp {
     fn new(link: ComponentLink<Self>) -> Self {
         let x_grid = SimpleGrid::new(GridId::LayerOne, 15, 15);
@@ -30,25 +59,10 @@ impl TestApp {
 
         TestApp {
             link,
+            interact: OneColorInteractor::new(),
             x_grid,
             y_grid,
             current_value: None,
-        }
-    }
-
-    // fn grid_for_id(&self, id: GridId) -> &dyn GridTrait {
-    //     match id {
-    //         GridId::LayerOne => &self.x_grid,
-    //         GridId::LayerTwo => &self.y_grid,
-    //         _ => panic!("Bad mapping for grid id: {:?}", id),
-    //     }
-    // }
-    //
-    fn grid_for_id_mut(&mut self, id: GridId) -> &mut dyn GridTrait {
-        match id {
-            GridId::LayerOne => &mut self.x_grid,
-            GridId::LayerTwo => &mut self.y_grid,
-            _ => panic!("Bad mapping for grid id: {:?}", id),
         }
     }
 
@@ -56,6 +70,24 @@ impl TestApp {
         make_app_callback(&self.link, move |link, cell_id| {
             link.send_message(f(cell_id));
         })
+    }
+}
+
+impl HasGrids for TestApp {
+    fn grid_for_id(&self, id: GridId) -> &dyn GridTrait {
+        match id {
+            GridId::LayerOne => &self.x_grid,
+            GridId::LayerTwo => &self.y_grid,
+            _ => panic!("Bad mapping for grid id: {:?}", id),
+        }
+    }
+
+    fn grid_for_id_mut(&mut self, id: GridId) -> &mut dyn GridTrait {
+        match id {
+            GridId::LayerOne => &mut self.x_grid,
+            GridId::LayerTwo => &mut self.y_grid,
+            _ => panic!("Bad mapping for grid id: {:?}", id),
+        }
     }
 }
 
@@ -79,6 +111,12 @@ impl Component for TestApp {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        let interact = &mut self.interact;
+        if let Some(render) = interact.update(self, &msg) {
+            yew::services::ConsoleService::info("WHAAAAAAAA");
+            return render;
+        }
+
         match msg {
             Message::Down(cell_id) => {
                 let grid = self.grid_for_id_mut(cell_id.grid_id);
@@ -119,6 +157,7 @@ impl Component for TestApp {
         let mut renderer = TableRenderer::regular_renderer(&self.x_grid);
         renderer.add_class_decorator(ThickBorders::default());
         renderer.set_label_decorator(FlatLabels::default());
+        self.interact.install(&self.link, &mut renderer);
 
         //OneColorInteractor::install(&mut renderer);
         // renderer.set_interactions(

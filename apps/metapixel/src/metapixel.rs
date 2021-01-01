@@ -8,7 +8,6 @@ use yew::prelude::*;
 
 pub struct MetapixelApp {
     // link: ComponentLink<Self>,
-
     base_grid: SimpleGrid,
     row_grid_cols: Vec<u8>,
     col_grid_cols: Vec<u8>,
