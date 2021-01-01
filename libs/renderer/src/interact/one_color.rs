@@ -2,6 +2,7 @@ use super::{Interactions, Interactor};
 use grids::{CellId, Color, GridTrait};
 use std::convert::TryInto;
 
+#[derive(Default)]
 pub struct OneColorInteractor {
     current_color: Option<Color>,
 }
