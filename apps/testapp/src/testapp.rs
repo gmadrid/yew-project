@@ -1,4 +1,4 @@
-use grids::{CellId, GridId, GridTrait, HasGrids, InvertedGrid, MergedGrid, SimpleGrid};
+use grids::{CellId, GridId, GridTrait, InvertedGrid, MergedGrid, SimpleGrid};
 use renderer::decorators::{
     FlatLabels, MergedBorderDecorator, MergedFlatLabels, RoundLabels, ThickBorders,
 };
@@ -83,24 +83,6 @@ impl TestApp {
             },
             &mut self.interact,
         )
-    }
-}
-
-impl HasGrids for TestApp {
-    fn grid_for_id(&self, id: GridId) -> &dyn GridTrait {
-        match id {
-            GridId::LayerOne => &self.x_grid,
-            GridId::LayerTwo => &self.y_grid,
-            _ => panic!("Bad mapping for grid id: {:?}", id),
-        }
-    }
-
-    fn grid_for_id_mut(&mut self, id: GridId) -> &mut dyn GridTrait {
-        match id {
-            GridId::LayerOne => &mut self.x_grid,
-            GridId::LayerTwo => &mut self.y_grid,
-            _ => panic!("Bad mapping for grid id: {:?}", id),
-        }
     }
 }
 
