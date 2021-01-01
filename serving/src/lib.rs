@@ -1,36 +1,17 @@
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-pub fn run_crown_app() -> Result<(), JsValue> {
-    yew::start_app::<crown::CrownApp>();
-
-    Ok(())
+macro_rules! app_runner {
+    ($func:ident, $app_class:path) => {
+        #[wasm_bindgen]
+        pub fn $func() -> Result<(), JsValue> {
+            yew::start_app::<$app_class>();
+            Ok(())
+        }
+    };
 }
 
-#[wasm_bindgen]
-pub fn run_metapixel_app() -> Result<(), JsValue> {
-    yew::start_app::<metapixel::MetapixelApp>();
-
-    Ok(())
-}
-
-#[wasm_bindgen]
-pub fn run_testapp_app() -> Result<(), JsValue> {
-    yew::start_app::<testapp::TestApp>();
-
-    Ok(())
-}
-
-#[wasm_bindgen]
-pub fn run_tiles_app() -> Result<(), JsValue> {
-    yew::start_app::<tiles::TilesApp>();
-
-    Ok(())
-}
-
-#[wasm_bindgen]
-pub fn run_twocolor_app() -> Result<(), JsValue> {
-    yew::start_app::<twocolor::TwoColorApp>();
-
-    Ok(())
-}
+app_runner!(run_crown_app, crown::CrownApp);
+app_runner!(run_metapixel_app, metapixel::MetapixelApp);
+app_runner!(run_testapp_app, testapp::TestApp);
+app_runner!(run_tiles_app, tiles::TilesApp);
+app_runner!(run_twocolor_app, twocolor::TwoColorApp);
