@@ -21,3 +21,9 @@ path = "../apps/metapixel"
 
 [dependencies.testapp]
 path = "../apps/testapp"
+
+[dependencies.tiles]
+path = "../apps/tiles"
+
+[dependencies.twocolor]
+path = "../apps/twocolor"

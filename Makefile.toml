@@ -22,6 +22,18 @@ dependencies = [ "wasm" ]
 command = "rollup"
 args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]
 
+[tasks.tilesapp-bundle]
+description = "Bundle the 'tilesapp' wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./serving/tiles.js", "--format", "iife", "--file", "./serving/pkg/tiles.js" ]
+
+[tasks.twocolorapp-bundle]
+description = "Bundle the 'twocolor' wasm"
+dependencies = [ "wasm" ]
+command = "rollup"
+args = [ "./serving/twocolor.js", "--format", "iife", "--file", "./serving/pkg/twocolor.js" ]
+
 [tasks.metapixel-bundle]
 description = "Bundle the 'metapixel' wasm"
 dependencies = [ "wasm" ]
@@ -36,7 +48,7 @@ args = [ "./serving/crownapp.js", "--format", "iife", "--file", "./serving/pkg/c
 
 [tasks.all-bundles]
 description = "All bundles"
-dependencies = [ "crownapp-bundle", "metapixel-bundle", "testapp-bundle"]
+dependencies = [ "crownapp-bundle", "metapixel-bundle", "testapp-bundle", "tilesapp-bundle", "twocolorapp-bundle",]
 
 # [tasks.watch-testapp-bundle]
 # dependencies = ["testapp-bundle"]

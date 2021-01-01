@@ -20,3 +20,17 @@ pub fn run_testapp_app() -> Result<(), JsValue> {
 
     Ok(())
 }
+
+#[wasm_bindgen]
+pub fn run_tiles_app() -> Result<(), JsValue> {
+    yew::start_app::<tiles::TilesApp>();
+
+    Ok(())
+}
+
+#[wasm_bindgen]
+pub fn run_twocolor_app() -> Result<(), JsValue> {
+    yew::start_app::<twocolor::TwoColorApp>();
+
+    Ok(())
+}

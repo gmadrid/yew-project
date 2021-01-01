@@ -459,6 +459,8 @@ dependencies = [
  "crown",
  "metapixel",
  "testapp",
+ "tiles",
+ "twocolor",
  "wasm-bindgen",
  "yew",
 ]
@@ -514,7 +516,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "tiles"
+version = "0.1.0"
+dependencies = [
+ "yew",
+]
+
+[[package]]
 name = "tools"
+version = "0.1.0"
+dependencies = [
+ "yew",
+]
+
+[[package]]
+name = "twocolor"
 version = "0.1.0"
 dependencies = [
  "yew",

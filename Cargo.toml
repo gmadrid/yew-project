@@ -1,7 +1,10 @@
 [workspace]
 members = [
   "apps/crown",
+  "apps/metapixel",
   "apps/testapp",
+  "apps/tiles",
+  "apps/twocolor",
   "libs/bootstrap",
   "libs/grids",
   "libs/renderer",
