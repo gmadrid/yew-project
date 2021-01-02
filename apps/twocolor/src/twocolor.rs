@@ -1,5 +1,7 @@
 use grids::{CellId, GridId, GridTrait, MergedGrid, SimpleGrid};
-use renderer::decorators::{FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders};
+use renderer::decorators::{
+    EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
+};
 use renderer::interact::{Interactions, Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use serde::{Deserialize, Serialize};
@@ -135,6 +137,7 @@ impl TwoColorApp {
         let mut combined_renderer = TableRenderer::regular_renderer(&combined_grid);
         combined_renderer.add_class_decorator(MergedBorderDecorator::default());
         combined_renderer.set_label_decorator(MergedFlatLabels::starting_at(3, 3));
+        combined_renderer.set_purl_decorator(EvenPurlDecorator::default());
         self.interact.install(&self.link, &mut combined_renderer);
 
         combined_renderer.render()

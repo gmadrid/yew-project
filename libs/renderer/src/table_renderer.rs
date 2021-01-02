@@ -1,12 +1,14 @@
 use crate::decorators::{
-    BorderedCellDecorator, ClassDecorator, ColorDecorator, CssMunger, EmptyLabels, LabelDecorator,
-    PrintableColorDecorator, RegularSizedTableDecorator, SmallSizedTableDecorator, StyleDecorator,
+    BorderedCellDecorator, ClassDecorator, ColorDecorator, CssMunger, EmptyLabels,
+    EvenPurlDecorator, LabelDecorator, NoPurlDecorator, PrintableColorDecorator, PurlDecorator,
+    RegularSizedTableDecorator, SmallSizedTableDecorator, StyleDecorator,
 };
 
 use grids::{CellId, GridTrait};
 
 use yew::prelude::*;
 
+static PURL_DOT_ONCE: std::sync::Once = std::sync::Once::new();
 static TABLE_ONCE: std::sync::Once = std::sync::Once::new();
 
 pub struct TableRenderer<'a> {
@@ -18,6 +20,7 @@ pub struct TableRenderer<'a> {
     mleave: Callback<CellId>,
 
     class_decorators: Vec<Box<dyn ClassDecorator>>,
+    purl_decorator: Box<dyn PurlDecorator>,
     style_decorators: Vec<Box<dyn StyleDecorator>>,
     label_decorator: Box<dyn LabelDecorator>,
 }
@@ -35,6 +38,7 @@ impl<'a> TableRenderer<'a> {
             menter: Callback::noop(),
             mleave: Callback::noop(),
             class_decorators: Default::default(),
+            purl_decorator: Box::from(NoPurlDecorator::default()),
             style_decorators: Default::default(),
             label_decorator: Box::from(EmptyLabels::default()),
         }
@@ -93,6 +97,12 @@ impl<'a> TableRenderer<'a> {
         label_decorator.register(&CssMunger::new());
         let boxx: Box<dyn LabelDecorator> = Box::from(label_decorator);
         self.label_decorator = boxx;
+    }
+
+    pub fn set_purl_decorator(&mut self, purl_decorator: impl PurlDecorator + 'static) {
+        purl_decorator.register(&CssMunger::new());
+        let boxx: Box<dyn PurlDecorator> = Box::from(purl_decorator);
+        self.purl_decorator = boxx;
     }
 
     fn render_left_label(&self, row: usize) -> Html {
@@ -177,7 +187,7 @@ impl<'a> TableRenderer<'a> {
 
         let style_string = style_strings.join(";");
 
-        let mut classes = vec![];
+        let mut classes = vec!["overflow-hidden"];
         for decorator in &self.class_decorators {
             classes.append(&mut decorator.cell_class(self.grid, row, col, contents))
         }
@@ -196,13 +206,19 @@ impl<'a> TableRenderer<'a> {
         let cloned_cell_id = cell_id;
         let mleave_callback: Callback<_> = self.mleave.clone().reform(move |_| cloned_cell_id);
 
+        let contents = if self.purl_decorator.add_purl(row, col) {
+            purl_dot()
+        } else {
+            html! {}
+        };
+
         html! {
             <td
             onmousedown=mdown_callback
             onmouseup=mup_callback
             onmouseenter=menter_callback
             onmouseleave=mleave_callback
-            class=classes style=style_string></td>
+            class=classes style=style_string>{contents}</td>
         }
     }
 
@@ -215,5 +231,20 @@ impl<'a> TableRenderer<'a> {
             {self.render_footer_row()}
           </table>
         }
+    }
+}
+
+// TODO: Might need a way to resize this thing.
+
+fn purl_dot() -> Html {
+    TABLE_ONCE.call_once(|| {
+        let munger = CssMunger::new();
+        munger.insert_rule(".purl_dot { display:block; margin: auto }")
+    });
+
+    html! {
+        <svg width="16px" height="16px" viewBox="0 0 16 16" class="purl_dot" fill="black" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50%" cy="50%" r="4"/>
+        </svg>
     }
 }
