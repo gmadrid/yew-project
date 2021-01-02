@@ -201,7 +201,6 @@ impl TwoColorApp {
         let contents = html! {
           <>
             {self.render_input_grids()}
-            {bootstrap::spacer()}
             {self.render_bottom_row()}
           </>
         };
@@ -243,6 +242,7 @@ impl TwoColorApp {
                     bootstrap::col(self.render_grid_card("Layer 1", "Transcribe a chart from Page 5 here.", GridId::LayerOne)),
                     bootstrap::col(self.render_grid_card("Layer 2", "Transcribe a chart from Page 6 here.", GridId::LayerTwo)),
             ))}
+            {bootstrap::spacer()}
           </>
         }
     }
