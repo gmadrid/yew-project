@@ -1,12 +1,14 @@
 use grids::{CellId, FlippedGrid, GridId, GridTrait, MergedGrid, SimpleGrid};
 use renderer::decorators::{
-    EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
+    CssMunger, EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
 };
 use renderer::interact::{Interactions, Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use yew::prelude::*;
+
+static FOOTER_ONCE: std::sync::Once = std::sync::Once::new();
 
 const GRID_HEIGHT: usize = 15;
 const GRID_WIDTH: usize = 15;
@@ -246,6 +248,26 @@ impl TwoColorApp {
           </>
         }
     }
+
+    fn render_footer(&self) -> Html {
+        FOOTER_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule(".footer{position:fixed;bottom:0;width:100%;height:3em;line-height:3em;background:darkgray;text-align:right}");
+            // munger.insert_rule(".footer small{float:left}");
+        });
+        if self.printable_page {
+            bootstrap::empty()
+        } else {
+            html! {
+              <footer class="footer">
+                <div class="container">
+                  <small class="float-left">{"Version "}{VERSION_NUMBER}</small>
+                  <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
+                </div>
+              </footer>
+            }
+        }
+    }
 }
 
 impl Component for TwoColorApp {
@@ -289,6 +311,7 @@ impl Component for TwoColorApp {
           <>
             {self.render_nav()}
             {self.render_main_container()}
+            {self.render_footer()}
           </>
         }
     }
