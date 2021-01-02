@@ -17,7 +17,7 @@ impl ClassDecorator for MergedBorderDecorator {
         col: usize,
         _contents: Color,
     ) -> Vec<&'static str> {
-        if col % 2 == 0 {
+        if col % 2 == 0 && col != 0 {
             vec!["mthick"]
         } else {
             vec![]

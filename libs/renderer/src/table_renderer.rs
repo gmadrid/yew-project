@@ -1,7 +1,7 @@
 use crate::decorators::{
-    BorderedCellDecorator, ClassDecorator, ColorDecorator, CssMunger, EmptyLabels,
-    EvenPurlDecorator, LabelDecorator, NoPurlDecorator, PrintableColorDecorator, PurlDecorator,
-    RegularSizedTableDecorator, SmallSizedTableDecorator, StyleDecorator,
+    BorderedCellDecorator, ClassDecorator, ColorDecorator, CssMunger, EmptyLabels, LabelDecorator,
+    NoPurlDecorator, PrintableColorDecorator, PurlDecorator, RegularSizedTableDecorator,
+    SmallSizedTableDecorator, StyleDecorator,
 };
 
 use grids::{CellId, GridTrait};
@@ -237,7 +237,7 @@ impl<'a> TableRenderer<'a> {
 // TODO: Might need a way to resize this thing.
 
 fn purl_dot() -> Html {
-    TABLE_ONCE.call_once(|| {
+    PURL_DOT_ONCE.call_once(|| {
         let munger = CssMunger::new();
         munger.insert_rule(".purl_dot { display:block; margin: auto }")
     });
