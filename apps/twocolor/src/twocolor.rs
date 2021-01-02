@@ -272,9 +272,9 @@ impl Component for TwoColorApp {
             | m @ Message::Leave(_) => {
                 let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);
                 if let Some(should_render) = interact.update(grid, &m) {
-                    return should_render;
+                    should_render
                 } else {
-                    return false;
+                    false
                 }
             }
         }

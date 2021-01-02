@@ -12,7 +12,7 @@ pub struct MetaGrid<'a, GRID: GridTrait> {
 fn compute_base_indices(indices: &[u8]) -> Vec<u8> {
     let mut vec = Vec::default();
 
-    for (base_index, index) in indices.into_iter().enumerate() {
+    for (base_index, index) in indices.iter().enumerate() {
         for _ in 0..*index {
             vec.push(base_index as u8);
         }
