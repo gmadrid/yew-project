@@ -1,4 +1,5 @@
-use grids::{CellId, GridId, GridTrait, SimpleGrid};
+use grids::{CellId, GridId, GridTrait, MergedGrid, SimpleGrid};
+use renderer::decorators::{FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders};
 use renderer::interact::{Interactions, Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use serde::{Deserialize, Serialize};
@@ -83,10 +84,10 @@ impl TryFrom<&Message> for Interactions {
 }
 
 impl TwoColorApp {
-    fn grid_with_id(&mut self, id: GridId) -> &dyn GridTrait {
+    fn grid_with_id(&self, id: GridId) -> &dyn GridTrait {
         match id {
-            GridId::LayerOne => &mut self.stored.front,
-            GridId::LayerTwo => &mut self.stored.back,
+            GridId::LayerOne => &self.stored.front,
+            GridId::LayerTwo => &self.stored.back,
             _ => panic!("Bad mapping for grid id: {:?}", id),
         }
     }
@@ -128,10 +129,52 @@ impl TwoColorApp {
         }
     }
 
+    fn render_pattern_table(&self) -> Html {
+        let combined_grid =
+            MergedGrid::new(GridId::Combined, &self.stored.front, &self.stored.back);
+        let mut combined_renderer = TableRenderer::regular_renderer(&combined_grid);
+        combined_renderer.add_class_decorator(MergedBorderDecorator::default());
+        combined_renderer.set_label_decorator(MergedFlatLabels::starting_at(3, 3));
+        self.interact.install(&self.link, &mut combined_renderer);
+
+        combined_renderer.render()
+    }
+
+    fn render_reference_card(&self) -> Html {
+        bootstrap::empty()
+    }
+
+    fn render_bottom_row(&self) -> Html {
+        let printable_callback = self.link.callback(|_| Message::TogglePrintable);
+        let printable_text = if self.printable_page {
+            "Return to input page"
+        } else {
+            "Show printable pattern"
+        };
+
+        bootstrap::row(bootstrap::col(bootstrap::concat(
+            bootstrap::card(
+                html! {
+                <>
+                  <span>{"Chart 2"}</span>
+
+                  <a class="d-print-none"
+                      onclick=printable_callback
+                      style="float:right" href="#"><small>{printable_text}</small></a>
+                </>},
+                "Follow this chart within the green box in Chart 1 on Page 7.",
+                self.render_pattern_table(),
+            ),
+            self.render_reference_card(),
+        )))
+    }
+
     fn render_main_container(&self) -> Html {
         let contents = html! {
           <>
             {self.render_input_grids()}
+            {bootstrap::spacer()}
+            {self.render_bottom_row()}
           </>
         };
 
@@ -140,9 +183,24 @@ impl TwoColorApp {
 
     fn render_grid_table(&self, grid_id: GridId) -> Html {
         let grid = self.grid_with_id(grid_id);
-        let renderer = TableRenderer::regular_renderer(grid);
+        let mut renderer = TableRenderer::regular_renderer(grid);
+        renderer.add_class_decorator(ThickBorders::default());
+        renderer.set_label_decorator(FlatLabels::starting_at(3, 3));
+        self.interact.install(&self.link, &mut renderer);
 
         html! {{renderer.render()}}
+    }
+
+    fn render_grid_card(&self, title: &str, subtitle: &str, grid_id: GridId) -> Html {
+        let clear_callback = self.link.callback(move |_| Message::Clear(grid_id));
+        bootstrap::card(
+            title,
+            subtitle,
+            bootstrap::concat(
+                self.render_grid_table(grid_id),
+                html! {<a href="#" class="btn btn-primary" onclick=clear_callback>{"Clear"}</a>},
+            ),
+        )
     }
 
     fn render_input_grids(&self) -> Html {
@@ -152,19 +210,11 @@ impl TwoColorApp {
 
         html! {
           <>
-            {bootstrap::spacer()}
-
-            {bootstrap::row(bootstrap::concat(
-                bootstrap::col(bootstrap::card("Layer 1", "Transcribe a chart from Page 5 here",
+            {bootstrap::row(
                 bootstrap::concat(
-                    self.render_grid_table(GridId::LayerOne),
-                    bootstrap::empty()  // turn this into the clear button
-                )
-            )),
-                bootstrap::col("CARD2"),
+                    bootstrap::col(self.render_grid_card("Layer 1", "Transcribe a chart from Page 5 here.", GridId::LayerOne)),
+                    bootstrap::col(self.render_grid_card("Layer 2", "Transcribe a chart from Page 6 here.", GridId::LayerTwo)),
             ))}
-
-            {bootstrap::spacer()}
           </>
         }
     }
@@ -184,19 +234,20 @@ impl Component for TwoColorApp {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        let (grid, interact) = self.grid_with_interact(msg.cell_id().grid_id);
-        if let Some(should_render) = interact.update(grid, &msg) {
-            return should_render;
-        }
-
         match msg {
             Message::TogglePrintable => self.msg_toggle_printable(),
             Message::Clear(grid_id) => self.msg_clear(grid_id),
 
-            // Tnese were handled by the interactor.
-            // TODO: maybe find a more elegant way to do this
-            Message::Up(_) | Message::Down(_) | Message::Enter(_) | Message::Leave(_) => {
-                panic!("Should be handled by interact.");
+            m @ Message::Up(_)
+            | m @ Message::Down(_)
+            | m @ Message::Enter(_)
+            | m @ Message::Leave(_) => {
+                let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);
+                if let Some(should_render) = interact.update(grid, &m) {
+                    return should_render;
+                } else {
+                    return false;
+                }
             }
         }
     }
@@ -206,13 +257,6 @@ impl Component for TwoColorApp {
     }
 
     fn view(&self) -> Html {
-        //        let printable_callback = self.link.callback(|_| Message::TogglePrintable);
-        let printable_text = if self.printable_page {
-            "Return to input page"
-        } else {
-            "Show printable pattern"
-        };
-
         html! {
           <>
             {self.render_nav()}

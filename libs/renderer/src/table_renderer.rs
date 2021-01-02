@@ -9,8 +9,8 @@ use yew::prelude::*;
 
 static TABLE_ONCE: std::sync::Once = std::sync::Once::new();
 
-pub struct TableRenderer<'a, GRID: GridTrait> {
-    grid: &'a GRID,
+pub struct TableRenderer<'a> {
+    grid: &'a dyn GridTrait,
 
     mdown: Callback<CellId>,
     mup: Callback<CellId>,
@@ -22,8 +22,8 @@ pub struct TableRenderer<'a, GRID: GridTrait> {
     label_decorator: Box<dyn LabelDecorator>,
 }
 
-impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
-    pub fn new(grid: &'a GRID) -> Self {
+impl<'a> TableRenderer<'a> {
+    pub fn new(grid: &'a dyn GridTrait) -> Self {
         TABLE_ONCE.call_once(|| {
             let munger = CssMunger::new();
             munger.insert_rule(".tblrdr td, .tblrdr th {line-height:1.0; vertical-align: middle; text-align: center }")
@@ -43,7 +43,7 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
     /// Creates a new renderer with the basic decorations: colored cells, printable, with borders.
     /// NOTE: this renderer will not display properly because it has no size.
     /// See small_renderer(), and regular_renderer().
-    pub fn base_renderer(grid: &'a GRID) -> Self {
+    pub fn base_renderer(grid: &'a dyn GridTrait) -> Self {
         let mut renderer = TableRenderer::new(grid);
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
@@ -51,13 +51,13 @@ impl<'a, GRID: GridTrait> TableRenderer<'a, GRID> {
         renderer
     }
 
-    pub fn regular_renderer(grid: &'a GRID) -> Self {
+    pub fn regular_renderer(grid: &'a dyn GridTrait) -> Self {
         let mut renderer = Self::base_renderer(grid);
         renderer.add_class_decorator(RegularSizedTableDecorator::default());
         renderer
     }
 
-    pub fn small_renderer(grid: &'a GRID) -> Self {
+    pub fn small_renderer(grid: &'a dyn GridTrait) -> Self {
         let mut renderer = Self::base_renderer(grid);
         renderer.add_class_decorator(SmallSizedTableDecorator::default());
         renderer

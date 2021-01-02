@@ -39,11 +39,8 @@ pub trait Interactor {
     fn update(&mut self, grid: &mut dyn GridTrait, msg: impl TryInto<Interactions>)
         -> Option<bool>;
 
-    fn install<'a, COMP, GRID: GridTrait>(
-        &self,
-        link: &ComponentLink<COMP>,
-        renderer: &mut TableRenderer<'a, GRID>,
-    ) where
+    fn install<'a, COMP>(&self, link: &ComponentLink<COMP>, renderer: &mut TableRenderer<'a>)
+    where
         COMP: Component,
         COMP::Message: From<Interactions>,
     {
