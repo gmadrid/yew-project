@@ -134,13 +134,14 @@ impl TwoColorApp {
     fn render_pattern_table(&self) -> Html {
         let combined_grid =
             MergedGrid::new(GridId::Combined, &self.stored.front, &self.stored.back);
-        let mut combined_renderer = TableRenderer::regular_renderer(&combined_grid);
-        combined_renderer.add_class_decorator(MergedBorderDecorator::default());
-        combined_renderer.set_label_decorator(MergedFlatLabels::starting_at(3, 3));
-        combined_renderer.set_purl_decorator(EvenPurlDecorator::default());
-        self.interact.install(&self.link, &mut combined_renderer);
+        let mut renderer = TableRenderer::regular_renderer(&combined_grid);
+        renderer.add_class_decorator(MergedBorderDecorator::default());
+        renderer.add_class_decorator(ThickBorders::thick_horizontal());
+        renderer.set_label_decorator(MergedFlatLabels::starting_at(3, 3));
+        renderer.set_purl_decorator(EvenPurlDecorator::default());
+        self.interact.install(&self.link, &mut renderer);
 
-        combined_renderer.render()
+        renderer.render()
     }
 
     fn render_reference_card(&self) -> Html {

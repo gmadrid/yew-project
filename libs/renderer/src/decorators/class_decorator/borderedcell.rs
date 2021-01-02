@@ -23,7 +23,19 @@ impl ClassDecorator for BorderedCellDecorator {
 }
 
 #[derive(Default)]
-pub struct ThickBorders;
+pub struct ThickBorders {
+    skip_horiz: bool,
+    skip_vert: bool,
+}
+
+impl ThickBorders {
+    pub fn thick_horizontal() -> ThickBorders {
+        ThickBorders {
+            skip_horiz: false,
+            skip_vert: true,
+        }
+    }
+}
 
 impl ClassDecorator for ThickBorders {
     fn register(&self, munger: &CssMunger) {
@@ -49,10 +61,10 @@ impl ClassDecorator for ThickBorders {
         let row_p = grid.num_rows() - row;
         let col_p = grid.num_cols() - col;
 
-        if row_p % 5 == 0 && row != 0 {
+        if !self.skip_horiz && row_p % 5 == 0 && row != 0 {
             ret.push("tcktop")
         }
-        if col_p % 5 == 0 && col != 0 {
+        if !self.skip_vert && col_p % 5 == 0 && col != 0 {
             ret.push("tckleft")
         }
 
