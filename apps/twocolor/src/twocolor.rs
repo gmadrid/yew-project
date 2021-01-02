@@ -6,7 +6,10 @@ use renderer::interact::{Interactions, Interactor, OneColorInteractor};
 use renderer::TableRenderer;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
+use yew::format::Json;
 use yew::prelude::*;
+use yew::services::storage::Area;
+use yew::services::StorageService;
 
 static FOOTER_ONCE: std::sync::Once = std::sync::Once::new();
 
@@ -275,23 +278,35 @@ impl Component for TwoColorApp {
     type Message = Message;
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let storage = StorageService::new(Area::Local).unwrap();
+        let Json(stored) = storage.restore(STORAGE_KEY);
         TwoColorApp {
             link,
             interact: OneColorInteractor::new(),
-            stored: Stored::default(),
+            stored: stored.unwrap_or_else(|_| Stored::default()),
             printable_page: false,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
+        let mut save = false;
+        let should_render = match msg {
             Message::TogglePrintable => self.msg_toggle_printable(),
-            Message::Clear(grid_id) => self.msg_clear(grid_id),
+            Message::Clear(grid_id) => {
+                save = true;
+                self.msg_clear(grid_id)
+            }
 
             m @ Message::Up(_)
             | m @ Message::Down(_)
             | m @ Message::Enter(_)
             | m @ Message::Leave(_) => {
+                // Only save on Up.
+                match &m {
+                    Message::Up(_) => save = true,
+                    _ => {}
+                }
+
                 let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);
                 if let Some(should_render) = interact.update(grid, &m) {
                     should_render
@@ -299,7 +314,14 @@ impl Component for TwoColorApp {
                     false
                 }
             }
+        };
+
+        if save {
+            let mut storage = StorageService::new(Area::Local).unwrap();
+            storage.store(STORAGE_KEY, Json(&self.stored));
         }
+
+        should_render
     }
 
     fn change(&mut self, _props: Self::Properties) -> ShouldRender {
