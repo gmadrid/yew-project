@@ -1,4 +1,4 @@
-use grids::{CellId, GridId, GridTrait, MergedGrid, SimpleGrid};
+use grids::{CellId, FlippedGrid, GridId, GridTrait, MergedGrid, SimpleGrid};
 use renderer::decorators::{
     EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
 };
@@ -145,7 +145,31 @@ impl TwoColorApp {
     }
 
     fn render_reference_card(&self) -> Html {
-        bootstrap::empty()
+        if !self.printable_page {
+            return bootstrap::empty();
+        }
+
+        let front_renderer = TableRenderer::small_renderer(&self.stored.front);
+
+        let flipped = FlippedGrid::new(GridId::SmallTwo, &self.stored.back);
+        let flipped_renderer = TableRenderer::small_renderer(&flipped);
+        bootstrap::concat(
+            bootstrap::spacer(),
+            bootstrap::card(
+                "Reference",
+                "",
+                bootstrap::row(bootstrap::concat(
+                    bootstrap::col(bootstrap::concat(
+                        bootstrap::h5("Layer 1"),
+                        front_renderer.render(),
+                    )),
+                    bootstrap::col(bootstrap::concat(
+                        bootstrap::h5("Layer 2"),
+                        flipped_renderer.render(),
+                    )),
+                )),
+            ),
+        )
     }
 
     fn render_bottom_row(&self) -> Html {

@@ -39,7 +39,7 @@ impl ClassDecorator for SmallSizedTableDecorator {
     fn register(&self, munger: &CssMunger) {
         SMALL_ONCE.call_once(||
             munger.insert_rule(
-                ".sszcell { height: 12px; width: 12px; min-height: 12px; max-height: 12px; min-width: 12px; max-width: 12px }"));
+                ".sszcell { height: 15px; width: 15px; min-height: 15px; max-height: 15px; min-width: 15px; max-width: 15px }"));
     }
 
     fn cell_class(

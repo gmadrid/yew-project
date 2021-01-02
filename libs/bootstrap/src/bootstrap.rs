@@ -9,6 +9,10 @@ pub fn main_container(contents: impl Into<Html>) -> Html {
     }
 }
 
+pub fn h5(content: impl Into<Html>) -> Html {
+    html! {<h5>{content}</h5>}
+}
+
 pub fn concat(first_html: Html, second_html: Html) -> Html {
     html! {
         <>
