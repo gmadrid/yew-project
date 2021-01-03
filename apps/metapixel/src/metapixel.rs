@@ -1,21 +1,118 @@
 use bootstrap::main_container;
 use grids::{Color, GridId, GridTrait, MetaGrid, SimpleGrid};
 use renderer::decorators::{
-    BorderedCellDecorator, ColorDecorator, PrintableColorDecorator, RegularSizedTableDecorator,
+    BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
+    RegularSizedTableDecorator,
 };
 use renderer::TableRenderer;
 use yew::prelude::*;
 
+static NAV_ONCE: std::sync::Once = std::sync::Once::new();
+static CONTROLS_ONCE: std::sync::Once = std::sync::Once::new();
+static PALETTE_ONCE: std::sync::Once = std::sync::Once::new();
+static FOOTER_ONCE: std::sync::Once = std::sync::Once::new();
+
+const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
+
 pub struct MetapixelApp {
-    // link: ComponentLink<Self>,
+    link: ComponentLink<Self>,
     base_grid: SimpleGrid,
     row_grid_cols: Vec<u8>,
     col_grid_cols: Vec<u8>,
+    current_color: Color,
+}
+
+pub enum Message {
+    SelectColor(Color),
 }
 
 impl MetapixelApp {
+    fn render_nav(&self) -> Html {
+        NAV_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule("body{background:lightgray}");
+            munger.insert_rule("nav{background:darkgray}");
+        });
+        html! {
+          <>
+            <nav class="navbar navbar-expand-md">
+              <a style="color:black" class="navbar-brand">{"Meta-pixel chart generator"}</a>
+            </nav>
+            {bootstrap::spacer()}
+          </>
+        }
+    }
+
+    fn render_footer(&self) -> Html {
+        FOOTER_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule(".footer{position:fixed;bottom:0;width:100%;height:3em;line-height:3em;background:darkgray;text-align:right}");
+            // munger.insert_rule(".footer small{float:left}");
+        });
+        html! {
+          <footer class="footer">
+            <div class="container">
+              <small class="float-left">{"Version "}{VERSION_NUMBER}</small>
+              <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
+            </div>
+          </footer>
+        }
+    }
+
+    fn render_palette(&self) -> Html {
+        PALETTE_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule("#palettetable{table-layout:fixed}");
+            munger.insert_rule("#palettetable td{height:40px;width:40px;border:2px solid black}");
+            munger.insert_rule("#palettetable td.selected{border-width:5px");
+        });
+        html! {
+          <>
+            <table id="palettetable">
+              <tr>
+                {self.render_palette_cell(Color::White)}
+                {self.render_palette_cell(Color::Gray)}
+                {self.render_palette_cell(Color::Blue)}
+                {self.render_palette_cell(Color::Orange)}
+                {self.render_palette_cell(Color::Yellow)}
+                {self.render_palette_cell(Color::Red)}
+                {self.render_palette_cell(Color::Green)}
+                {self.render_palette_cell(Color::Brown)}
+              </tr>
+            </table>
+          </>
+        }
+    }
+
+    fn render_palette_cell(&self, color: Color) -> Html {
+        let class = if color == self.current_color {
+            "selected"
+        } else {
+            ""
+        };
+        let style_str = format!("background: {}", color.to_string());
+        let click_callback = self.link.callback(move |_| Message::SelectColor(color));
+        html! {
+            <td class=class onclick=click_callback style={style_str}></td>
+        }
+    }
+
     fn render_controls(&self) -> Html {
-        bootstrap::empty()
+        CONTROLS_ONCE.call_once(|| {
+            let munger = CssMunger::new();
+            munger.insert_rule("#topstuff .card{height:100%}");
+        });
+
+        html! {
+          <div id="topstuff" class="row">
+            {bootstrap::col(bootstrap::card("Palette", "", self.render_palette()))}
+            {bootstrap::col(bootstrap::card("Metapixel config", "", bootstrap::spacer()))}
+          </div>
+        }
+        // bootstrap::row(bootstrap::concat(
+        //     bootstrap::col(bootstrap::card("Palette", "", self.render_palette())),
+        //     bootstrap::col(bootstrap::card("Metapixel config", "", bootstrap::spacer())),
+        // ))
     }
 
     fn render_base_grid(&self) -> Html {
@@ -24,7 +121,12 @@ impl MetapixelApp {
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
-        renderer.render()
+
+        bootstrap::row(bootstrap::col(bootstrap::card(
+            "Pixel grid",
+            "",
+            renderer.render(),
+        )))
     }
 
     fn render_meta_grid(&self) -> Html {
@@ -39,15 +141,20 @@ impl MetapixelApp {
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
-        renderer.render()
+
+        bootstrap::row(bootstrap::col(bootstrap::card(
+            "Metapixel grid",
+            "",
+            renderer.render(),
+        )))
     }
 }
 
 impl Component for MetapixelApp {
-    type Message = ();
+    type Message = Message;
     type Properties = ();
 
-    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let mut grid = SimpleGrid::new(GridId::Main, 5, 5);
         for row in 0..grid.num_rows() {
             for col in 0..grid.num_cols() {
@@ -60,10 +167,11 @@ impl Component for MetapixelApp {
             }
         }
         MetapixelApp {
-            // link,
+            link,
             base_grid: grid,
             row_grid_cols: vec![3, 2, 1, 2, 3],
             col_grid_cols: vec![1, 2, 3, 2, 1],
+            current_color: Color::Orange,
         }
     }
 
@@ -76,15 +184,23 @@ impl Component for MetapixelApp {
     }
 
     fn view(&self) -> Html {
-        main_container(html! {
-            <>
-                {self.render_controls()}
-                {bootstrap::spacer()}
-                {self.render_base_grid()}
-                {bootstrap::spacer()}
-                {self.render_meta_grid()}
-            </>
-        })
+        html! {
+          <>
+          {self.render_nav()}
+          {main_container(html! {
+              <>
+                  {self.render_controls()}
+                  {bootstrap::spacer()}
+                  {self.render_base_grid()}
+                  {bootstrap::spacer()}
+                  {self.render_meta_grid()}
+                  {bootstrap::spacer()}
+                  {bootstrap::spacer()}
+              </>
+          })}
+          {self.render_footer()}
+          </>
+        }
     }
 }
 //
