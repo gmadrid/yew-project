@@ -38,7 +38,6 @@ impl MetapixelApp {
             <nav class="navbar navbar-expand-md">
               <a style="color:black" class="navbar-brand">{"Meta-pixel chart generator"}</a>
             </nav>
-            {bootstrap::spacer()}
           </>
         }
     }
@@ -109,10 +108,6 @@ impl MetapixelApp {
             {bootstrap::col(bootstrap::card("Metapixel config", "", bootstrap::spacer()))}
           </div>
         }
-        // bootstrap::row(bootstrap::concat(
-        //     bootstrap::col(bootstrap::card("Palette", "", self.render_palette())),
-        //     bootstrap::col(bootstrap::card("Metapixel config", "", bootstrap::spacer())),
-        // ))
     }
 
     fn render_base_grid(&self) -> Html {
@@ -187,6 +182,7 @@ impl Component for MetapixelApp {
         html! {
           <>
           {self.render_nav()}
+          {bootstrap::spacer()}
           {main_container(html! {
               <>
                   {self.render_controls()}

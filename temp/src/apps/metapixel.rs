@@ -6,7 +6,6 @@ use yew::prelude::*;
 
 pub struct Metapixel {
     // link: ComponentLink<Self>,
-
     base_grid: ColorGrid,
 
     row_grid_cols: Vec<u8>,

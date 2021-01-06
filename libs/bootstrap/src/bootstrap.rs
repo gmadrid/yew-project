@@ -3,7 +3,6 @@ use yew::prelude::*;
 pub fn main_container(contents: impl Into<Html>) -> Html {
     html! {
       <main class="main container">
-        {spacer()}
         {contents.into()}
       </main>
     }
