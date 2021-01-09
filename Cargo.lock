@@ -330,6 +330,8 @@ dependencies = [
  "bootstrap",
  "grids",
  "renderer",
+ "serde",
+ "serde_json",
  "tools",
  "wasm-bindgen",
  "web-sys",

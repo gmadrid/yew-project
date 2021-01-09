@@ -1,32 +1,94 @@
 use bootstrap::main_container;
-use grids::{Color, GridId, GridTrait, MetaGrid, SimpleGrid};
+use grids::{CellId, Color, GridId, GridTrait, MetaGrid, SimpleGrid};
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
     RegularSizedTableDecorator,
 };
+use renderer::interact::{ColoredInteractor, Interactions, Interactor};
 use renderer::TableRenderer;
+use serde::{Deserialize, Serialize};
+use std::convert::TryFrom;
+use yew::format::Json;
 use yew::prelude::*;
+use yew::services::storage::Area;
+use yew::services::StorageService;
 
 static NAV_ONCE: std::sync::Once = std::sync::Once::new();
 static CONTROLS_ONCE: std::sync::Once = std::sync::Once::new();
 static PALETTE_ONCE: std::sync::Once = std::sync::Once::new();
 static FOOTER_ONCE: std::sync::Once = std::sync::Once::new();
 
+const STORAGE_KEY: &str = "SAVED_META_CHART";
 const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
+
+#[derive(Serialize, Deserialize)]
+struct Stored {
+    base_grid: SimpleGrid,
+}
 
 pub struct MetapixelApp {
     link: ComponentLink<Self>,
-    base_grid: SimpleGrid,
+    interact: ColoredInteractor,
+    stored: Stored,
     row_grid_cols: Vec<u8>,
     col_grid_cols: Vec<u8>,
-    current_color: Color,
 }
 
+#[derive(Debug)]
 pub enum Message {
+    Down(CellId),
+    Up(CellId),
+    Enter(CellId),
+    Leave(CellId),
+
     SelectColor(Color),
 }
 
+impl Message {
+    fn cell_id(&self) -> CellId {
+        match self {
+            Message::Down(cell_id) => *cell_id,
+            Message::Enter(cell_id) => *cell_id,
+            Message::Leave(cell_id) => *cell_id,
+            Message::Up(cell_id) => *cell_id,
+            _ => panic!("CellId unavailable for Message: {:?}", self),
+        }
+    }
+}
+
+impl From<Interactions> for Message {
+    fn from(i: Interactions) -> Message {
+        match i {
+            Interactions::MouseDown(cell_id) => Message::Down(cell_id),
+            Interactions::MouseUp(cell_id) => Message::Up(cell_id),
+            Interactions::MouseEnter(cell_id) => Message::Enter(cell_id),
+            Interactions::MouseExit(cell_id) => Message::Leave(cell_id),
+            _ => panic!("woohoo"),
+        }
+    }
+}
+
+impl TryFrom<&Message> for Interactions {
+    type Error = ();
+
+    fn try_from(msg: &Message) -> Result<Self, Self::Error> {
+        match msg {
+            Message::Down(cell_id) => Ok(Interactions::MouseDown(*cell_id)),
+            Message::Up(cell_id) => Ok(Interactions::MouseUp(*cell_id)),
+            Message::Enter(cell_id) => Ok(Interactions::MouseEnter(*cell_id)),
+            Message::Leave(cell_id) => Ok(Interactions::MouseExit(*cell_id)),
+            _ => Err(()),
+        }
+    }
+}
+
 impl MetapixelApp {
+    // TODO: can we get rid of this uglyness?
+    fn grid_with_interact(&mut self, id: GridId) -> (&mut dyn GridTrait, &mut ColoredInteractor) {
+        // TODO: should you check the value of id here?
+        (&mut self.stored.base_grid, &mut self.interact)
+    }
+
     fn render_nav(&self) -> Html {
         NAV_ONCE.call_once(|| {
             let munger = CssMunger::new();
@@ -84,7 +146,7 @@ impl MetapixelApp {
     }
 
     fn render_palette_cell(&self, color: Color) -> Html {
-        let class = if color == self.current_color {
+        let class = if color == self.interact.current_color() {
             "selected"
         } else {
             ""
@@ -111,11 +173,12 @@ impl MetapixelApp {
     }
 
     fn render_base_grid(&self) -> Html {
-        let mut renderer = TableRenderer::new(&self.base_grid);
+        let mut renderer = TableRenderer::new(&self.stored.base_grid);
         renderer.add_class_decorator(RegularSizedTableDecorator::default());
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
+        self.interact.install(&self.link, &mut renderer);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Pixel grid",
@@ -127,7 +190,7 @@ impl MetapixelApp {
     fn render_meta_grid(&self) -> Html {
         let metagrid = MetaGrid::new(
             GridId::SmallOne,
-            &self.base_grid,
+            &self.stored.base_grid,
             &self.row_grid_cols,
             &self.col_grid_cols,
         );
@@ -136,6 +199,8 @@ impl MetapixelApp {
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
+        // TODO: for some reason, this is crashing.
+        self.interact.install(&self.link, &mut renderer);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Metapixel grid",
@@ -161,17 +226,50 @@ impl Component for MetapixelApp {
                 grid.set_cell(row, col, color);
             }
         }
+        let mut interact: ColoredInteractor = Default::default();
+        interact.set_current_color(Color::Orange);
         MetapixelApp {
             link,
-            base_grid: grid,
+            stored: Stored { base_grid: grid },
+            interact,
             row_grid_cols: vec![3, 2, 1, 2, 3],
             col_grid_cols: vec![1, 2, 3, 2, 1],
-            current_color: Color::Orange,
         }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        let mut save = false;
+        let should_render = match msg {
+            Message::SelectColor(color) => {
+                self.interact.set_current_color(color);
+                true
+            }
+
+            m @ Message::Up(_)
+            | m @ Message::Down(_)
+            | m @ Message::Enter(_)
+            | m @ Message::Leave(_) => {
+                // Only save on Up.
+                match &m {
+                    Message::Up(_) => save = true,
+                    _ => {}
+                }
+
+                let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);
+                if let Some(should_render) = interact.update(grid, &m) {
+                    should_render
+                } else {
+                    false
+                }
+            }
+        };
+
+        if save {
+            let mut storage = StorageService::new(Area::Local).unwrap();
+            storage.store(STORAGE_KEY, Json(&self.stored));
+        }
+
+        should_render
     }
 
     fn change(&mut self, _props: Self::Properties) -> ShouldRender {

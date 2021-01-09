@@ -4,8 +4,10 @@ use std::convert::TryInto;
 use yew::prelude::*;
 
 mod one_color;
-
 pub use one_color::OneColorInteractor;
+
+mod colored;
+pub use colored::ColoredInteractor;
 
 /*
   NOTES
