@@ -1,5 +1,5 @@
 use crate::gridtrait::ToBaseTrait;
-use crate::{GridId, GridTrait};
+use crate::{CellId, GridId, GridTrait};
 
 pub struct MetaGrid<'a, GRID: GridTrait> {
     id: GridId,
@@ -53,6 +53,11 @@ impl<'a, GRID: GridTrait> ToBaseTrait for MetaGrid<'a, GRID> {
 impl<'a, GRID: GridTrait> GridTrait for MetaGrid<'a, GRID> {
     fn grid_id(&self) -> GridId {
         self.id
+    }
+
+    fn cell_id(&self, row: usize, col: usize) -> CellId {
+        let (base_row, base_col) = self.to_base(row, col);
+        CellId::new(self.grid_id(), base_row, base_col)
     }
 
     fn num_rows(&self) -> usize {
