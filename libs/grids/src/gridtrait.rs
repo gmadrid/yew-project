@@ -40,20 +40,38 @@ pub trait GridTrait {
     /// Returns the [GridId] associated with this grid.
     fn grid_id(&self) -> GridId;
 
+    /// Returns the [CellId] for the cell in the _base_ grid.
     fn cell_id(&self, row: usize, col: usize) -> CellId {
         CellId::new(self.grid_id(), row, col)
     }
 
+    /// Returns the number of rows in the grid.
     fn num_rows(&self) -> usize;
+    /// Returns the number of cols in the grid.
     fn num_cols(&self) -> usize;
 
+    /// Returns the [Color] at the (`row`, `col`) location in the grid.
     fn cell(&self, row: usize, col: usize) -> Color;
+    /// Sets the [Color] at the (`row`, `col`) location in the grid.
     fn set_cell(&mut self, row: usize, col: usize, value: Color);
 
-    fn clear(&mut self);
+    /// 'Clears' the grid.
+    ///
+    /// The default implementation sets all of the cells to [Color::default].
+    /// Implementations are free to interpret this however makes sense, or may write their own
+    /// version for efficiency.
+    fn clear(&mut self) {
+        for row in 0..self.num_rows() {
+            for col in 0..self.num_cols() {
+                self.set_cell(row, col, Color::default());
+            }
+        }
+    }
 }
 
 pub trait ToBaseTrait {
+    /// For any grid that modifies or filters an underlying grid, returns the (row, col)
+    /// in the _base_ grid that corresponds to the cell in the filtered grid.
     fn to_base(&self, row: usize, col: usize) -> (usize, usize) {
         (row, col)
     }

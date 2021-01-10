@@ -42,7 +42,9 @@ pub enum Message {
     Enter(CellId),
     Leave(CellId),
 
-    Compass(CompassDirection),
+    ControlShift(CompassDirection),
+    BaseShift(CompassDirection),
+    MetagridShift(CompassDirection),
     SelectColor(Color),
 }
 
@@ -127,14 +129,6 @@ impl MetapixelApp {
         }
     }
 
-    fn render_compass(&self) -> Html {
-        let cb = self.link.callback(|direction| Message::Compass(direction));
-
-        html! {
-            <Compass callback=cb />
-        }
-    }
-
     fn render_palette(&self) -> Html {
         PALETTE_ONCE.call_once(|| {
             let munger = CssMunger::new();
@@ -179,10 +173,16 @@ impl MetapixelApp {
             munger.insert_rule("#topstuff .card{height:100%}");
         });
 
+        let cb = self
+            .link
+            .callback(|direction| Message::ControlShift(direction));
+
         html! {
           <div id="topstuff" class="row">
             {bootstrap::col(bootstrap::card("Palette", "", self.render_palette()))}
-            {bootstrap::col(bootstrap::card("Metapixel config", "", bootstrap::spacer()))}
+            {bootstrap::col(bootstrap::card("Metapixel config", "", html!{
+                <Compass callback=cb/>
+            }))}
           </div>
         }
     }
@@ -195,10 +195,19 @@ impl MetapixelApp {
         renderer.add_class_decorator(PrintableColorDecorator::default());
         self.interact.install(&self.link, &mut renderer);
 
+        let cb = self
+            .link
+            .callback(|direction| Message::BaseShift(direction));
+
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Pixel grid",
             "",
-            renderer.render(),
+            html! {
+              <>
+                {renderer.render()}
+                <Compass callback=cb/>
+              </>
+            },
         )))
     }
 
@@ -217,10 +226,19 @@ impl MetapixelApp {
         // TODO: for some reason, this is crashing.
         self.interact.install(&self.link, &mut renderer);
 
+        let cb = self
+            .link
+            .callback(|direction| Message::MetagridShift(direction));
+
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Metapixel grid",
             "",
-            renderer.render(),
+            html! {
+                <>
+                    {renderer.render()}
+                    <Compass callback=cb/>
+                </>
+            },
         )))
     }
 }
@@ -260,7 +278,9 @@ impl Component for MetapixelApp {
                 true
             }
 
-            Message::Compass(_direction) => false,
+            Message::ControlShift(_direction) => false,
+            Message::BaseShift(_direction) => false,
+            Message::MetagridShift(_direction) => false,
 
             m @ Message::Up(_)
             | m @ Message::Down(_)

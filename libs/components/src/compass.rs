@@ -7,7 +7,7 @@ pub struct Compass {
 
 impl Compass {}
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum CompassDirection {
     Down,
     Left,
@@ -26,45 +26,38 @@ pub struct CompassProperties {
 }
 
 impl Compass {
-    fn display_north(&self) -> Html {
-        let cb = self.link.callback(|_| CompassDirection::Up);
-        if self.props.vert {
-            html! {
-                <button onclick=cb>{"NORTH"}</button>
-            }
-        } else {
-            html! {}
+    fn display_button(&self, code_point: u32, direction: CompassDirection) -> Html {
+        let cb = self.link.callback(move |_| direction);
+        let str = std::char::from_u32(code_point).unwrap().to_string();
+
+        html! {
+            <button onclick=cb class="btn btn-outline-primary">{str}</button>
         }
+    }
+
+    fn display_north(&self) -> Html {
+        if !self.props.vert {
+            return html! {};
+        }
+        self.display_button(0x2191, CompassDirection::Up)
     }
     fn display_west(&self) -> Html {
-        let cb = self.link.callback(|_| CompassDirection::Left);
-        if self.props.horiz {
-            html! {
-                <button onclick=cb>{"WEST"}</button>
-            }
-        } else {
-            html! {}
+        if !self.props.horiz {
+            return html! {};
         }
+        self.display_button(0x2190, CompassDirection::Left)
     }
     fn display_east(&self) -> Html {
-        let cb = self.link.callback(|_| CompassDirection::Right);
-        if self.props.horiz {
-            html! {
-                <button onclick=cb>{"EAST"}</button>
-            }
-        } else {
-            html! {}
+        if !self.props.horiz {
+            return html! {};
         }
+        self.display_button(0x2192, CompassDirection::Right)
     }
     fn display_south(&self) -> Html {
-        let cb = self.link.callback(|_| CompassDirection::Down);
-        if self.props.vert {
-            html! {
-                <button onclick=cb>{"SOUTH"}</button>
-            }
-        } else {
-            html! {}
+        if !self.props.vert {
+            return html! {};
         }
+        self.display_button(0x2193, CompassDirection::Down)
     }
 }
 
@@ -87,12 +80,12 @@ impl Component for Compass {
 
     fn view(&self) -> Html {
         html! {
-          <>
-            {self.display_north()}
+          <div class="btn_group" role="group">
             {self.display_west()}
-            {self.display_east()}
+            {self.display_north()}
             {self.display_south()}
-          </>
+            {self.display_east()}
+          </div>
         }
     }
 }
