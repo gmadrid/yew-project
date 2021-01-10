@@ -16,6 +16,16 @@ where
     GRIDTWO: GridTrait,
 {
     pub fn new(id: GridId, grid_one: &'a GRIDONE, grid_two: &'a GRIDTWO) -> Self {
+        if grid_one.num_cols() != grid_two.num_cols() || grid_one.num_rows() != grid_two.num_rows()
+        {
+            panic!(
+                "Grids must be same size. grid one: ({}, {}), grid_two: ({}, {}).",
+                grid_one.num_rows(),
+                grid_one.num_cols(),
+                grid_two.num_rows(),
+                grid_two.num_cols()
+            );
+        }
         MergedGrid {
             id,
             grid_one,
