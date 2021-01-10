@@ -1,4 +1,5 @@
 use bootstrap::main_container;
+use components::{Compass, CompassDirection};
 use grids::{CellId, Color, GridId, GridTrait, MetaGrid, SimpleGrid};
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
@@ -41,6 +42,7 @@ pub enum Message {
     Enter(CellId),
     Leave(CellId),
 
+    Compass(CompassDirection),
     SelectColor(Color),
 }
 
@@ -122,6 +124,14 @@ impl MetapixelApp {
               <a href="https://double-knitting.com/" class="text-muted">{"Fallingblox Designs"}</a>
             </div>
           </footer>
+        }
+    }
+
+    fn render_compass(&self) -> Html {
+        let cb = self.link.callback(|direction| Message::Compass(direction));
+
+        html! {
+            <Compass callback=cb />
         }
     }
 
@@ -249,6 +259,8 @@ impl Component for MetapixelApp {
                 self.interact.set_current_color(color);
                 true
             }
+
+            Message::Compass(_direction) => false,
 
             m @ Message::Up(_)
             | m @ Message::Down(_)

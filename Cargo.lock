@@ -80,6 +80,9 @@ checksum = "8100e46ff92eb85bf6dc2930c73f2a4f7176393c84a9446b3d501e1b354e7b34"
 [[package]]
 name = "components"
 version = "0.1.0"
+dependencies = [
+ "yew",
+]
 
 [[package]]
 name = "console_error_panic_hook"
@@ -331,6 +334,7 @@ name = "metapixel"
 version = "0.1.0"
 dependencies = [
  "bootstrap",
+ "components",
  "grids",
  "renderer",
  "serde",
