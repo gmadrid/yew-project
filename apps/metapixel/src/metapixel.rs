@@ -63,7 +63,6 @@ impl From<Interactions> for Message {
             Interactions::MouseUp(cell_id) => Message::Up(cell_id),
             Interactions::MouseEnter(cell_id) => Message::Enter(cell_id),
             Interactions::MouseExit(cell_id) => Message::Leave(cell_id),
-            _ => panic!("woohoo"),
         }
     }
 }
@@ -85,7 +84,13 @@ impl TryFrom<&Message> for Interactions {
 impl MetapixelApp {
     // TODO: can we get rid of this uglyness?
     fn grid_with_interact(&mut self, id: GridId) -> (&mut dyn GridTrait, &mut ColoredInteractor) {
-        // TODO: should you check the value of id here?
+        if id != GridId::Main {
+            panic!(
+                "Only GridId::Main is defined for the metapixel app. Received request for {:?}",
+                id
+            );
+        }
+
         (&mut self.stored.base_grid, &mut self.interact)
     }
 

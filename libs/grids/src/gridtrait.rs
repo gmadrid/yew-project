@@ -1,7 +1,7 @@
 use super::Color;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq, Serialize)]
 pub enum GridId {
     Main,
     LayerOne,

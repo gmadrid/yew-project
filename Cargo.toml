@@ -6,6 +6,7 @@ members = [
   "apps/tiles",
   "apps/twocolor",
   "libs/bootstrap",
+  "libs/components",
   "libs/grids",
   "libs/renderer",
   "libs/tools",
