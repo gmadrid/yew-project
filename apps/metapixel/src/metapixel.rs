@@ -197,12 +197,12 @@ impl MetapixelApp {
             {bootstrap::col(bootstrap::card("Metapixel config", "", html!{
               <>
                 <div>{"Metapixel config (x-axis):"}
-                  <Input start="1,2,3,2,1" callback=x_callback/>
+                  <Input vec=self.col_grid_cols.clone() callback=x_callback/>
                   <small>{" Pixel count: "}{col_count}</small>
                 </div>
                 <Compass callback=x_compass vert=false/>
                 <div>{"Metapixel config (y-axis):"}
-                  <Input start="3,2,1,2,3" callback=y_callback/>
+                  <Input vec=self.row_grid_cols.clone() callback=y_callback/>
                   <small>{" Pixel count: "}{row_count}</small>
                 </div>
                 <Compass callback=y_compass vert=false/>

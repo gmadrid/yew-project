@@ -8,14 +8,13 @@ pub struct Input {
     input_ref: NodeRef,
     err_ref: NodeRef,
 
-    text: String,
-    meta_vec: Vec<u8>,
+    vec: Vec<u8>,
 }
 
 #[derive(Properties, Clone)]
 pub struct Props {
     pub callback: Callback<Vec<u8>>,
-    pub start: String,
+    pub vec: Vec<u8>,
 }
 
 pub enum Msg {
@@ -42,20 +41,24 @@ fn parse_input(input: &str) -> Result<Vec<u8>, String> {
         .collect::<Vec<_>>())
 }
 
+fn unparse_input(slice: &[u8]) -> String {
+    let foo: Vec<String> = slice.into_iter().map(|i| i.to_string()).collect();
+    foo.join(",")
+}
+
 impl Component for Input {
     type Message = Msg;
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let meta_vec = parse_input(&props.start).unwrap_or_else(|_| vec![2, 3, 2]);
-        props.callback.emit(meta_vec.clone());
+        //let meta_vec = parse_input(&props.start).unwrap_or_else(|_| vec![2, 3, 2]);
+        props.callback.emit(props.vec.clone());
         Input {
             link,
             callback: props.callback,
             input_ref: Default::default(),
             err_ref: Default::default(),
-            text: props.start,
-            meta_vec,
+            vec: props.vec,
         }
     }
 
@@ -72,8 +75,8 @@ impl Component for Input {
         match result {
             Ok(vec) => {
                 err_element.set_inner_text("");
-                self.meta_vec = vec;
-                self.callback.emit(self.meta_vec.clone());
+                self.callback.emit(vec.clone());
+                self.vec = vec;
             }
             Err(err_text) => {
                 err_element.set_inner_text(&err_text);
@@ -86,8 +89,13 @@ impl Component for Input {
     fn change(&mut self, props: <Self as yew::Component>::Properties) -> bool {
         yew::services::ConsoleService::info("<Input change>");
         if self.callback != props.callback {
-            yew::services::ConsoleService::info("<Input change>: real");
             self.callback = props.callback;
+        }
+        yew::services::ConsoleService::info(&format!("got a start: {:?}", props.vec));
+        if self.vec != props.vec {
+            yew::services::ConsoleService::info("IN HERE");
+            self.vec = props.vec;
+            return true;
         }
 
         // We work hard to never rerender this.
@@ -96,10 +104,11 @@ impl Component for Input {
 
     fn view(&self) -> Html {
         let change_callback = self.link.callback(|_| Msg::ChangeEvent);
+        let text = unparse_input(&self.vec);
 
         html! {
           <>
-            <input ref=self.input_ref.clone() onchange=change_callback type="text" value=self.text/>
+            <input ref=self.input_ref.clone() onchange=change_callback type="text" value=text/>
             <span ref=self.err_ref.clone() class=".errspan"></span>
           </>
         }
