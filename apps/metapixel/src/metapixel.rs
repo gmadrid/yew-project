@@ -262,33 +262,92 @@ impl MetapixelApp {
             html! {
                 <>
                     {renderer.render()}
-                    <Compass callback=cb/>
+                    //<Compass callback=cb/>
                 </>
             },
         )))
     }
 }
 
+/*
+  __*_____*__
+  ___*___*___
+  __*******__
+  _**_***_**_
+  ***********
+  *_*******_*
+  *_*_____*_*
+  ___**_**___
+*/
+const INVADER_SIZE: (usize, usize) = (11, 8);
+const INVADER: [(usize, usize); 46] = [
+    (0, 2),
+    (0, 8),
+    (1, 3),
+    (1, 7),
+    (2, 2),
+    (2, 3),
+    (2, 4),
+    (2, 5),
+    (2, 6),
+    (2, 7),
+    (2, 8),
+    (3, 1),
+    (3, 2),
+    (3, 4),
+    (3, 5),
+    (3, 6),
+    (3, 8),
+    (3, 9),
+    (4, 0),
+    (4, 1),
+    (4, 2),
+    (4, 3),
+    (4, 4),
+    (4, 5),
+    (4, 6),
+    (4, 7),
+    (4, 8),
+    (4, 9),
+    (4, 10),
+    (5, 0),
+    (5, 2),
+    (5, 3),
+    (5, 4),
+    (5, 5),
+    (5, 6),
+    (5, 7),
+    (5, 8),
+    (5, 10),
+    (6, 0),
+    (6, 2),
+    (6, 8),
+    (6, 10),
+    (7, 3),
+    (7, 4),
+    (7, 6),
+    (7, 7),
+];
+
 impl Component for MetapixelApp {
     type Message = Message;
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let mut grid = BigGrid::new(GridId::Main, 5, 5);
-
-        // Create a simple grid with a red diagonal stripe.
-        for index in 0..(std::cmp::max(grid.num_rows(), grid.num_cols())) {
-            grid.set_cell(index, index, Color::Red);
+        let mut grid = BigGrid::new(GridId::Main, INVADER_SIZE.0, INVADER_SIZE.1);
+        for (row, col) in INVADER.iter() {
+            grid.set_cell(*row, *col, Color::Green)
         }
 
         let mut interact: ColoredInteractor = Default::default();
         interact.set_current_color(Color::Orange);
+
         MetapixelApp {
             link,
             stored: Stored { base_grid: grid },
             interact,
-            row_grid_cols: vec![3, 2, 1, 2, 3],
-            col_grid_cols: vec![1, 2, 3, 2, 1],
+            row_grid_cols: vec![1, 2, 1, 3, 3, 1, 2, 1],
+            col_grid_cols: vec![1, 2, 3, 2, 1, 1, 1, 2, 3, 2, 1],
         }
     }
 
