@@ -57,7 +57,7 @@ impl<'a, GRID: GridTrait> GridTrait for MetaGrid<'a, GRID> {
 
     fn cell_id(&self, row: usize, col: usize) -> CellId {
         let (base_row, base_col) = self.to_base(row, col);
-        CellId::new(self.grid_id(), base_row, base_col)
+        CellId::new(self.grid.grid_id(), base_row, base_col)
     }
 
     fn num_rows(&self) -> usize {
