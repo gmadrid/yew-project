@@ -53,7 +53,7 @@ pub enum Message {
     NewRowVec(Vec<u8>),
     NewColVec(Vec<u8>),
 
-    NoOp,
+    Clear,
 }
 
 impl Message {
@@ -224,6 +224,7 @@ impl MetapixelApp {
         let cb = self
             .link
             .callback(|direction| Message::BaseShift(direction));
+        let clear_cb = self.link.callback(|_| Message::Clear);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Pixel grid",
@@ -232,6 +233,7 @@ impl MetapixelApp {
               <>
                 {renderer.render()}
                 <Compass callback=cb/>
+                <button onclick=clear_cb class="btn btn-outline-primary">{"Clear"}</button>
               </>
             },
         )))
@@ -354,7 +356,10 @@ impl Component for MetapixelApp {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         let mut save = false;
         let should_render = match msg {
-            Message::NoOp => false,
+            Message::Clear => {
+                self.stored.base_grid.clear();
+                true
+            }
 
             Message::NewRowVec(vec) => {
                 // TODO: check for equality
