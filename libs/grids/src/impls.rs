@@ -12,3 +12,6 @@ pub use metagrid::MetaGrid;
 
 mod simplegrid;
 pub use simplegrid::SimpleGrid;
+
+mod transpose;
+pub use transpose::TransposedGrid;

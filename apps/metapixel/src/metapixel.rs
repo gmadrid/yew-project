@@ -1,6 +1,8 @@
 use bootstrap::main_container;
 use components::{Compass, CompassDirection};
-use grids::{CellId, Color, GridId, GridTrait, MetaGrid, SimpleGrid};
+use grids::{
+    shift_cols, shift_rows, CellId, Color, GridId, GridTrait, MetaGrid, ShiftDirection, SimpleGrid,
+};
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
     RegularSizedTableDecorator,
@@ -249,16 +251,12 @@ impl Component for MetapixelApp {
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let mut grid = SimpleGrid::new(GridId::Main, 5, 5);
-        for row in 0..grid.num_rows() {
-            for col in 0..grid.num_cols() {
-                let color = if row % 2 == col % 2 {
-                    Color::Orange
-                } else {
-                    Color::White
-                };
-                grid.set_cell(row, col, color);
-            }
+
+        // Create a simple grid with a red diagonal stripe.
+        for index in 0..(std::cmp::max(grid.num_rows(), grid.num_cols())) {
+            grid.set_cell(index, index, Color::Red);
         }
+
         let mut interact: ColoredInteractor = Default::default();
         interact.set_current_color(Color::Orange);
         MetapixelApp {
@@ -279,7 +277,23 @@ impl Component for MetapixelApp {
             }
 
             Message::ControlShift(_direction) => false,
-            Message::BaseShift(_direction) => false,
+            Message::BaseShift(direction) => {
+                match direction {
+                    CompassDirection::Left => {
+                        shift_rows(&mut self.stored.base_grid, ShiftDirection::Left)
+                    }
+                    CompassDirection::Right => {
+                        shift_rows(&mut self.stored.base_grid, ShiftDirection::Right)
+                    }
+                    CompassDirection::Up => {
+                        shift_cols(&mut self.stored.base_grid, ShiftDirection::Left)
+                    }
+                    CompassDirection::Down => {
+                        shift_cols(&mut self.stored.base_grid, ShiftDirection::Right)
+                    }
+                }
+                true
+            }
             Message::MetagridShift(_direction) => false,
 
             m @ Message::Up(_)

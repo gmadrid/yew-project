@@ -27,10 +27,13 @@
 //! ```
 
 mod color;
-mod gridtrait;
-mod impls;
-
 pub use color::Color;
+
+mod gridtrait;
 pub use gridtrait::{CellId, GridId, GridTrait};
 
-pub use impls::{FlippedGrid, InvertedGrid, MergedGrid, MetaGrid, SimpleGrid};
+mod impls;
+pub use impls::{FlippedGrid, InvertedGrid, MergedGrid, MetaGrid, SimpleGrid, TransposedGrid};
+
+mod tools;
+pub use tools::{shift_cols, shift_rows, ShiftDirection};

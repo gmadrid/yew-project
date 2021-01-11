@@ -10,6 +10,7 @@ pub enum GridId {
     SmallTwo,
     Combined,
     Flipped,
+    Temp,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
