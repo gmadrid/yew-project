@@ -1,7 +1,7 @@
 use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
-pub struct InputComponent {
+pub struct Input {
     link: ComponentLink<Self>,
     callback: Callback<Vec<u8>>,
 
@@ -22,7 +22,7 @@ pub enum Msg {
     ChangeEvent,
 }
 
-impl InputComponent {}
+impl Input {}
 
 fn parse_input(input: &str) -> Result<Vec<u8>, String> {
     let bad_chars = input.find(|ch: char| !ch.is_whitespace() && !ch.is_ascii_digit() && ch != ',');
@@ -42,14 +42,14 @@ fn parse_input(input: &str) -> Result<Vec<u8>, String> {
         .collect::<Vec<_>>())
 }
 
-impl Component for InputComponent {
+impl Component for Input {
     type Message = Msg;
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let meta_vec = parse_input(&props.start).unwrap_or_else(|_| vec![2, 3, 2]);
         props.callback.emit(meta_vec.clone());
-        InputComponent {
+        Input {
             link,
             callback: props.callback,
             input_ref: Default::default(),
@@ -84,7 +84,9 @@ impl Component for InputComponent {
     }
 
     fn change(&mut self, props: <Self as yew::Component>::Properties) -> bool {
+        yew::services::ConsoleService::info("<Input change>");
         if self.callback != props.callback {
+            yew::services::ConsoleService::info("<Input change>: real");
             self.callback = props.callback;
         }
 

@@ -1,3 +1,6 @@
+mod biggrid;
+pub use biggrid::BigGrid;
+
 mod flipped;
 pub use flipped::FlippedGrid;
 

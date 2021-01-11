@@ -1,7 +1,7 @@
 use bootstrap::main_container;
-use components::{Compass, CompassDirection};
+use components::{Compass, CompassDirection, Input};
 use grids::{
-    shift_cols, shift_rows, CellId, Color, GridId, GridTrait, MetaGrid, ShiftDirection, SimpleGrid,
+    shift_cols, shift_rows, BigGrid, CellId, Color, GridId, GridTrait, MetaGrid, ShiftDirection,
 };
 use renderer::decorators::{
     BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
@@ -26,7 +26,7 @@ const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(Serialize, Deserialize)]
 struct Stored {
-    base_grid: SimpleGrid,
+    base_grid: BigGrid,
 }
 
 pub struct MetapixelApp {
@@ -48,6 +48,11 @@ pub enum Message {
     BaseShift(CompassDirection),
     MetagridShift(CompassDirection),
     SelectColor(Color),
+
+    NewRowVec(Vec<u8>),
+    NewColVec(Vec<u8>),
+
+    NoOp,
 }
 
 impl Message {
@@ -175,15 +180,33 @@ impl MetapixelApp {
             munger.insert_rule("#topstuff .card{height:100%}");
         });
 
-        let cb = self
+        let x_compass = self
             .link
             .callback(|direction| Message::ControlShift(direction));
+        let y_compass = self
+            .link
+            .callback(|direction| Message::ControlShift(direction));
+        let x_callback = self.link.callback(|v| Message::NewColVec(v));
+        let y_callback = self.link.callback(|v| Message::NewRowVec(v));
+        let row_count = self.stored.base_grid.num_rows();
+        let col_count = self.stored.base_grid.num_cols();
 
         html! {
           <div id="topstuff" class="row">
             {bootstrap::col(bootstrap::card("Palette", "", self.render_palette()))}
             {bootstrap::col(bootstrap::card("Metapixel config", "", html!{
-                <Compass callback=cb/>
+              <>
+                <div>{"Metapixel config (x-axis):"}
+                  <Input start="1,2,3,2,1" callback=x_callback/>
+                  <small>{" Pixel count: "}{col_count}</small>
+                </div>
+                <Compass callback=x_compass vert=false/>
+                <div>{"Metapixel config (y-axis):"}
+                  <Input start="3,2,1,2,3" callback=y_callback/>
+                  <small>{" Pixel count: "}{row_count}</small>
+                </div>
+                <Compass callback=y_compass vert=false/>
+              </>
             }))}
           </div>
         }
@@ -250,7 +273,7 @@ impl Component for MetapixelApp {
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let mut grid = SimpleGrid::new(GridId::Main, 5, 5);
+        let mut grid = BigGrid::new(GridId::Main, 5, 5);
 
         // Create a simple grid with a red diagonal stripe.
         for index in 0..(std::cmp::max(grid.num_rows(), grid.num_cols())) {
@@ -271,6 +294,25 @@ impl Component for MetapixelApp {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         let mut save = false;
         let should_render = match msg {
+            Message::NoOp => false,
+
+            Message::NewRowVec(vec) => {
+                // TODO: check for equality
+                self.row_grid_cols = vec;
+                self.stored
+                    .base_grid
+                    .resize(self.row_grid_cols.len(), self.col_grid_cols.len());
+                true
+            }
+            Message::NewColVec(vec) => {
+                // TODO: check for equality
+                self.col_grid_cols = vec;
+                self.stored
+                    .base_grid
+                    .resize(self.row_grid_cols.len(), self.col_grid_cols.len());
+                true
+            }
+
             Message::SelectColor(color) => {
                 self.interact.set_current_color(color);
                 true
