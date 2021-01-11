@@ -87,13 +87,10 @@ impl Component for Input {
     }
 
     fn change(&mut self, props: <Self as yew::Component>::Properties) -> bool {
-        yew::services::ConsoleService::info("<Input change>");
         if self.callback != props.callback {
             self.callback = props.callback;
         }
-        yew::services::ConsoleService::info(&format!("got a start: {:?}", props.vec));
         if self.vec != props.vec {
-            yew::services::ConsoleService::info("IN HERE");
             self.vec = props.vec;
             return true;
         }

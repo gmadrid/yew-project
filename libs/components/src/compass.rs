@@ -7,7 +7,7 @@ pub struct Compass {
 
 impl Compass {}
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CompassDirection {
     Down,
     Left,

@@ -44,7 +44,8 @@ pub enum Message {
     Enter(CellId),
     Leave(CellId),
 
-    ControlShift(CompassDirection),
+    MetaXShift(CompassDirection),
+    MetaYShift(CompassDirection),
     BaseShift(CompassDirection),
     MetagridShift(CompassDirection),
     SelectColor(Color),
@@ -182,10 +183,10 @@ impl MetapixelApp {
 
         let x_compass = self
             .link
-            .callback(|direction| Message::ControlShift(direction));
+            .callback(|direction| Message::MetaXShift(direction));
         let y_compass = self
             .link
-            .callback(|direction| Message::ControlShift(direction));
+            .callback(|direction| Message::MetaYShift(direction));
         let x_callback = self.link.callback(|v| Message::NewColVec(v));
         let y_callback = self.link.callback(|v| Message::NewRowVec(v));
         let row_count = self.stored.base_grid.num_rows();
@@ -318,7 +319,39 @@ impl Component for MetapixelApp {
                 true
             }
 
-            Message::ControlShift(_direction) => false,
+            Message::MetaXShift(direction) => {
+                if self.col_grid_cols.len() == 0 {
+                    false
+                } else {
+                    if direction == CompassDirection::Left {
+                        let val = self.col_grid_cols.remove(0);
+                        self.col_grid_cols.push(val);
+                    } else {
+                        /* CompassDirection::Right */
+                        // unwrap: we have checked the length of the Vec above.
+                        let val = self.col_grid_cols.pop().unwrap();
+                        self.col_grid_cols.insert(0, val);
+                    }
+                    true
+                }
+            }
+            Message::MetaYShift(direction) => {
+                if self.row_grid_cols.len() == 0 {
+                    false
+                } else {
+                    if direction == CompassDirection::Left {
+                        let val = self.row_grid_cols.remove(0);
+                        self.row_grid_cols.push(val);
+                    } else {
+                        /* CompassDirection::Right */
+                        // unwrap: we have checked the length of the Vec above.
+                        let val = self.row_grid_cols.pop().unwrap();
+                        self.row_grid_cols.insert(0, val);
+                    }
+                    true
+                }
+            }
+
             Message::BaseShift(direction) => {
                 match direction {
                     CompassDirection::Left => {
