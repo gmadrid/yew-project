@@ -42,8 +42,8 @@ fn parse_input(input: &str) -> Result<Vec<u8>, String> {
 }
 
 fn unparse_input(slice: &[u8]) -> String {
-    let foo: Vec<String> = slice.into_iter().map(|i| i.to_string()).collect();
-    foo.join(",")
+    let vec: Vec<String> = slice.iter().map(|i| i.to_string()).collect();
+    vec.join(",")
 }
 
 impl Component for Input {

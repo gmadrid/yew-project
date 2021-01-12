@@ -181,14 +181,10 @@ impl MetapixelApp {
             munger.insert_rule("#topstuff .card{height:100%}");
         });
 
-        let x_compass = self
-            .link
-            .callback(|direction| Message::MetaXShift(direction));
-        let y_compass = self
-            .link
-            .callback(|direction| Message::MetaYShift(direction));
-        let x_callback = self.link.callback(|v| Message::NewColVec(v));
-        let y_callback = self.link.callback(|v| Message::NewRowVec(v));
+        let x_compass = self.link.callback(Message::MetaXShift);
+        let y_compass = self.link.callback(Message::MetaYShift);
+        let x_callback = self.link.callback(Message::NewColVec);
+        let y_callback = self.link.callback(Message::NewRowVec);
         let row_count = self.stored.base_grid.num_rows();
         let col_count = self.stored.base_grid.num_cols();
 
@@ -221,9 +217,7 @@ impl MetapixelApp {
         renderer.add_class_decorator(PrintableColorDecorator::default());
         self.interact.install(&self.link, &mut renderer);
 
-        let cb = self
-            .link
-            .callback(|direction| Message::BaseShift(direction));
+        let cb = self.link.callback(Message::BaseShift);
         let clear_cb = self.link.callback(|_| Message::Clear);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
@@ -254,9 +248,7 @@ impl MetapixelApp {
         // TODO: for some reason, this is crashing.
         self.interact.install(&self.link, &mut renderer);
 
-        let cb = self
-            .link
-            .callback(|direction| Message::MetagridShift(direction));
+        let cb = self.link.callback(Message::MetagridShift);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Metapixel grid",
@@ -384,7 +376,7 @@ impl Component for MetapixelApp {
             }
 
             Message::MetaXShift(direction) => {
-                if self.col_grid_cols.len() == 0 {
+                if self.col_grid_cols.is_empty() {
                     false
                 } else {
                     if direction == CompassDirection::Left {
@@ -400,7 +392,7 @@ impl Component for MetapixelApp {
                 }
             }
             Message::MetaYShift(direction) => {
-                if self.row_grid_cols.len() == 0 {
+                if self.row_grid_cols.is_empty() {
                     false
                 } else {
                     if direction == CompassDirection::Left {
@@ -440,9 +432,8 @@ impl Component for MetapixelApp {
             | m @ Message::Enter(_)
             | m @ Message::Leave(_) => {
                 // Only save on Up.
-                match &m {
-                    Message::Up(_) => save = true,
-                    _ => {}
+                if let Message::Up(_) = &m {
+                    save = true;
                 }
 
                 let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);

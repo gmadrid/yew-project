@@ -302,9 +302,8 @@ impl Component for TwoColorApp {
             | m @ Message::Enter(_)
             | m @ Message::Leave(_) => {
                 // Only save on Up.
-                match &m {
-                    Message::Up(_) => save = true,
-                    _ => {}
+                if let Message::Up(_) = &m {
+                    save = true;
                 }
 
                 let (grid, interact) = self.grid_with_interact(m.cell_id().grid_id);
