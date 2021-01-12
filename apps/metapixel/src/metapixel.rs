@@ -27,14 +27,14 @@ const VERSION_NUMBER: &str = env!("CARGO_PKG_VERSION");
 #[derive(Serialize, Deserialize)]
 struct Stored {
     base_grid: BigGrid,
+    row_grid_cols: Vec<u8>,
+    col_grid_cols: Vec<u8>,
 }
 
 pub struct MetapixelApp {
     link: ComponentLink<Self>,
     interact: ColoredInteractor,
     stored: Stored,
-    row_grid_cols: Vec<u8>,
-    col_grid_cols: Vec<u8>,
 }
 
 #[derive(Debug)]
@@ -194,12 +194,12 @@ impl MetapixelApp {
             {bootstrap::col(bootstrap::card("Metapixel config", "", html!{
               <>
                 <div>{"Metapixel config (x-axis):"}
-                  <Input vec=self.col_grid_cols.clone() callback=x_callback/>
+                  <Input vec=self.stored.col_grid_cols.clone() callback=x_callback/>
                   <small>{" Pixel count: "}{col_count}</small>
                 </div>
                 <Compass callback=x_compass vert=false/>
                 <div>{"Metapixel config (y-axis):"}
-                  <Input vec=self.row_grid_cols.clone() callback=y_callback/>
+                  <Input vec=self.stored.row_grid_cols.clone() callback=y_callback/>
                   <small>{" Pixel count: "}{row_count}</small>
                 </div>
                 <Compass callback=y_compass vert=false/>
@@ -237,8 +237,8 @@ impl MetapixelApp {
         let metagrid = MetaGrid::new(
             GridId::SmallOne,
             &self.stored.base_grid,
-            &self.row_grid_cols,
-            &self.col_grid_cols,
+            &self.stored.row_grid_cols,
+            &self.stored.col_grid_cols,
         );
         let mut renderer = TableRenderer::new(&metagrid);
         renderer.add_class_decorator(RegularSizedTableDecorator::default());
@@ -246,8 +246,8 @@ impl MetapixelApp {
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
         renderer.add_class_decorator(MetagridDecorator::new(
-            &self.row_grid_cols,
-            &self.col_grid_cols,
+            &self.stored.row_grid_cols,
+            &self.stored.col_grid_cols,
         ));
         // TODO: for some reason, this is crashing.
         self.interact.install(&self.link, &mut renderer);
@@ -327,11 +327,22 @@ const INVADER: [(usize, usize); 46] = [
     (7, 7),
 ];
 
+fn make_invader_grid() -> BigGrid {
+    let mut grid = BigGrid::new(GridId::Main, INVADER_SIZE.0, INVADER_SIZE.1);
+    for (row, col) in INVADER.iter() {
+        grid.set_cell(*row, *col, Color::Green)
+    }
+    grid
+}
+
 impl Component for MetapixelApp {
     type Message = Message;
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let storage = StorageService::new(Area::Local).unwrap();
+        let Json(stored) = storage.restore(STORAGE_KEY);
+
         let mut grid = BigGrid::new(GridId::Main, INVADER_SIZE.0, INVADER_SIZE.1);
         for (row, col) in INVADER.iter() {
             grid.set_cell(*row, *col, Color::Green)
@@ -342,10 +353,12 @@ impl Component for MetapixelApp {
 
         MetapixelApp {
             link,
-            stored: Stored { base_grid: grid },
+            stored: stored.unwrap_or_else(|_| Stored {
+                base_grid: make_invader_grid(),
+                row_grid_cols: vec![1, 2, 1, 3, 3, 1, 2, 1],
+                col_grid_cols: vec![1, 2, 3, 2, 1, 1, 1, 2, 3, 2, 1],
+            }),
             interact,
-            row_grid_cols: vec![1, 2, 1, 3, 3, 1, 2, 1],
-            col_grid_cols: vec![1, 2, 3, 2, 1, 1, 1, 2, 3, 2, 1],
         }
     }
 
@@ -359,18 +372,22 @@ impl Component for MetapixelApp {
 
             Message::NewRowVec(vec) => {
                 // TODO: check for equality
-                self.row_grid_cols = vec;
-                self.stored
-                    .base_grid
-                    .resize(self.row_grid_cols.len(), self.col_grid_cols.len());
+                self.stored.row_grid_cols = vec;
+                self.stored.base_grid.resize(
+                    self.stored.row_grid_cols.len(),
+                    self.stored.col_grid_cols.len(),
+                );
+                save = true;
                 true
             }
             Message::NewColVec(vec) => {
                 // TODO: check for equality
-                self.col_grid_cols = vec;
-                self.stored
-                    .base_grid
-                    .resize(self.row_grid_cols.len(), self.col_grid_cols.len());
+                self.stored.col_grid_cols = vec;
+                self.stored.base_grid.resize(
+                    self.stored.row_grid_cols.len(),
+                    self.stored.col_grid_cols.len(),
+                );
+                save = true;
                 true
             }
 
@@ -380,34 +397,36 @@ impl Component for MetapixelApp {
             }
 
             Message::MetaXShift(direction) => {
-                if self.col_grid_cols.is_empty() {
+                if self.stored.col_grid_cols.is_empty() {
                     false
                 } else {
                     if direction == CompassDirection::Left {
-                        let val = self.col_grid_cols.remove(0);
-                        self.col_grid_cols.push(val);
+                        let val = self.stored.col_grid_cols.remove(0);
+                        self.stored.col_grid_cols.push(val);
                     } else {
                         /* CompassDirection::Right */
                         // unwrap: we have checked the length of the Vec above.
-                        let val = self.col_grid_cols.pop().unwrap();
-                        self.col_grid_cols.insert(0, val);
+                        let val = self.stored.col_grid_cols.pop().unwrap();
+                        self.stored.col_grid_cols.insert(0, val);
                     }
+                    save = true;
                     true
                 }
             }
             Message::MetaYShift(direction) => {
-                if self.row_grid_cols.is_empty() {
+                if self.stored.row_grid_cols.is_empty() {
                     false
                 } else {
                     if direction == CompassDirection::Left {
-                        let val = self.row_grid_cols.remove(0);
-                        self.row_grid_cols.push(val);
+                        let val = self.stored.row_grid_cols.remove(0);
+                        self.stored.row_grid_cols.push(val);
                     } else {
                         /* CompassDirection::Right */
                         // unwrap: we have checked the length of the Vec above.
-                        let val = self.row_grid_cols.pop().unwrap();
-                        self.row_grid_cols.insert(0, val);
+                        let val = self.stored.row_grid_cols.pop().unwrap();
+                        self.stored.row_grid_cols.insert(0, val);
                     }
+                    save = true;
                     true
                 }
             }
@@ -427,6 +446,7 @@ impl Component for MetapixelApp {
                         shift_cols(&mut self.stored.base_grid, ShiftDirection::Right)
                     }
                 }
+                save = true;
                 true
             }
             Message::MetagridShift(_direction) => false,
