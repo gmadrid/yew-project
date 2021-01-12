@@ -34,7 +34,8 @@ pub use gridtrait::{CellId, GridId, GridTrait};
 
 mod impls;
 pub use impls::{
-    BigGrid, FlippedGrid, InvertedGrid, MergedGrid, MetaGrid, SimpleGrid, TransposedGrid,
+    compute_base_indices, BigGrid, FlippedGrid, InvertedGrid, MergedGrid, MetaGrid, SimpleGrid,
+    TransposedGrid,
 };
 
 mod tools;

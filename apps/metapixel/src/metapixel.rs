@@ -4,7 +4,7 @@ use grids::{
     shift_cols, shift_rows, BigGrid, CellId, Color, GridId, GridTrait, MetaGrid, ShiftDirection,
 };
 use renderer::decorators::{
-    BorderedCellDecorator, ColorDecorator, CssMunger, PrintableColorDecorator,
+    BorderedCellDecorator, ColorDecorator, CssMunger, MetagridDecorator, PrintableColorDecorator,
     RegularSizedTableDecorator,
 };
 use renderer::interact::{ColoredInteractor, Interactions, Interactor};
@@ -245,10 +245,14 @@ impl MetapixelApp {
         renderer.add_style_decorator(ColorDecorator::default());
         renderer.add_class_decorator(BorderedCellDecorator::default());
         renderer.add_class_decorator(PrintableColorDecorator::default());
+        renderer.add_class_decorator(MetagridDecorator::new(
+            &self.row_grid_cols,
+            &self.col_grid_cols,
+        ));
         // TODO: for some reason, this is crashing.
         self.interact.install(&self.link, &mut renderer);
 
-        let cb = self.link.callback(Message::MetagridShift);
+        // let cb = self.link.callback(Message::MetagridShift);
 
         bootstrap::row(bootstrap::col(bootstrap::card(
             "Metapixel grid",

@@ -11,7 +11,7 @@ mod merged;
 pub use merged::MergedGrid;
 
 mod metagrid;
-pub use metagrid::MetaGrid;
+pub use metagrid::{compute_base_indices, MetaGrid};
 
 mod simplegrid;
 pub use simplegrid::SimpleGrid;

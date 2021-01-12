@@ -10,7 +10,7 @@ pub use purl_decorator::PurlDecorator;
 pub use style_decorator::StyleDecorator;
 
 pub use class_decorator::{
-    BorderedCellDecorator, MergedBorderDecorator, PrintableColorDecorator,
+    BorderedCellDecorator, MergedBorderDecorator, MetagridDecorator, PrintableColorDecorator,
     RegularSizedTableDecorator, SmallSizedTableDecorator, ThickBorders,
 };
 pub use label_decorator::{EmptyLabels, FlatLabels, MergedFlatLabels, RoundLabels};
