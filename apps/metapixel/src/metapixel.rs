@@ -367,6 +367,7 @@ impl Component for MetapixelApp {
         let should_render = match msg {
             Message::Clear => {
                 self.stored.base_grid.clear();
+                save = true;
                 true
             }
 
