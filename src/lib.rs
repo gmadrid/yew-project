@@ -12,8 +12,8 @@ macro_rules! app_runner {
     };
 }
 
-mod twocolor;
+mod PROJECT;
 
-pub use crate::twocolor::TwoColorApp;
+pub use crate::PROJECT::PROJECTApp;
 
-app_runner!(run_twopattern_app, twocolor::TwoColorApp);
+app_runner!(run_PROJECT_app, PROJECT::PROJECTApp);

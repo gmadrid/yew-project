@@ -2,7 +2,7 @@
 default_to_workspace = false
 
 [tasks.default]
-alias = "twopatternapp-bundle"
+alias = "PROJECT-bundle"
 
 [tasks.serve]
 command = "simple-http-server"
@@ -16,11 +16,11 @@ args = ["build", "--target", "web"]
 dependencies = [ "format" ]
 install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "--help" }
 
-[tasks.twopatternapp-bundle]
-description = "Bundle the 'twopattern' wasm"
+[tasks.PROJECT-bundle]
+description = "Bundle the 'PROJECT' wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
-args = [ "./twopattern.js", "--format", "iife", "--file", "./pkg/twopattern.js" ]
+args = [ "./PROJECT.js", "--format", "iife", "--file", "./pkg/PROJECT.js" ]
 
 
 # [tasks.testapp-bundle]
