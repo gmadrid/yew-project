@@ -1,15 +1,16 @@
-use grids::{CellId, FlippedGrid, GridId, GridTrait, MergedGrid, SimpleGrid};
-use renderer::decorators::{
-    CssMunger, EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
-};
-use renderer::interact::{Interactions, Interactor, OneColorInteractor};
-use renderer::TableRenderer;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use yew::format::Json;
 use yew::prelude::*;
 use yew::services::storage::Area;
 use yew::services::StorageService;
+use yewknit::bootstrap;
+use yewknit::grids::{CellId, FlippedGrid, GridId, GridTrait, MergedGrid, SimpleGrid};
+use yewknit::renderer::decorators::{
+    CssMunger, EvenPurlDecorator, FlatLabels, MergedBorderDecorator, MergedFlatLabels, ThickBorders,
+};
+use yewknit::renderer::interact::{Interactions, Interactor, OneColorInteractor};
+use yewknit::renderer::TableRenderer;
 
 static FOOTER_ONCE: std::sync::Once = std::sync::Once::new();
 

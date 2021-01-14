@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use wasm_bindgen::prelude::*;
 
 macro_rules! app_runner {
@@ -10,8 +12,8 @@ macro_rules! app_runner {
     };
 }
 
-app_runner!(run_crown_app, crown::CrownApp);
-app_runner!(run_metapixel_app, metapixel::MetapixelApp);
-app_runner!(run_testapp_app, testapp::TestApp);
-app_runner!(run_tiles_app, tiles::TilesApp);
-app_runner!(run_twocolor_app, twocolor::TwoColorApp);
+mod twocolor;
+
+pub use crate::twocolor::TwoColorApp;
+
+app_runner!(run_twopattern_app, twocolor::TwoColorApp);

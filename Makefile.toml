@@ -2,54 +2,61 @@
 default_to_workspace = false
 
 [tasks.default]
-alias = "testapp-bundle"
+alias = "twopatternapp-bundle"
 
 [tasks.serve]
 command = "simple-http-server"
-args = [ "--nocache", "serving" ]
+args = [ "--nocache", "." ]
 imstall_crate = {crate_name = "simple-http-server", binary = "simple-http-server"}
 
 [tasks.wasm]
 description = "Build the wasm code"
 command = "wasm-pack"
-args = ["build", "--target", "web", "serving"]
+args = ["build", "--target", "web"]
 dependencies = [ "format" ]
 install_crate = { crate_name = "wasm-pack", binary = "wasm-pack", test_arg = "--help" }
 
-[tasks.testapp-bundle]
-description = "Bundle the 'testapp' wasm"
+[tasks.twopatternapp-bundle]
+description = "Bundle the 'twopattern' wasm"
 dependencies = [ "wasm" ]
 command = "rollup"
-args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]
+args = [ "./twopattern.js", "--format", "iife", "--file", "./pkg/twopattern.js" ]
 
-[tasks.tilesapp-bundle]
-description = "Bundle the 'tilesapp' wasm"
-dependencies = [ "wasm" ]
-command = "rollup"
-args = [ "./serving/tiles.js", "--format", "iife", "--file", "./serving/pkg/tiles.js" ]
 
-[tasks.twocolorapp-bundle]
-description = "Bundle the 'twocolor' wasm"
-dependencies = [ "wasm" ]
-command = "rollup"
-args = [ "./serving/twocolor.js", "--format", "iife", "--file", "./serving/pkg/twocolor.js" ]
-
-[tasks.metapixel-bundle]
-description = "Bundle the 'metapixel' wasm"
-dependencies = [ "wasm" ]
-command = "rollup"
-args = [ "./serving/metapixel.js", "--format", "iife", "--file", "./serving/pkg/metapixel.js" ]
-
-[tasks.crownapp-bundle]
-description = "Bundle the 'crown' wasm"
-dependencies = [ "wasm" ]
-command = "rollup"
-args = [ "./serving/crownapp.js", "--format", "iife", "--file", "./serving/pkg/crownapp.js" ]
-
-[tasks.all-bundles]
-description = "All bundles"
-dependencies = [ "crownapp-bundle", "metapixel-bundle", "testapp-bundle", "tilesapp-bundle", "twocolorapp-bundle",]
-
-# [tasks.watch-testapp-bundle]
-# dependencies = ["testapp-bundle"]
-# watch = { postpone = true, no_git_ignore = true, watch = ["./apps", "./libs", "./serving"] }
+# [tasks.testapp-bundle]
+# description = "Bundle the 'testapp' wasm"
+# dependencies = [ "wasm" ]
+# command = "rollup"
+# args = [ "./serving/testapp.js", "--format", "iife", "--file", "./serving/pkg/testapp.js" ]
+#
+# [tasks.tilesapp-bundle]
+# description = "Bundle the 'tilesapp' wasm"
+# dependencies = [ "wasm" ]
+# command = "rollup"
+# args = [ "./serving/tiles.js", "--format", "iife", "--file", "./serving/pkg/tiles.js" ]
+#
+# [tasks.twocolorapp-bundle]
+# description = "Bundle the 'twocolor' wasm"
+# dependencies = [ "wasm" ]
+# command = "rollup"
+# args = [ "./serving/twocolor.js", "--format", "iife", "--file", "./serving/pkg/twocolor.js" ]
+#
+# [tasks.metapixel-bundle]
+# description = "Bundle the 'metapixel' wasm"
+# dependencies = [ "wasm" ]
+# command = "rollup"
+# args = [ "./serving/metapixel.js", "--format", "iife", "--file", "./serving/pkg/metapixel.js" ]
+#
+# [tasks.crownapp-bundle]
+# description = "Bundle the 'crown' wasm"
+# dependencies = [ "wasm" ]
+# command = "rollup"
+# args = [ "./serving/crownapp.js", "--format", "iife", "--file", "./serving/pkg/crownapp.js" ]
+#
+# [tasks.all-bundles]
+# description = "All bundles"
+# dependencies = [ "crownapp-bundle", "metapixel-bundle", "testapp-bundle", "tilesapp-bundle", "twocolorapp-bundle",]
+#
+# # [tasks.watch-testapp-bundle]
+# # dependencies = ["testapp-bundle"]
+# # watch = { postpone = true, no_git_ignore = true, watch = ["./apps", "./libs", "./serving"] }
